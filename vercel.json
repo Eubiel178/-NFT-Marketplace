@@ -1,0 +1,6 @@
+{
+  "buildCommand": "npm run build:demo",
+  "outputDirectory": "dist",
+  "rewrites": [{ "source": "/((?!assets/|mockServiceWorker.js).*)", "destination": "/index.html" }],
+  "headers": [{ "source": "/mockServiceWorker.js", "headers": [{ "key": "Cache-Control", "value": "no-cache" }] }]
+}
