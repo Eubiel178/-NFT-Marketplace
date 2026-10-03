@@ -6,3 +6,7 @@ dist/
 playwright-report/
 test-results/
 reports/lighthouse/
+.agents/
+opencode.json
+reports/
+skills-lock.json
