@@ -297,7 +297,7 @@ Para Lighthouse, execute `npm run build:demo` e `npm run preview` em um terminal
 
 ### Credenciais e cenários disponíveis
 
-As fixtures reservam `ana@example.test` e `bruno@example.test`. **Ainda não existem senhas ou autenticação funcional**; sessão sempre visitante. Não usar dados reais. Implementação de cadastro/hash, login e contas utilizáveis consta do checklist.
+As fixtures reservam `ana@example.test` / `kurio-demo` e `bruno@example.test` / `bruno-demo`. São credenciais fictícias exclusivas do modo demo; não usar dados reais. As senhas são persistidas apenas como hash com salt no mock. Novos cadastros também recebem hash e sessão automaticamente.
 
 Seleção de cenário no console do navegador da aplicação, com MSW ativo:
 
@@ -309,7 +309,7 @@ await fetch('/api/__mock/scenario', {
 location.reload()
 ```
 
-Disponíveis: `default`, `empty`, `slow` (2 s), `variable-latency` (páginas ímpares 900 ms/pares 100 ms), `network-error`, `http-500` (503), `unauthorized` (401 nas consultas de NFTs). A configuração persiste localmente. Para recuperação/reset:
+Disponíveis: `default`, `empty`, `slow` (2 s), `variable-latency` (páginas ímpares 900 ms/pares 100 ms), `network-error`, `http-500` (503), `unauthorized` (401 nas consultas de NFTs), `favorites-error` (503 em favoritos), `cart-error`, `cart-load-error`, `quote-error`, `profile-error`, `wallets-error`, `order-error`, `payment-declined`, `payment-pending`, `payment-timeout` e `stale-quote`. A configuração persiste localmente. Para recuperação/reset:
 
 ```js
 await fetch('/api/__mock/reset', { method: 'POST' })
@@ -322,8 +322,8 @@ Para exercitar REST + Socket.IO, abra `/nfts/nft-1`, aguarde o carregamento e ex
 await fetch('/api/__mock/nfts/nft-1/update', { method: 'POST' })
 ```
 
-O preço persistido muda para `0.125` ETH, o mock emite pelo protocolo Socket.IO e o cliente reconcilia por REST. Demais falhas exigidas (pagamento, cupom, idempotência, sessão real etc.) permanecem pendentes; veja o checklist. Esses controles de mock são exclusivos do modo de demonstração.
+O preço persistido muda para `0.125` ETH, o mock emite pelo protocolo Socket.IO e o cliente reconcilia por REST. Os cenários de pagamento, favoritos, idempotência e sessão são exclusivos do modo de demonstração e podem ser selecionados pelo mesmo endpoint.
 
 ### Entrega e limitações atuais
 
-Configuração SPA da Vercel preparada em `vercel.json`; deploy e URL de repositório ainda pendentes. Não há alegação de compra funcional, conta concluída, regressão visual aprovada ou notas Lighthouse finais nesta estrutura. Os frames Figma não ficaram acessíveis na inspeção inicial; assets e identidade visual aguardam implementação. Resultado das verificações desta etapa em [docs/VALIDATION.md](docs/VALIDATION.md).
+Configuração SPA da Vercel preparada em `vercel.json`; deploy e URL de repositório ainda pendentes. Os fluxos de conta, carrinho, favoritos e pedidos descritos nesta etapa usam MSW e possuem cobertura E2E. Permanecem no checklist os refinamentos de perfil/avatar/senha, alguns cenários completos de catálogo/cupom/tempo real, baselines visuais finais, auditoria Lighthouse final e o deploy público. Resultado das verificações desta etapa em [docs/VALIDATION.md](docs/VALIDATION.md).

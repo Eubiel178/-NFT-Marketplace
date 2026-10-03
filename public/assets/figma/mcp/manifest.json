@@ -1,0 +1,113 @@
+{
+  "source": {
+    "fileKey": "Ff0SksUi7UFtPWUO8kyNtw",
+    "downloadedAt": "2026-10-03",
+    "mcp": "figma_download_figma_images"
+  },
+  "raster": [
+    {
+      "alias": "fill_0380e2ac",
+      "imageRef": "8459204731e6eba9d474cbc8ebc37071360d3ba5",
+      "representativeNodeId": "70342:2673",
+      "path": "/assets/figma/mcp/raster/fill-0380e2ac.png"
+    },
+    {
+      "alias": "fill_02276ad0",
+      "imageRef": "2986a7cb16d09de8970824d2dd58bf0bb021702c",
+      "representativeNodeId": "70410:3798",
+      "path": "/assets/figma/mcp/raster/fill-02276ad0.png"
+    },
+    {
+      "alias": "fill_26d577be",
+      "imageRef": "9df2ff42dd27ba657621c304557d1a855a4be6a5",
+      "representativeNodeId": "4:164",
+      "path": "/assets/figma/mcp/raster/fill-26d577be.png"
+    },
+    {
+      "alias": "fill_d003b2ae",
+      "imageRef": "87580f2def9af0ce13f4b6f6ce17bb2449bcfc16",
+      "representativeNodeId": "70343:286",
+      "path": "/assets/figma/mcp/raster/fill-d003b2ae.png"
+    }
+  ],
+  "svg": [
+    { "name": "iconly-two-tone-arrow-down-2", "nodeId": "4:152" },
+    { "name": "iconly-curved-arrow-right-2", "nodeId": "4:392" },
+    { "name": "iconly-curved-arrow-right", "nodeId": "5:99" },
+    { "name": "promo-genesis-mask", "nodeId": "5:134", "category": "illustration" },
+    { "name": "promo-curated-mask", "nodeId": "5:130", "category": "illustration" },
+    { "name": "mobile-hero-mask", "nodeId": "14:5290", "category": "background" },
+    { "name": "featured-favorite-vector", "nodeId": "70410:3935" },
+    { "name": "mobile-grid-vector", "nodeId": "15:5427" },
+    { "name": "tab-bar-background", "nodeId": "15:5504", "category": "background" },
+    { "name": "tab-bar-home-vector", "nodeId": "15:5523" },
+    { "name": "tab-bar-user-vector", "nodeId": "15:5525" },
+    { "name": "tab-bar-shop-vector", "nodeId": "15:5527" },
+    { "name": "mobile-detail-vector", "nodeId": "15:5642" },
+    { "name": "iconly-bold-star", "nodeId": "11:1195", "category": "icon" },
+    { "name": "input-frame", "nodeId": "70410:4191" },
+    { "name": "heart", "nodeId": "70410:3940", "category": "icon" },
+    { "name": "linkedin", "nodeId": "11:1245", "category": "icon" },
+    { "name": "message", "nodeId": "11:1248", "category": "icon" },
+    { "name": "twitter-vector", "nodeId": "11:1249", "category": "icon" },
+    { "name": "twitter", "nodeId": "11:1247", "category": "icon" },
+    { "name": "iconly-curved-delete", "nodeId": "11:2029", "category": "icon" },
+    { "name": "thank-you", "nodeId": "11:5150", "category": "illustration" },
+    { "name": "close-x", "nodeId": "12:5223", "category": "icon" },
+    { "name": "close-x-component", "nodeId": "9:947", "category": "icon" },
+    { "name": "close-x-vector", "nodeId": "9:948", "category": "icon" },
+    { "name": "iconly-curved-hide", "nodeId": "9:963", "category": "icon" },
+    { "name": "user", "nodeId": "70420:4541", "category": "icon" },
+    { "name": "iconly-light-outline-location", "nodeId": "70420:4544", "category": "icon" },
+    { "name": "shopping", "nodeId": "70420:4547", "category": "icon" },
+    { "name": "iconly-curved-activity", "nodeId": "70420:4555", "category": "icon" },
+    { "name": "iconly-curved-download", "nodeId": "70420:4558", "category": "icon" },
+    { "name": "iconly-curved-danger-triangle", "nodeId": "70420:4561", "category": "icon" },
+    { "name": "iconly-curved-logout", "nodeId": "70420:4565", "category": "icon" },
+    { "name": "arrow-down-component", "nodeId": "9:1589", "category": "icon" },
+    { "name": "arrow-down-vector", "nodeId": "9:1590", "category": "icon" },
+    { "name": "iconly-curved-image-2", "nodeId": "9:1560", "category": "icon" },
+    { "name": "arrow-down", "nodeId": "9:1837", "category": "icon" },
+    { "name": "search", "nodeId": "15:5331", "category": "icon" },
+    { "name": "search-ellipse", "nodeId": "15:5332", "category": "icon" },
+    { "name": "iconly-curved-filter", "nodeId": "15:5488", "category": "icon" },
+    { "name": "iconly-bold-home", "nodeId": "15:5519", "category": "icon" },
+    { "name": "user-tab", "nodeId": "15:5522", "category": "icon" },
+    { "name": "shop-tab", "nodeId": "15:5524", "category": "icon" },
+    { "name": "mobile-nav-group", "nodeId": "15:5529", "category": "icon" },
+    { "name": "iconly-curved-arrow-left-2", "nodeId": "15:5745", "category": "icon" },
+    { "name": "shop", "nodeId": "16:357", "category": "icon" },
+    { "name": "back", "nodeId": "16:393", "category": "icon" },
+    { "name": "iconly-curved-wallet", "nodeId": "23:1379", "category": "icon" }
+  ],
+  "home": [
+    { "name": "desktop-hero-seal", "nodeId": "3:131", "path": "/assets/figma/desktop-hero-seal.svg" },
+    { "name": "featured-green-ring", "nodeId": "70410:3799", "path": "/assets/figma/featured-green-ring.svg" },
+    { "name": "featured-glow", "nodeId": "70410:3800", "path": "/assets/figma/featured-glow.svg" },
+    { "name": "featured-dot", "nodeId": "70410:3801", "path": "/assets/figma/featured-dot.svg" },
+    { "name": "promo-genesis-mask", "nodeId": "5:134", "path": "/assets/figma/promo-genesis-mask.svg" },
+    { "name": "promo-curated-mask", "nodeId": "5:130", "path": "/assets/figma/promo-curated-mask.svg" }
+  ],
+  "unavailable": [
+    {
+      "category": "logo",
+      "reason": "O Figma não expõe um arquivo de logo: desktop/footer usam alias EL-* e login/cadastro mobile usam texto. O alias não pode ser baixado isoladamente e não foi criado SVG substituto."
+    },
+    {
+      "category": "badge",
+      "reason": "RARO, NFT EM DESTAQUE e OFERTA LIMITADA são composições de texto e formas no Figma, não assets binários exportáveis."
+    },
+    {
+      "category": "raster-without-image-ref",
+      "reason": "Os nós sem imageRef não possuem imagem real associada para download; não foram preenchidos com placeholders."
+    },
+    {
+      "category": "figma-data-api",
+      "reason": "figma_get_figma_data retornou HTTP 429 no arquivo Ff0SksUi7UFtPWUO8kyNtw, com Retry-After de aproximadamente 393558 segundos e limitação do plano/seat Viewer ou Collaborator. O download_figma_images funcionou com os node IDs já inventariados."
+    },
+    {
+      "category": "home-hero-ornament",
+      "reason": "O node 2:104, descrito no Figma como IMAGE-SVG de 1200x450 para o ornamento do hero desktop, não foi retornado pelo download_figma_images; a chamada retornou apenas os outros quatro nodes solicitados. Nenhum substituto foi criado ou usado."
+    }
+  ]
+}

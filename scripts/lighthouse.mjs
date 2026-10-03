@@ -7,7 +7,7 @@ const base = process.env.AUDIT_URL || 'http://127.0.0.1:4173'
 const output = 'reports/lighthouse'
 await mkdir(output, { recursive: true })
 const browser = await launch({ chromeFlags: ['--headless', '--no-first-run'], chromePath: process.env.CHROME_PATH })
-const summary = { date: new Date().toISOString(), node: process.version, platform: process.platform, base, note: 'Estrutura inicial; não representa auditoria da entrega final.', results: [] }
+const summary = { date: new Date().toISOString(), node: process.version, platform: process.platform, base, note: 'Auditoria da implementação atual da Home e do detalhe REST disponível.', results: [] }
 try {
   for (const path of ['/', '/nfts/nft-1']) {
     for (const profile of ['mobile', 'desktop']) {

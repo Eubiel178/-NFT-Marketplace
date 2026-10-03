@@ -1,0 +1,1469 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "meta": {
+    "purpose": "Indice machine-readable do design extraido do Figma. Fonte de referencia visual; nao e fonte de requisitos.",
+    "figma": {
+      "fileName": "Frontend Challenge (Copy)",
+      "fileKey": "dpcWPY3VTb7slaohK7USmz",
+      "url": "https://www.figma.com/design/dpcWPY3VTb7slaohK7USmz/Frontend-Challenge--Copy-?node-id=0-1",
+      "canvas": {
+        "id": "0:1",
+        "name": "Marketplace de NFTs GreenMint"
+      },
+      "pages": 1,
+      "lastModified": null
+    },
+    "extraction": {
+      "tool": "figma-developer-mcp@0.13.2",
+      "tool_call": "get_figma_data",
+      "arguments": {
+        "fileKey": "dpcWPY3VTb7slaohK7USmz"
+      },
+      "apiCalls": 15,
+      "apiCallsSucceeded": 7,
+      "apiCallsRateLimited": 8,
+      "rawDumpChars": 322222,
+      "rawDumpLines": 7867,
+      "note": "O endpoint /v1/files/:key nao estava subjects a rate limit; /v1/files/:key/nodes retornou HTTP 429 (Retry-After ~399687s, X-Figma-Plan-Tier=starter)."
+    },
+    "nodeTypeCounts": {
+      "CANVAS": 1,
+      "FRAME": 988,
+      "INSTANCE": 39,
+      "TEXT": 825,
+      "LINE": 52,
+      "IMAGE-SVG": 173,
+      "GROUP": 55,
+      "ELLIPSE": 51,
+      "RECTANGLE": 187,
+      "COMPONENT": 6
+    },
+    "counts": {
+      "screens": 15,
+      "screensDesktop": 9,
+      "screensMobile": 6,
+      "components": 32,
+      "componentSets": 2,
+      "componentVariants": 4,
+      "componentEntriesTotal": 38,
+      "rasterImages": 4,
+      "namedVectors": 40
+    },
+    "knownGaps": [
+      "Textos internos de instancias de componente nao sao expostos pelo dump: o MCP renderiza subarvores de instancia com alias template=EL-* e a secao COMPONENTS traz apenas id/key/name.",
+      "Binarios raster e SVG nao foram baixados: download_figma_images exige node ids e gravaria arquivos no repositorio, o que esta fora do escopo da Fase 0.",
+      "Nao existe frame tablet no Figma; o projeto testa 768px."
+    ]
+  },
+  "designTokens": {
+    "colors": [
+      {
+        "token": "Color/Ink",
+        "value": "#140D0A"
+      },
+      {
+        "token": "Color/Foreground",
+        "value": "#F5F1EB"
+      },
+      {
+        "token": "Text/Accent",
+        "value": "#E89B55"
+      },
+      {
+        "token": "Color/Primary",
+        "value": "#D28A4C"
+      },
+      {
+        "token": "Text/Secondary",
+        "value": "#CFB28C"
+      },
+      {
+        "token": "Color/Surface Card",
+        "value": "#241612"
+      },
+      {
+        "token": "Color/Secondary",
+        "value": "#B39463"
+      },
+      {
+        "token": "Color/Border",
+        "value": "#3F2319"
+      },
+      {
+        "token": "Color/Surface Dark",
+        "value": "#38220F"
+      },
+      {
+        "token": "Color/Border Soft",
+        "value": "#55321F"
+      },
+      {
+        "token": "Color/Surface Raised",
+        "value": "#2F1D15"
+      },
+      {
+        "token": "Text/Coral",
+        "value": "#F0805F"
+      }
+    ],
+    "gradients": [
+      {
+        "alias": "fill_928da933",
+        "css": "linear-gradient(145deg, rgba(210,138,76,0.3) 0%, rgba(210,138,76,0) 100%)",
+        "usage": "glow do Featured NFT Banner"
+      },
+      {
+        "alias": "fill_af2f5fc9",
+        "css": "linear-gradient(135deg, #241612 0%, #2F1D15 100%)",
+        "usage": "fundo de cartao mobile e hero de detalhe mobile"
+      },
+      {
+        "alias": "fill_4399d4cf",
+        "css": "linear-gradient(137deg, rgba(210,138,76,1) 0%, rgba(210,138,76,0.8) 100%)",
+        "usage": "CTA principal de checkout"
+      },
+      {
+        "alias": "fill_73ba89d3",
+        "css": "linear-gradient(144deg, #241612 0%, #241612 100%)",
+        "usage": "item de carrinho mobile em foco"
+      }
+    ],
+    "shadows": [
+      {
+        "alias": "effect_12da039e",
+        "css": "0 6px 20px 0 rgba(10,6,4,0.45)",
+        "usage": "inputs de carrinho mobile e resumo"
+      },
+      {
+        "alias": "effect_e368b9ba",
+        "css": "0 0 20px 0 rgba(10,6,4,0.45)",
+        "usage": "Buy Bar do detalhe mobile"
+      },
+      {
+        "alias": "inline",
+        "css": "0 -10px 30px 0 rgba(10,6,4,0.45)",
+        "usage": "Tab Bar mobile"
+      },
+      {
+        "alias": "inline",
+        "css": "0 20px 20px 0 rgba(10,6,4,0.45)",
+        "usage": "wallet card Reserva (selecionada)"
+      },
+      {
+        "alias": "inline",
+        "css": "0 0 40px 0 rgba(10,6,4,0.45)",
+        "usage": "opcao Coinbase Wallet (selecionada)"
+      }
+    ],
+    "radii": [
+      {
+        "value": "4px",
+        "usage": "item de paginacao"
+      },
+      {
+        "value": "5px",
+        "usage": "input de senha do modal de login; botao Etherscan"
+      },
+      {
+        "value": "6px",
+        "usage": "CTA desktop do hero e do detalhe; thumbnail"
+      },
+      {
+        "value": "8px",
+        "usage": "Sign Up Modal; card de blog"
+      },
+      {
+        "value": "10px",
+        "usage": "inputs de login/cadastro mobile"
+      },
+      {
+        "value": "13px",
+        "usage": "arte de NFT em card"
+      },
+      {
+        "value": "14px",
+        "usage": "botao de filtro mobile; avatar"
+      },
+      {
+        "value": "15px",
+        "usage": "arte de NFT no grid"
+      },
+      {
+        "value": "16px",
+        "usage": "input de busca mobile; pill de edicao; artwork mobile"
+      },
+      {
+        "value": "17.5px",
+        "usage": "botao circular de 35px (voltar/favoritar)"
+      },
+      {
+        "value": "20px",
+        "usage": "card de NFT mobile"
+      },
+      {
+        "value": "22px",
+        "usage": "NFT em destaque"
+      },
+      {
+        "value": "24px",
+        "usage": "arte principal do detalhe"
+      },
+      {
+        "value": "29px",
+        "usage": "badge/avatar sobreposto ao NFT em destaque"
+      },
+      {
+        "value": "32px",
+        "usage": "pill de avaliacao"
+      },
+      {
+        "value": "40px",
+        "usage": "CTA de checkout, Tab Bar, frame mobile"
+      }
+    ],
+    "spacing": {
+      "gaps": [
+        "4px",
+        "6px",
+        "8px",
+        "10px",
+        "12px",
+        "16px",
+        "20px",
+        "24px",
+        "28px",
+        "32px",
+        "40px",
+        "44px",
+        "48px",
+        "72px",
+        "88px",
+        "-114px"
+      ],
+      "note": "-114px e o gap negativo que sobrepoe a Details Sheet sobre o Hero no detalhe mobile."
+    },
+    "typography": {
+      "fontFamily": "Roboto Mono",
+      "weights": [
+        400,
+        500,
+        700
+      ],
+      "scale": [
+        9,
+        10,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        20,
+        21,
+        22,
+        24,
+        28,
+        32,
+        43
+      ],
+      "stylesFile": "design-tokens.md"
+    }
+  },
+  "screens": [
+    {
+      "id": "2:2",
+      "name": "Desktop / Início",
+      "breakpoint": "desktop",
+      "width": 1440,
+      "height": null,
+      "frameTemplate": "EL-efd5d6b0",
+      "radius": null,
+      "padding": "24px 120px",
+      "gap": "96px",
+      "backgroundFill": "Color/Ink",
+      "descendantNodes": 333,
+      "maxDepth": 20
+    },
+    {
+      "id": "10:244",
+      "name": "Desktop / Detalhes do NFT",
+      "breakpoint": "desktop",
+      "width": 1440,
+      "height": null,
+      "frameTemplate": "EL-efd5d6b0",
+      "radius": null,
+      "padding": "24px 120px",
+      "gap": "96px",
+      "backgroundFill": "Color/Ink",
+      "descendantNodes": 240,
+      "maxDepth": 22
+    },
+    {
+      "id": "11:1278",
+      "name": "Desktop / Carrinho de NFTs",
+      "breakpoint": "desktop",
+      "width": 1440,
+      "height": null,
+      "frameTemplate": "EL-efd5d6b0",
+      "radius": null,
+      "padding": "24px 120px",
+      "gap": "96px",
+      "backgroundFill": "Color/Ink",
+      "descendantNodes": 243,
+      "maxDepth": 20
+    },
+    {
+      "id": "11:2862",
+      "name": "Desktop / Pagamento",
+      "breakpoint": "desktop",
+      "width": 1440,
+      "height": null,
+      "frameTemplate": "EL-efd5d6b0",
+      "radius": null,
+      "padding": "24px 120px",
+      "gap": "96px",
+      "backgroundFill": "Color/Ink",
+      "descendantNodes": 243,
+      "maxDepth": 24
+    },
+    {
+      "id": "11:4385",
+      "name": "Desktop / Confirmação de Pedido",
+      "breakpoint": "desktop",
+      "width": 1440,
+      "height": null,
+      "frameTemplate": "EL-efd5d6b0",
+      "radius": null,
+      "padding": "24px 120px",
+      "gap": "96px",
+      "backgroundFill": "Color/Ink",
+      "descendantNodes": 325,
+      "maxDepth": 24
+    },
+    {
+      "id": "9:115",
+      "name": "Desktop / Login",
+      "breakpoint": "desktop",
+      "width": 1440,
+      "height": null,
+      "frameTemplate": "EL-24679dc2",
+      "radius": null,
+      "padding": "24px 120px 0px",
+      "gap": "96px",
+      "backgroundFill": "Color/Ink",
+      "descendantNodes": 191,
+      "maxDepth": 18
+    },
+    {
+      "id": "9:1022",
+      "name": "Desktop / Cadastro",
+      "breakpoint": "desktop",
+      "width": 1440,
+      "height": null,
+      "frameTemplate": "EL-24679dc2",
+      "radius": null,
+      "padding": "24px 120px 0px",
+      "gap": "96px",
+      "backgroundFill": "Color/Ink",
+      "descendantNodes": 191,
+      "maxDepth": 18
+    },
+    {
+      "id": "9:1238",
+      "name": "Desktop / Perfil do Colecionador",
+      "breakpoint": "desktop",
+      "width": 1440,
+      "height": 1080,
+      "frameTemplate": "EL-ba18ce52",
+      "radius": null,
+      "padding": "24px 120px",
+      "gap": "96px",
+      "backgroundFill": "Color/Ink",
+      "descendantNodes": 120,
+      "maxDepth": 22
+    },
+    {
+      "id": "9:1670",
+      "name": "Desktop / Carteiras",
+      "breakpoint": "desktop",
+      "width": 1440,
+      "height": 1080,
+      "frameTemplate": "EL-ba18ce52",
+      "radius": null,
+      "padding": "24px 120px",
+      "gap": "96px",
+      "backgroundFill": "Color/Ink",
+      "descendantNodes": 136,
+      "maxDepth": 16
+    },
+    {
+      "id": "14:5226",
+      "name": "Mobile / Início",
+      "breakpoint": "mobile",
+      "width": 414,
+      "height": 896,
+      "frameTemplate": null,
+      "radius": "40px",
+      "padding": "40px 24px 0px",
+      "gap": "16px",
+      "backgroundFill": null,
+      "descendantNodes": 84,
+      "maxDepth": 18
+    },
+    {
+      "id": "15:5536",
+      "name": "Mobile / Detalhes do NFT",
+      "breakpoint": "mobile",
+      "width": 414,
+      "height": 896,
+      "frameTemplate": null,
+      "radius": "40px",
+      "padding": null,
+      "gap": "-114px",
+      "backgroundFill": null,
+      "descendantNodes": 59,
+      "maxDepth": 14
+    },
+    {
+      "id": "16:360",
+      "name": "Mobile / Carrinho de NFTs",
+      "breakpoint": "mobile",
+      "width": 414,
+      "height": 896,
+      "frameTemplate": null,
+      "radius": "40px",
+      "padding": "32px 0px 0px",
+      "gap": "4px",
+      "backgroundFill": null,
+      "descendantNodes": 80,
+      "maxDepth": 12
+    },
+    {
+      "id": "16:748",
+      "name": "Mobile / Pagamento",
+      "breakpoint": "mobile",
+      "width": 414,
+      "height": 896,
+      "frameTemplate": null,
+      "radius": "40px",
+      "padding": "32px 28px",
+      "gap": null,
+      "backgroundFill": null,
+      "descendantNodes": 47,
+      "maxDepth": 10
+    },
+    {
+      "id": "16:1022",
+      "name": "Mobile / Login",
+      "breakpoint": "mobile",
+      "width": 414,
+      "height": 896,
+      "frameTemplate": null,
+      "radius": "40px",
+      "padding": "80px 28px 24px",
+      "gap": "40px",
+      "backgroundFill": null,
+      "descendantNodes": 32,
+      "maxDepth": 10
+    },
+    {
+      "id": "16:1228",
+      "name": "Mobile / Cadastro",
+      "breakpoint": "mobile",
+      "width": 414,
+      "height": 896,
+      "frameTemplate": null,
+      "radius": "40px",
+      "padding": "80px 28px 24px",
+      "gap": "40px",
+      "backgroundFill": null,
+      "descendantNodes": 37,
+      "maxDepth": 10
+    }
+  ],
+  "components": [
+    {
+      "id": "70504:3017",
+      "name": "Header With Divider",
+      "key": "5769e957b9d9708ab42817f743715746a34b196c",
+      "type": "COMPONENT",
+      "componentSetId": null
+    },
+    {
+      "id": "70486:529",
+      "name": "Active=Home",
+      "key": "efa13c0317ce9cf7a56b4053ec52897f4a639af8",
+      "type": "COMPONENT_VARIANT",
+      "componentSetId": "70486:560"
+    },
+    {
+      "id": "2:36",
+      "name": "Iconly/Curved/Logout",
+      "key": "2311c9842d5671a062f0a35b1efdb7d82fac2310",
+      "type": "COMPONENT",
+      "componentSetId": null
+    },
+    {
+      "id": "70485:381",
+      "name": "Filters",
+      "key": "54b7b20cdecd0e3912d78542f74dc6794a20e8f6",
+      "type": "COMPONENT",
+      "componentSetId": null
+    },
+    {
+      "id": "4:153",
+      "name": "Iconly/Two-tone/Arrow - Down 2",
+      "key": "b1b96f9baab0fe08bb3559118ed45e26ceb5b109",
+      "type": "COMPONENT",
+      "componentSetId": null
+    },
+    {
+      "id": "4:149",
+      "name": "Iconly/Two-tone/Arrow - Down 2",
+      "key": "40be17a950fa051aea7022dc658750d7d88c0d80",
+      "type": "COMPONENT",
+      "componentSetId": null
+    },
+    {
+      "id": "4:393",
+      "name": "Iconly/Curved/Arrow - Right 2",
+      "key": "ed16eb9e758701e2bf3842eed730e587a4f7072a",
+      "type": "COMPONENT",
+      "componentSetId": null
+    },
+    {
+      "id": "5:100",
+      "name": "Iconly/Curved/Arrow - Right",
+      "key": "3c6578c8198ad08270ad4718c5319864c9a74268",
+      "type": "COMPONENT",
+      "componentSetId": null
+    },
+    {
+      "id": "70491:1286",
+      "name": "Footer",
+      "key": "afe8c94222e7a76b5b2690228f9bc6125149f9e8",
+      "type": "COMPONENT",
+      "componentSetId": null
+    },
+    {
+      "id": "70486:555",
+      "name": "Active=Market",
+      "key": "49a7586b5c8368166b22429ffd8e247b06f0311a",
+      "type": "COMPONENT_VARIANT",
+      "componentSetId": "70486:560"
+    },
+    {
+      "id": "11:1192",
+      "name": "Iconly/Bold/Star",
+      "key": "34b81c4bd707b71489bbb4ab05a493532ce4cc84",
+      "type": "COMPONENT",
+      "componentSetId": null
+    },
+    {
+      "id": "11:1248",
+      "name": "Message",
+      "key": "363b795ccb8adfb405020c534bb3fdef60849333",
+      "type": "COMPONENT",
+      "componentSetId": null
+    },
+    {
+      "id": "11:2030",
+      "name": "Iconly/Curved/Delete",
+      "key": "3a00eb3940fa9d2748ea7476d9284824cf38b25d",
+      "type": "COMPONENT",
+      "componentSetId": null
+    },
+    {
+      "id": "70504:3190",
+      "name": "Checkout Page",
+      "key": "b4388757748f6f710d03c7e9e169e41c958545f2",
+      "type": "COMPONENT",
+      "componentSetId": null
+    },
+    {
+      "id": "9:1589",
+      "name": "Arrow-Down",
+      "key": "179fbc0b098b343af88ddbd5dab88c78b0746e12",
+      "type": "COMPONENT",
+      "componentSetId": null
+    },
+    {
+      "id": "9:947",
+      "name": "X",
+      "key": "2c9873688b27f04fbcc2145750dd6bcac4fd8020",
+      "type": "COMPONENT",
+      "componentSetId": null
+    },
+    {
+      "id": "70504:3297",
+      "name": "Marketplace Page",
+      "key": "1b7c3142bec4c9523e0a5e10eea27b6a23851ef6",
+      "type": "COMPONENT",
+      "componentSetId": null
+    },
+    {
+      "id": "9:964",
+      "name": "Iconly/Curved/Hide",
+      "key": "3513b2fde82f0a4abe86a3678ee76d702bd2a771",
+      "type": "COMPONENT",
+      "componentSetId": null
+    },
+    {
+      "id": "70483:256",
+      "name": "Provider=Google",
+      "key": "6fa1fd0b39b7d2323dce1ba993197bbc23f4ca04",
+      "type": "COMPONENT_VARIANT",
+      "componentSetId": "70483:263"
+    },
+    {
+      "id": "70483:262",
+      "name": "Provider=Facebook",
+      "key": "56fe02b6a2a5e30e00fcaf7012b027063ebff01d",
+      "type": "COMPONENT_VARIANT",
+      "componentSetId": "70483:263"
+    },
+    {
+      "id": "9:1443",
+      "name": "User",
+      "key": "d966be8e98f9067904f33c9157a2e179b84a5673",
+      "type": "COMPONENT",
+      "componentSetId": null
+    },
+    {
+      "id": "9:1651",
+      "name": "Iconly/Light-Outline/Location",
+      "key": "1545bf3a5340c3c9af3c79cc95ebdd008d37de0b",
+      "type": "COMPONENT",
+      "componentSetId": null
+    },
+    {
+      "id": "9:1467",
+      "name": "Iconly/Curved/Activity",
+      "key": "852ec763cff375867a9ecec0849a447fbf740132",
+      "type": "COMPONENT",
+      "componentSetId": null
+    },
+    {
+      "id": "9:1477",
+      "name": "Iconly/Curved/Download",
+      "key": "d59474e368ae527f4fe37ba95e835940dec4b594",
+      "type": "COMPONENT",
+      "componentSetId": null
+    },
+    {
+      "id": "9:1487",
+      "name": "Iconly/Curved/Danger Triangle",
+      "key": "fb96f93028c98ea845f653db7b2475d9f38dfe3e",
+      "type": "COMPONENT",
+      "componentSetId": null
+    },
+    {
+      "id": "9:1550",
+      "name": "Iconly/Curved/Image 2",
+      "key": "87705ab51f3967859031d7cb9fa5c320d3b48388",
+      "type": "COMPONENT",
+      "componentSetId": null
+    },
+    {
+      "id": "70504:2973",
+      "name": "Password Input",
+      "key": "165e83c6843ba951a2ecc04f179352b73340b875",
+      "type": "COMPONENT",
+      "componentSetId": null
+    },
+    {
+      "id": "9:1592",
+      "name": "Iconly/Light-Outline/Hide",
+      "key": "7322ee2836ba2b9574009b87d6eaa2535fe670a6",
+      "type": "COMPONENT",
+      "componentSetId": null
+    },
+    {
+      "id": "15:5331",
+      "name": "Search",
+      "key": "07fe8f0e25df8e0963e8f0e048ec7df6f08fb3cf",
+      "type": "COMPONENT",
+      "componentSetId": null
+    },
+    {
+      "id": "15:5313",
+      "name": "Iconly/Curved/Filter",
+      "key": "939acf38672309e45e03d32628b9573ee082b3fd",
+      "type": "COMPONENT",
+      "componentSetId": null
+    },
+    {
+      "id": "15:5516",
+      "name": "Iconly/Bold/Home",
+      "key": "fb488d88181134d6af14c1b545c8387b84148069",
+      "type": "COMPONENT",
+      "componentSetId": null
+    },
+    {
+      "id": "15:5522",
+      "name": "User",
+      "key": "b7060bf983ecf2ee8e85e89fb43b6c1eb2c04354",
+      "type": "COMPONENT",
+      "componentSetId": null
+    },
+    {
+      "id": "15:5524",
+      "name": "Shop",
+      "key": "66badadea5dfd8763025f9d771d82dbd429c174d",
+      "type": "COMPONENT",
+      "componentSetId": null
+    },
+    {
+      "id": "15:5746",
+      "name": "Iconly/Curved/Arrow - Left 2",
+      "key": "def24a32e64f23d6c24f49f9828e8650e2cee9c2",
+      "type": "COMPONENT",
+      "componentSetId": null
+    },
+    {
+      "id": "23:1373",
+      "name": "Iconly/Curved/Wallet",
+      "key": "a732e64c551a099a339ae7ae12b77f8b35bbc0cd",
+      "type": "COMPONENT",
+      "componentSetId": null
+    },
+    {
+      "id": "70504:2994",
+      "name": "Mobile Social Block",
+      "key": "090fb2f5bebe90fea5d4e34ce8921bdf2ea7bc77",
+      "type": "COMPONENT",
+      "componentSetId": null
+    },
+    {
+      "id": "70486:560",
+      "name": "Header Row",
+      "key": "5c028a19fa1583d5de6564b6ee9e747def4c61a0",
+      "type": "COMPONENT_SET",
+      "componentSetId": null
+    },
+    {
+      "id": "70483:263",
+      "name": "Social Button",
+      "key": "c08d163d1d28b93d5c5c7656709d9b946de1d287",
+      "type": "COMPONENT_SET",
+      "componentSetId": null
+    }
+  ],
+  "assets": {
+    "raster": [
+      {
+        "kind": "raster",
+        "alias": "fill_0380e2ac",
+        "imageRef": "8459204731e6eba9d474cbc8ebc37071360d3ba5",
+        "scaleMode": "FILL",
+        "figmaImageUrl": "https://www.figma.com/file/dpcWPY3VTb7slaohK7USmz/?node-id=0-1",
+        "apiImageEndpoint": "GET /v1/images/dpcWPY3VTb7slaohK7USmz?ids=8459204731e6eba9d474cbc8ebc37071360d3ba5&format=png&scale=1",
+        "usedBy": [
+          {
+            "nodeId": "70342:2673",
+            "type": "FRAME",
+            "name": null,
+            "width": 450,
+            "height": 450
+          },
+          {
+            "nodeId": "4:137",
+            "type": "RECTANGLE",
+            "name": "NFT Artwork 03",
+            "width": 250,
+            "height": 250
+          },
+          {
+            "nodeId": "4:428",
+            "type": "RECTANGLE",
+            "name": "NFT Artwork 17",
+            "width": 292,
+            "height": 250
+          },
+          {
+            "nodeId": "70343:268",
+            "type": "RECTANGLE",
+            "name": "Image",
+            "width": null,
+            "height": null
+          },
+          {
+            "nodeId": "11:1188",
+            "type": "RECTANGLE",
+            "name": "NFT Collection Artwork 02",
+            "width": null,
+            "height": null
+          },
+          {
+            "nodeId": "11:1161",
+            "type": "RECTANGLE",
+            "name": "NFT Collection Artwork 01",
+            "width": 404,
+            "height": 404
+          },
+          {
+            "nodeId": "11:1900",
+            "type": "RECTANGLE",
+            "name": "NFT Cart Artwork 6",
+            "width": null,
+            "height": null
+          },
+          {
+            "nodeId": "14:5238",
+            "type": "RECTANGLE",
+            "name": "Mobile NFT Artwork 1",
+            "width": 138,
+            "height": 138
+          },
+          {
+            "nodeId": "15:5639",
+            "type": "RECTANGLE",
+            "name": "Mobile NFT Hero Artwork",
+            "width": null,
+            "height": null
+          },
+          {
+            "nodeId": "22:1315",
+            "type": "RECTANGLE",
+            "name": null,
+            "width": null,
+            "height": null
+          },
+          {
+            "nodeId": "22:1330",
+            "type": "RECTANGLE",
+            "name": "Mobile Cart NFT 2",
+            "width": 100,
+            "height": 100
+          }
+        ]
+      },
+      {
+        "kind": "raster",
+        "alias": "fill_02276ad0",
+        "imageRef": "2986a7cb16d09de8970824d2dd58bf0bb021702c",
+        "scaleMode": "FILL",
+        "figmaImageUrl": "https://www.figma.com/file/dpcWPY3VTb7slaohK7USmz/?node-id=0-1",
+        "apiImageEndpoint": "GET /v1/images/dpcWPY3VTb7slaohK7USmz?ids=2986a7cb16d09de8970824d2dd58bf0bb021702c&format=png&scale=1",
+        "usedBy": [
+          {
+            "nodeId": "70410:3798",
+            "type": "RECTANGLE",
+            "name": "NFT Artwork 18",
+            "width": null,
+            "height": null
+          },
+          {
+            "nodeId": "4:162",
+            "type": "RECTANGLE",
+            "name": "NFT Artwork 04",
+            "width": 250,
+            "height": 250
+          },
+          {
+            "nodeId": "4:280",
+            "type": "RECTANGLE",
+            "name": "NFT Artwork 06",
+            "width": 224,
+            "height": 286
+          },
+          {
+            "nodeId": "4:282",
+            "type": "RECTANGLE",
+            "name": "NFT Artwork 07",
+            "width": null,
+            "height": null
+          },
+          {
+            "nodeId": "70343:277",
+            "type": "RECTANGLE",
+            "name": "Image",
+            "width": null,
+            "height": null
+          },
+          {
+            "nodeId": "11:1177",
+            "type": "RECTANGLE",
+            "name": "NFT Collection Artwork 06",
+            "width": null,
+            "height": null
+          },
+          {
+            "nodeId": "11:1178",
+            "type": "RECTANGLE",
+            "name": "NFT Collection Artwork 07",
+            "width": null,
+            "height": null
+          },
+          {
+            "nodeId": "11:2092",
+            "type": "RECTANGLE",
+            "name": "NFT Cart Artwork 7",
+            "width": null,
+            "height": null
+          },
+          {
+            "nodeId": "11:1976",
+            "type": "RECTANGLE",
+            "name": "NFT Cart Artwork 1",
+            "width": null,
+            "height": null
+          },
+          {
+            "nodeId": "11:1979",
+            "type": "RECTANGLE",
+            "name": "NFT Cart Artwork 2",
+            "width": null,
+            "height": null
+          },
+          {
+            "nodeId": "14:5239",
+            "type": "RECTANGLE",
+            "name": "Mobile NFT Artwork 2",
+            "width": 58,
+            "height": 58
+          },
+          {
+            "nodeId": "15:5415",
+            "type": "RECTANGLE",
+            "name": "Mobile NFT Artwork 4",
+            "width": null,
+            "height": null
+          },
+          {
+            "nodeId": "22:1318",
+            "type": "RECTANGLE",
+            "name": null,
+            "width": null,
+            "height": null
+          },
+          {
+            "nodeId": "22:1344",
+            "type": "RECTANGLE",
+            "name": "Mobile Cart NFT 3",
+            "width": 100,
+            "height": 100
+          }
+        ]
+      },
+      {
+        "kind": "raster",
+        "alias": "fill_26d577be",
+        "imageRef": "9df2ff42dd27ba657621c304557d1a855a4be6a5",
+        "scaleMode": "FILL",
+        "figmaImageUrl": "https://www.figma.com/file/dpcWPY3VTb7slaohK7USmz/?node-id=0-1",
+        "apiImageEndpoint": "GET /v1/images/dpcWPY3VTb7slaohK7USmz?ids=9df2ff42dd27ba657621c304557d1a855a4be6a5&format=png&scale=1",
+        "usedBy": [
+          {
+            "nodeId": "4:164",
+            "type": "RECTANGLE",
+            "name": "NFT Artwork 05",
+            "width": 250,
+            "height": 250
+          },
+          {
+            "nodeId": "4:284",
+            "type": "RECTANGLE",
+            "name": "NFT Artwork 08",
+            "width": null,
+            "height": null
+          },
+          {
+            "nodeId": "4:423",
+            "type": "RECTANGLE",
+            "name": "NFT Artwork 16",
+            "width": 287,
+            "height": 250
+          },
+          {
+            "nodeId": "70343:259",
+            "type": "RECTANGLE",
+            "name": "Image",
+            "width": null,
+            "height": null
+          },
+          {
+            "nodeId": "11:1179",
+            "type": "RECTANGLE",
+            "name": "NFT Collection Artwork 08",
+            "width": null,
+            "height": null
+          },
+          {
+            "nodeId": "11:2094",
+            "type": "RECTANGLE",
+            "name": "NFT Cart Artwork 8",
+            "width": null,
+            "height": null
+          },
+          {
+            "nodeId": "11:1982",
+            "type": "RECTANGLE",
+            "name": "NFT Cart Artwork 3",
+            "width": null,
+            "height": null
+          },
+          {
+            "nodeId": "22:1332",
+            "type": "RECTANGLE",
+            "name": null,
+            "width": 100,
+            "height": 100
+          },
+          {
+            "nodeId": "22:1358",
+            "type": "RECTANGLE",
+            "name": "Mobile Cart NFT 4",
+            "width": null,
+            "height": null
+          }
+        ]
+      },
+      {
+        "kind": "raster",
+        "alias": "fill_d003b2ae",
+        "imageRef": "87580f2def9af0ce13f4b6f6ce17bb2449bcfc16",
+        "scaleMode": "FILL",
+        "figmaImageUrl": "https://www.figma.com/file/dpcWPY3VTb7slaohK7USmz/?node-id=0-1",
+        "apiImageEndpoint": "GET /v1/images/dpcWPY3VTb7slaohK7USmz?ids=87580f2def9af0ce13f4b6f6ce17bb2449bcfc16&format=png&scale=1",
+        "usedBy": [
+          {
+            "nodeId": "70343:286",
+            "type": "RECTANGLE",
+            "name": "Image",
+            "width": null,
+            "height": null
+          },
+          {
+            "nodeId": "15:5431",
+            "type": "RECTANGLE",
+            "name": "Mobile NFT Artwork 6",
+            "width": null,
+            "height": null
+          },
+          {
+            "nodeId": "22:1346",
+            "type": "RECTANGLE",
+            "name": null,
+            "width": null,
+            "height": null
+          },
+          {
+            "nodeId": "16:553",
+            "type": "RECTANGLE",
+            "name": "Mobile Cart NFT 1",
+            "width": null,
+            "height": null
+          }
+        ]
+      }
+    ],
+    "vectors": [
+      {
+        "type": "IMAGE-SVG",
+        "name": "Iconly/Two-tone/Arrow - Down 2",
+        "nodeIds": [
+          "4:152"
+        ],
+        "width": 16,
+        "height": 16
+      },
+      {
+        "type": "IMAGE-SVG",
+        "name": "Iconly/Curved/Arrow - Right 2",
+        "nodeIds": [
+          "4:392"
+        ],
+        "width": null,
+        "height": null
+      },
+      {
+        "type": "IMAGE-SVG",
+        "name": "Iconly/Curved/Arrow - Right",
+        "nodeIds": [
+          "5:99",
+          "70304:393",
+          "15:5295"
+        ],
+        "width": null,
+        "height": null
+      },
+      {
+        "type": "IMAGE-SVG",
+        "name": "Mask Group",
+        "nodeIds": [
+          "5:134",
+          "5:130",
+          "14:5290"
+        ],
+        "width": 366,
+        "height": 190
+      },
+      {
+        "type": "IMAGE-SVG",
+        "name": "Vector",
+        "nodeIds": [
+          "70410:3935",
+          "15:5427",
+          "15:5504",
+          "15:5523",
+          "15:5525",
+          "15:5527",
+          "15:5642"
+        ],
+        "width": 20,
+        "height": 20
+      },
+      {
+        "type": "IMAGE-SVG",
+        "name": "Iconly/Bold/Star",
+        "nodeIds": [
+          "11:1195",
+          "11:1198",
+          "11:1201",
+          "11:1204",
+          "11:1207",
+          "15:5663"
+        ],
+        "width": 14,
+        "height": 14
+      },
+      {
+        "type": "IMAGE-SVG",
+        "name": "Frame",
+        "nodeIds": [
+          "70410:4191",
+          "70410:4195",
+          "70402:3304",
+          "70402:3308",
+          "70402:3300",
+          "70402:3296",
+          "70402:3284",
+          "70402:3281",
+          "70410:4203",
+          "70410:4207"
+        ],
+        "width": null,
+        "height": null
+      },
+      {
+        "type": "IMAGE-SVG",
+        "name": "heart 1",
+        "nodeIds": [
+          "70410:3940",
+          "70420:4551",
+          "70420:4609"
+        ],
+        "width": null,
+        "height": null
+      },
+      {
+        "type": "IMAGE-SVG",
+        "name": "Linkedin",
+        "nodeIds": [
+          "11:1245"
+        ],
+        "width": 15,
+        "height": 14.38
+      },
+      {
+        "type": "COMPONENT",
+        "name": "Message",
+        "nodeIds": [
+          "11:1248"
+        ],
+        "width": null,
+        "height": null
+      },
+      {
+        "type": "IMAGE-SVG",
+        "name": "Vector 13 (Stroke)",
+        "nodeIds": [
+          "11:1249"
+        ],
+        "width": 15,
+        "height": 12
+      },
+      {
+        "type": "IMAGE-SVG",
+        "name": "Twitter",
+        "nodeIds": [
+          "11:1247"
+        ],
+        "width": 15.97,
+        "height": 12.19
+      },
+      {
+        "type": "IMAGE-SVG",
+        "name": "Iconly/Curved/Delete",
+        "nodeIds": [
+          "11:2029",
+          "11:2069",
+          "11:2086",
+          "16:463"
+        ],
+        "width": 24,
+        "height": 24
+      },
+      {
+        "type": "IMAGE-SVG",
+        "name": "thank-you 1",
+        "nodeIds": [
+          "11:5150"
+        ],
+        "width": 80,
+        "height": 80
+      },
+      {
+        "type": "IMAGE-SVG",
+        "name": "X",
+        "nodeIds": [
+          "12:5223",
+          "9:1147"
+        ],
+        "width": 18,
+        "height": 17.35
+      },
+      {
+        "type": "IMAGE-SVG",
+        "name": "Iconly/Curved/Hide",
+        "nodeIds": [
+          "9:963",
+          "9:1167",
+          "16:1191",
+          "16:1292",
+          "16:1302"
+        ],
+        "width": null,
+        "height": null
+      },
+      {
+        "type": "COMPONENT",
+        "name": "X",
+        "nodeIds": [
+          "9:947"
+        ],
+        "width": 18,
+        "height": 18
+      },
+      {
+        "type": "IMAGE-SVG",
+        "name": "Vector 139 (Stroke)",
+        "nodeIds": [
+          "9:948"
+        ],
+        "width": 12,
+        "height": 12
+      },
+      {
+        "type": "IMAGE-SVG",
+        "name": "User",
+        "nodeIds": [
+          "70420:4541",
+          "70420:4599"
+        ],
+        "width": null,
+        "height": null
+      },
+      {
+        "type": "IMAGE-SVG",
+        "name": "Iconly/Light-Outline/Location",
+        "nodeIds": [
+          "70420:4544",
+          "70420:4602"
+        ],
+        "width": null,
+        "height": null
+      },
+      {
+        "type": "IMAGE-SVG",
+        "name": "shopping 1",
+        "nodeIds": [
+          "70420:4547",
+          "70420:4605"
+        ],
+        "width": null,
+        "height": null
+      },
+      {
+        "type": "IMAGE-SVG",
+        "name": "Iconly/Curved/Activity",
+        "nodeIds": [
+          "70420:4555",
+          "70420:4613"
+        ],
+        "width": null,
+        "height": null
+      },
+      {
+        "type": "IMAGE-SVG",
+        "name": "Iconly/Curved/Download",
+        "nodeIds": [
+          "70420:4558",
+          "70420:4616"
+        ],
+        "width": null,
+        "height": null
+      },
+      {
+        "type": "IMAGE-SVG",
+        "name": "Iconly/Curved/Danger Triangle",
+        "nodeIds": [
+          "70420:4561",
+          "70420:4619"
+        ],
+        "width": null,
+        "height": null
+      },
+      {
+        "type": "IMAGE-SVG",
+        "name": "Iconly/Curved/Logout",
+        "nodeIds": [
+          "70420:4565",
+          "70420:4623"
+        ],
+        "width": null,
+        "height": null
+      },
+      {
+        "type": "COMPONENT",
+        "name": "Arrow-Down",
+        "nodeIds": [
+          "9:1589"
+        ],
+        "width": null,
+        "height": null
+      },
+      {
+        "type": "IMAGE-SVG",
+        "name": "Vector 37 (Stroke)",
+        "nodeIds": [
+          "9:1590"
+        ],
+        "width": 11.25,
+        "height": 6.25
+      },
+      {
+        "type": "IMAGE-SVG",
+        "name": "Iconly/Curved/Image 2",
+        "nodeIds": [
+          "9:1560"
+        ],
+        "width": null,
+        "height": null
+      },
+      {
+        "type": "IMAGE-SVG",
+        "name": "Arrow-Down",
+        "nodeIds": [
+          "9:1837",
+          "9:1854",
+          "9:1758"
+        ],
+        "width": null,
+        "height": null
+      },
+      {
+        "type": "COMPONENT",
+        "name": "Search",
+        "nodeIds": [
+          "15:5331"
+        ],
+        "width": null,
+        "height": null
+      },
+      {
+        "type": "IMAGE-SVG",
+        "name": "Ellipse 2 (Stroke)",
+        "nodeIds": [
+          "15:5332"
+        ],
+        "width": 18.33,
+        "height": 18.33
+      },
+      {
+        "type": "IMAGE-SVG",
+        "name": "Iconly/Curved/Filter",
+        "nodeIds": [
+          "15:5488"
+        ],
+        "width": null,
+        "height": null
+      },
+      {
+        "type": "IMAGE-SVG",
+        "name": "Iconly/Bold/Home",
+        "nodeIds": [
+          "15:5519"
+        ],
+        "width": 20,
+        "height": 20
+      },
+      {
+        "type": "COMPONENT",
+        "name": "User",
+        "nodeIds": [
+          "15:5522"
+        ],
+        "width": 20,
+        "height": 20
+      },
+      {
+        "type": "COMPONENT",
+        "name": "Shop",
+        "nodeIds": [
+          "15:5524"
+        ],
+        "width": 20,
+        "height": 20
+      },
+      {
+        "type": "IMAGE-SVG",
+        "name": "Group",
+        "nodeIds": [
+          "15:5529"
+        ],
+        "width": 26.82,
+        "height": 24
+      },
+      {
+        "type": "IMAGE-SVG",
+        "name": "Iconly/Curved/Arrow - Left 2",
+        "nodeIds": [
+          "15:5745"
+        ],
+        "width": null,
+        "height": null
+      },
+      {
+        "type": "IMAGE-SVG",
+        "name": "Shop",
+        "nodeIds": [
+          "16:357"
+        ],
+        "width": null,
+        "height": null
+      },
+      {
+        "type": "IMAGE-SVG",
+        "name": "Back",
+        "nodeIds": [
+          "16:393",
+          "16:757"
+        ],
+        "width": null,
+        "height": null
+      },
+      {
+        "type": "IMAGE-SVG",
+        "name": "Iconly/Curved/Wallet",
+        "nodeIds": [
+          "23:1379"
+        ],
+        "width": 24,
+        "height": 24
+      }
+    ]
+  }
+}

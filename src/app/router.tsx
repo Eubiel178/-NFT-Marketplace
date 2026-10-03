@@ -4,11 +4,26 @@ import {
   createRouter,
   redirect,
 } from "@tanstack/react-router";
+import axios from "axios";
 import { catalogSearchSchema } from "@/contracts";
 import { queryClient } from "@/lib/query";
-import { Layout, PendingFeature } from "./layout";
+import { Layout } from "./layout";
 import { sessionOptions } from "@/features/session/api";
 import { CatalogPage, NftPage } from "@/features/catalog/pages";
+import { AuthPage } from "@/features/auth/auth-page";
+import { CartPage } from "@/features/cart/cart-page";
+import { CheckoutPage } from "@/features/checkout/checkout-page";
+import { OrderPage } from "@/features/orders/order-page";
+import { ProfilePage } from "@/features/account/profile-page";
+import { WalletsPage } from "@/features/account/wallets-page";
+
+function safeRedirect(value: unknown) {
+  return typeof value === "string" && value.startsWith("/") && !value.startsWith("//") ? value : "/";
+}
+
+function authSearch(search: Record<string, unknown>) {
+  return { redirect: safeRedirect(search.redirect), expired: search.expired === true || search.expired === "true" };
+}
 
 const root = createRootRoute({
   component: Layout,
@@ -36,54 +51,59 @@ const nft = createRoute({
 const cart = createRoute({
   getParentRoute: () => root,
   path: "/cart",
-  component: () => <PendingFeature name="Carrinho" />,
+  component: CartPage,
 });
 const login = createRoute({
   getParentRoute: () => root,
   path: "/login",
-  validateSearch: (search: Record<string, unknown>) => ({
-    redirect:
-      typeof search.redirect === "string" &&
-      search.redirect.startsWith("/") &&
-      !search.redirect.startsWith("//")
-        ? search.redirect
-        : "/",
-  }),
-  component: () => <PendingFeature name="Login" />,
+  validateSearch: authSearch,
+  component: () => <AuthPage mode="login" />,
 });
 const register = createRoute({
   getParentRoute: () => root,
   path: "/register",
-  component: () => <PendingFeature name="Cadastro" />,
+  validateSearch: authSearch,
+  component: () => <AuthPage mode="register" />,
 });
 const privateRoot = createRoute({
   getParentRoute: () => root,
   id: "authenticated",
   beforeLoad: async ({ location }) => {
-    const session = await queryClient.fetchQuery(sessionOptions);
+    let session;
+    try {
+      session = await queryClient.fetchQuery(sessionOptions);
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response?.status === 401) {
+        throw redirect({ to: "/login", search: { redirect: location.href, expired: true } });
+      }
+      throw error;
+    }
     if (!session.user)
-      throw redirect({ to: "/login", search: { redirect: location.href } });
+      throw redirect({ to: "/login", search: { redirect: location.href, expired: false } });
   },
 });
 const checkout = createRoute({
   getParentRoute: () => privateRoot,
   path: "/checkout",
-  component: () => <PendingFeature name="Pagamento" />,
+  component: CheckoutPage,
 });
 const profile = createRoute({
   getParentRoute: () => privateRoot,
   path: "/profile",
-  component: () => <PendingFeature name="Perfil do colecionador" />,
+  component: ProfilePage,
 });
 const wallets = createRoute({
   getParentRoute: () => privateRoot,
   path: "/wallets",
-  component: () => <PendingFeature name="Carteiras" />,
+  component: WalletsPage,
 });
 const order = createRoute({
   getParentRoute: () => privateRoot,
   path: "/orders/$orderId",
-  component: () => <PendingFeature name="Estado do pedido" />,
+  component: function OrderRoute() {
+    const { orderId } = order.useParams();
+    return <OrderPage id={orderId} />;
+  },
 });
 export const router = createRouter({
   routeTree: root.addChildren([
