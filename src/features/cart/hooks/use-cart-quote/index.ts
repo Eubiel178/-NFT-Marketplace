@@ -45,7 +45,7 @@ export function useCartQuote(userId: string | null, items: CartItem[]) {
     applyCoupon: () => apply.mutate(coupon.trim()),
     applying: apply.isPending,
     couponError: apply.isError ? (parseHttpError(apply.error).message ?? 'Não foi possível aplicar o cupom.') : '',
-    hasCoupon: Boolean(coupon),
+    hasCoupon: Boolean(applied),
     removeCoupon,
     quote,
   }

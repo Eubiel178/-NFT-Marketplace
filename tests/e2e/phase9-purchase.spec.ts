@@ -65,3 +65,44 @@ test('conflito de cotação preserva o checkout e permite revisão', async ({ pa
   await expect(page).toHaveURL(/\/checkout$/)
   await expect(review.getByRole('button', { name: 'Enviar pedido' })).toBeVisible()
 })
+
+test('cupom expirado tem mensagem própria, diferente de cupom inválido', async ({ page }) => {
+  await signIn(page, '/cart')
+  const coupon = page.getByLabel('Código promocional')
+  const apply = page.getByRole('button', { name: 'Aplicar' })
+  const couponError = page.getByRole('alert').filter({ hasText: /cupom/i })
+  await coupon.fill('KURIO5')
+  await apply.click()
+  await expect(couponError).toHaveText('Este cupom expirou')
+  await expect(page.getByText('Remover cupom')).toHaveCount(0)
+  await expect(page.getByTestId('cart-totals')).toContainText('-0 ETH')
+  await coupon.fill('INVALIDO')
+  await apply.click()
+  await expect(couponError).toHaveText('Cupom inválido')
+  await expect(page.getByTestId('cart-totals')).toContainText('-0 ETH')
+})
+
+test('edição esgotada (nft-4) não entra na compra e as outras edições seguem disponíveis', async ({ page }) => {
+  await signIn(page, '/cart')
+  await page.goto('/nfts/nft-4')
+  await expect(page.getByRole('heading', { name: 'Cosmic Bloom #118', level: 1 })).toBeVisible()
+  const soldOut = page.getByRole('button', { name: '1/1 (esgotada)' })
+  await expect(soldOut).toBeDisabled()
+  await expect(soldOut).toHaveAttribute('aria-pressed', 'false')
+  // A API também recusa a edição esgotada, mesmo fora da interface.
+  const refused = await page.evaluate(async () => {
+    const response = await fetch('/api/cart/items', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ nftId: 'nft-4', editionId: '1/1', quantity: 1 }) })
+    return { status: response.status, body: await response.json() as { code: string; message: string } }
+  })
+  expect(refused).toEqual({ status: 409, body: expect.objectContaining({ code: 'OUT_OF_STOCK', message: 'Esta edição está esgotada' }) })
+  // A compra continua com a edição disponível escolhida.
+  if ((page.viewportSize()?.width ?? 0) >= 640) await page.getByRole('button', { name: 'COMPRAR' }).click()
+  else await page.getByRole('button', { name: 'Adicionar ao carrinho' }).click()
+  await expect(page).toHaveURL(/\/cart$/)
+  await expect(page.getByRole('list', { name: 'Itens do carrinho' })).toContainText('Cosmic Bloom #118')
+  const editions = await page.evaluate(async () => {
+    const cart = await (await fetch('/api/cart')).json() as { items: Array<{ nftId: string; editionId: string }> }
+    return cart.items.filter((item) => item.nftId === 'nft-4').map((item) => item.editionId)
+  })
+  expect(editions).toEqual(['1/50'])
+})

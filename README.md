@@ -348,7 +348,7 @@ O campo `soldOutEditions` do NFT lista as edições sem estoque (`src/mocks/fixt
 | --- | --- | --- |
 | `nft-4` — Cosmic Bloom #118 | `1/1` | `/nfts/nft-4`: o botão "1/1" fica desabilitado e riscado, com o nome acessível "1/1 (esgotada)"; `POST /api/cart/items` com essa edição responde `409 OUT_OF_STOCK` ("Esta edição está esgotada"). |
 
-Uso nos testes: nenhum spec E2E cobre essa edição ainda. Os specs usam só `nft-1` e `nft-2`, e a edição esgotada fica fora desses dois de propósito. O `phase7-resilience` adiciona `nft-2` edição `1/1` ao carrinho do visitante e espera `201`, então marcar uma edição desses NFTs como esgotada quebraria os testes de carrinho, detalhe e compra. Para conferir à mão, abra `/nfts/nft-4` ou rode no console:
+Uso nos testes: `phase9-purchase` ("edição esgotada (nft-4)…") confere o botão desabilitado, a recusa `409` da API e a compra seguindo com a edição disponível (1/50). Os demais specs usam `nft-1` e `nft-2`, e a edição esgotada fica fora desses dois de propósito. O `phase7-resilience` adiciona `nft-2` edição `1/1` ao carrinho do visitante e espera `201`, então marcar uma edição desses NFTs como esgotada quebraria os testes de carrinho, detalhe e compra. Para conferir à mão, abra `/nfts/nft-4` ou rode no console:
 
 ```js
 await fetch('/api/cart/items', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ nftId: 'nft-4', editionId: '1/1', quantity: 1 }) })

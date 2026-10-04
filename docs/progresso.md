@@ -185,3 +185,9 @@ Mobile (414×896), linhas de tinta: voltar 32→31, título 42 (x 88→89), "Car
 ### 2. "Mudança exige nova confirmação" depende da revalidação
 
 Com `refreshReview` sem chamar `revalidate.mutate()`, o teste falha nos dois projetos na linha 52 (`Expected substring: "A cotação mudou"`; a revisão mostra só o aviso do evento). Código restaurado em seguida.
+
+### 5. Testes novos (`phase9-purchase`)
+
+- "cupom expirado tem mensagem própria, diferente de cupom inválido": `KURIO5` → "Este cupom expirou", `INVALIDO` → "Cupom inválido"; nos dois o desconto fica em 0 e "Remover cupom" não aparece. O teste encontrou um bug: "Remover cupom" aparecia pelo texto digitado, não pelo cupom aceito (`hasCoupon` passou a usar o cupom aplicado).
+- "edição esgotada (nft-4) não entra na compra…": botão "1/1 (esgotada)" desabilitado, `POST /api/cart/items` com 1/1 → `409 OUT_OF_STOCK`, e a compra segue com a 1/50.
+- `phase9-purchase`, `phase13-e2e-complete` e `phase0-isolation` nos dois projetos: 34 passaram.
