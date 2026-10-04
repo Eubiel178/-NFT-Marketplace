@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils'
 
 import { Icon } from '../../ui/icon'
 
-const tabClass = 'absolute top-6.5 grid size-11 place-items-center rounded-full focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none'
+const tabClass = 'absolute top-7 grid size-11 place-items-center rounded-full focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none'
 
 function tabColor(active: boolean) {
   return active ? 'text-text-accent' : 'text-text-secondary'
@@ -22,13 +22,13 @@ export function TabBar() {
 
   return (
     <nav aria-label="Navegação principal" className="pointer-events-none fixed inset-x-0 bottom-0 z-50 lg:hidden">
-      <div className="relative h-23.25">
+      <div className="relative h-23.75">
         <div aria-hidden="true" className="absolute inset-0 flex drop-shadow-tab-bar">
-          <div className="flex-1 rounded-tl-29 bg-surface-card" />
-          <svg className="h-full w-[9.48125rem] shrink-0 fill-surface-card" viewBox="0 0 151.7 93" preserveAspectRatio="none">
-            <path d="M151.7 0C137.94 0 125.72 8.2 119.87 20.65C112.11 37.17 95.31 48.62 75.85 48.62C56.39 48.62 39.59 37.18 31.83 20.65C25.98 8.2 13.75 0 0 0V93H151.7Z" />
+          <div className="-mr-px flex-1 rounded-tl-29 bg-surface-card" />
+          <svg className="relative h-full w-[9.48125rem] shrink-0 fill-surface-card" viewBox="0 0 151.7 95" preserveAspectRatio="none">
+            <path d="M151.7 0C137.94 0 125.72 8.2 119.87 20.65C112.11 37.17 95.31 48.62 75.85 48.62C56.39 48.62 39.59 37.18 31.83 20.65C25.98 8.2 13.75 0 0 0V95H151.7Z" />
           </svg>
-          <div className="flex-1 rounded-tr-29 bg-surface-card" />
+          <div className="-ml-px flex-1 rounded-tr-29 bg-surface-card" />
         </div>
 
         <ul className="pointer-events-auto">
@@ -46,7 +46,7 @@ export function TabBar() {
             <Link
               to="/checkout"
               aria-label="Ação principal"
-              className="absolute -top-8.5 left-1/2 grid size-16.25 -translate-x-1/2 place-items-center rounded-full bg-(image:--gradient-tab-bar-notch) focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-ink focus-visible:outline-none"
+              className="absolute -top-7.75 left-1/2 grid size-16.25 -translate-x-1/2 place-items-center rounded-full bg-(image:--gradient-tab-bar-notch) focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-ink focus-visible:outline-none"
             >
               <img src="/assets/figma/mcp/svg/mobile-nav-group.svg" alt="" width={27} height={24} aria-hidden="true" />
             </Link>

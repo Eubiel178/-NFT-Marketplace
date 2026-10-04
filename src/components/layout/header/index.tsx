@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Link, useLocation } from "@tanstack/react-router";
 
 import { Icon } from "@/components";
+import { cn } from "@/lib/utils";
 import { sessionOptions } from "@/shared/api/session";
 import { useCartCount } from "@/shared/hooks/use-cart-count";
 import { useLogout } from "@/shared/hooks/use-logout";
@@ -9,7 +10,7 @@ import { useLogout } from "@/shared/hooks/use-logout";
 import { Avatar } from "../../ui/avatar";
 
 const actionClass =
-  "flex h-8.75 items-center gap-1 rounded-6 bg-primary px-2.5 text-body-large-16 font-medium leading-auto text-ink";
+  "flex h-8.75 items-center gap-1 rounded-6 bg-primary pr-2.5 pl-2.25 text-body-large-16 font-medium leading-auto text-ink";
 
 const navigation = [
   { label: "Início", to: "/", match: (pathname: string) => pathname === "/" },
@@ -30,16 +31,16 @@ export function Header() {
 
   return (
     <header className="hidden px-6 md:px-12 lg:block">
-      <div className="mx-auto flex items-center ga h-17.25 max-w-content  border-b border-primary/25">
+      <div className="mx-auto flex h-17.25 max-w-content items-center border-b border-primary/25">
         <Link
           to="/"
-          className="text-foreground font-mono text-body-14 font-bold leading-normal tracking-[1.4px]"
+          className="mt-3 text-body-14 font-bold leading-normal tracking-wide text-foreground"
           aria-label="Kurio, início"
         >
           KURIO
         </Link>
 
-        <nav aria-label="Principal" className="ml-82 self-stretch">
+        <nav aria-label="Principal" className="ml-81.75 self-stretch">
           <ul className="flex h-full gap-10">
             {navigation.map((item) => {
               const active = item.match(pathname);
@@ -48,11 +49,12 @@ export function Header() {
                   <Link
                     to={item.to}
                     aria-current={active ? "page" : undefined}
-                    className={
+                    className={cn(
+                      "relative flex h-full items-center pt-0.5 text-body-large-16 font-normal leading-normal hover:text-text-accent after:absolute after:inset-x-0 after:bottom-0 after:h-0.5",
                       active
-                        ? "relative flex items-center text-body-large-16 font-medium leading-auto text-text-accent after:absolute after:inset-x-0 after:bottom-0 after:h-0.5 after:bg-primary"
-                        : "flex items-center text-body-large-16 font-medium leading-auto text-foreground hover:text-text-accent"
-                    }
+                        ? "text-text-accent  after:bg-primary"
+                        : "text-foreground after:text-foreground",
+                    )}
                   >
                     {item.label}
                   </Link>
@@ -62,11 +64,11 @@ export function Header() {
           </ul>
         </nav>
 
-        <div className="ml-auto flex items-center gap-6">
+        <div className="mt-3.5 ml-auto flex items-center gap-6">
           <Link
             to="/"
             aria-label="Buscar NFTs"
-            className="rounded-6 p-1 text-foreground"
+            className="mt-1.5 rounded-6 p-1 text-foreground"
           >
             <Icon src="/assets/figma/mcp/svg/search.svg" className="size-6" />
           </Link>
@@ -74,11 +76,11 @@ export function Header() {
           <Link
             to="/cart"
             aria-label={`Carrinho, ${cartCount} itens`}
-            className="relative rounded-6 p-1 text-foreground"
+            className="relative mt-1.5 mr-1.75 -ml-1.75 rounded-6 p-1 text-foreground"
           >
-            <Icon src="/assets/figma/mcp/svg/shop.svg" className="size-6" />
+            <Icon src="/assets/figma/mcp/svg/shopping.svg" className="size-6" />
             <span
-              className="absolute -top-0.5 -right-0.5 grid size-4 place-items-center rounded-full bg-primary text-tiny-9 font-bold leading-auto text-ink"
+              className="absolute top-1.25 -right-1 grid size-4 place-items-center rounded-full bg-primary text-tiny-9 font-bold leading-auto text-ink"
               aria-hidden="true"
             >
               {cartCount}

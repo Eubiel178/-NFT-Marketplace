@@ -41,6 +41,18 @@ Atualmente a DB local versionada contém catálogo, usuários, sessão, carrinho
   Base inclui link de salto, landmark principal, foco visível, feedback semântico, skeleton shimmer e redução de movimento. Acessibilidade completa exige formularios, dialogs/drawers, foco na navegação, imagens finais e auditoria. As medidas de Lighthouse da estrutura não podem ser apresentadas como pontuação da solução final. O texto dos CTAs âmbar e o texto secundário sobre o card claro usam cores de maior contraste que o raster original quando necessário para cumprir WCAG; os indicadores de carrossel mantêm o ponto visual de 8px dentro de uma área de toque de 24px.
   Na fundação responsiva da Etapa 4, o shell troca em `1024px`: abaixo desse limite usa a composição mobile do Figma (conteúdo fluido, Tab Bar quando a tela permite e sem footer), e a partir dele usa o header horizontal, container de `1200px` em `1440px`, sidebar e footer desktop. O Figma não fornece frame tablet; em `640px–1023px` mantemos a adaptação já documentada em `docs/figma/responsive.md` (grid de três colunas e filtros em drawer nas telas que os exibem), sem criar um terceiro shell visual ou afirmar que essa faixa é um frame do Figma.
 
+### Desvios registrados do Figma (layout global e componentes base)
+
+Medidas e método em `docs/figma-medidas.md`.
+
+- **Favoritos na tab bar:** o frame mobile tem um coração na 2ª posição, mas o README não prevê página de favoritos. O ícone fica na posição do Figma como botão desabilitado (`Favoritos (indisponível)`), sem aparentar sucesso funcional.
+- **Footer no mobile:** o frame mobile (414×896) mostra só a primeira dobra. Header e footer aparecem a partir de `1024px`; abaixo disso há só a tab bar, sem footer.
+- **Header autenticado:** o Figma só desenha o estado deslogado ("Entrar"). Logado, o header mostra o avatar (iniciais, link para o perfil) e o botão "Sair" no mesmo estilo do "Entrar".
+- **Tab bar em 390px:** o frame é de 414px. A barra usa o desenho do asset `tab-bar-background.svg` dividido em três partes: as laterais esticam, enquanto o recorte central e os cantos mantêm a forma original. Os ícones da esquerda ficam ancorados à esquerda e os da direita à direita, nas distâncias medidas em 414px.
+- **Ícones da tab bar:** são os SVGs do Figma aplicados como máscara (`Icon`), para que o item ativo use `text-accent` e os demais `text-secondary` em qualquer rota. Com `<img>`, o ícone de início ficava laranja em todas as telas.
+- **Destaque de opção no Select:** com o Radix, o foco vai para a opção. O destaque usa `surface-raised`, porque o tom anterior era igual ao fundo da lista e deixava o foco invisível (foco visível é obrigatório).
+- **Animação de abertura de overlays:** as animações do shadcn/ui dependem do pacote `tw-animate-css`, que não foi instalado. Dialog, Sheet e Select abrem sem transição.
+
 ## Execução e deploy
 
 Vite é a ferramenta complementar escolhida; todas as tecnologias obrigatórias têm dependência/configuração dedicada. REST, Socket.IO, Router, Query, Axios, Tailwind e componentes iniciais já têm caminho de execução. Playwright exercita a infraestrutura. Lighthouse tem script preparado, sem atestar metas finais. Build de demonstração ativa MSW inclusive em produção; build normal permite API configurada, mas não existe backend externo entregue.
