@@ -23,8 +23,8 @@ const spacing = {
 } as const
 
 const copy = {
-  login: { heading: 'Entrar', subtitle: 'Entre para gerenciar sua carteira, coleção e perfil de criador.', submit: 'Entrar' },
-  register: { heading: 'Criar perfil de colecionador', subtitle: 'Crie seu perfil de colecionador e conecte uma carteira quando quiser.', submit: 'Criar perfil' },
+  login: { heading: 'Entrar', subtitle: 'Entre para gerenciar sua carteira, coleção e perfil de criador.', submit: { mobile: 'Entrar', desktop: 'Entrar' } },
+  register: { heading: 'Criar perfil de colecionador', subtitle: 'Crie seu perfil de colecionador e conecte uma carteira quando quiser.', submit: { mobile: 'Criar perfil', desktop: 'Criar conta' } },
 } as const
 
 export function AuthPage({ mode }: { mode: AuthMode }) {
@@ -141,7 +141,9 @@ export function AuthPage({ mode }: { mode: AuthMode }) {
               loading={auth.pending}
               className={cn('mt-7 h-15 min-h-0 rounded-10 text-body-large-16-bold font-bold tracking-normal sm:h-11 sm:rounded-3 sm:text-body-15-bold', spacing[mode].submit)}
             >
-              {copy[mode].submit}
+              {/* O frame mobile diz "Criar perfil" e o desktop "Criar conta"; o texto oculto fica fora do nome acessível. */}
+              <span className="sm:hidden">{copy[mode].submit.mobile}</span>
+              <span className="max-sm:hidden">{copy[mode].submit.desktop}</span>
             </Button>
           </form>
 

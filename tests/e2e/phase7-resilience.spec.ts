@@ -1,4 +1,4 @@
-import { expect, placeOrder, test } from './test'
+import { expect, placeOrder, registerButtonName, test } from './test'
 
 async function signIn(page: import('@playwright/test').Page, redirect: string) {
   await page.goto(`/login?redirect=${encodeURIComponent(redirect)}&expired=false`)
@@ -85,7 +85,7 @@ test('cadastro associa erro de confirmação de senha ao campo', async ({ page }
   await page.getByLabel('Email').fill('validacao@example.test')
   await page.getByRole('textbox', { name: 'Senha', exact: true }).fill('senha-valida')
   await page.getByRole('textbox', { name: 'Confirmar senha' }).fill('senha-diferente')
-  await page.getByRole('button', { name: 'Criar perfil' }).click()
+  await page.getByRole('button', { name: registerButtonName(page) }).click()
   await expect(page.getByText('As senhas precisam ser iguais', { exact: true })).toBeVisible()
 })
 

@@ -23,3 +23,8 @@ export async function placeOrder(page: Page) {
 
 export { expect }
 export type { Page }
+
+// Botão do cadastro: "Criar perfil" no frame mobile e "Criar conta" no desktop.
+export function registerButtonName(page: Page) {
+  return (page.viewportSize()?.width ?? 1440) < 640 ? 'Criar perfil' : 'Criar conta'
+}

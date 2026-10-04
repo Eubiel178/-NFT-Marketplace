@@ -1,4 +1,4 @@
-import { expect, test } from './test'
+import { expect, registerButtonName, test } from './test'
 
 async function signIn(page: import('@playwright/test').Page, email: string, password: string, redirect: string) {
   await page.goto(`/login?redirect=${encodeURIComponent(redirect)}&expired=false`)
@@ -20,7 +20,7 @@ test('login rejeita credenciais inválidas e cadastro rejeita email duplicado', 
   await page.getByLabel('Email').fill('ana@example.test')
   await page.getByRole('textbox', { name: 'Senha', exact: true }).fill('kurio-demo')
   await page.getByRole('textbox', { name: 'Confirmar senha' }).fill('kurio-demo')
-  await page.getByRole('button', { name: 'Criar perfil' }).click()
+  await page.getByRole('button', { name: registerButtonName(page) }).click()
   await expect(page.getByRole('alert')).toContainText('Este email já está cadastrado')
 })
 
@@ -30,7 +30,7 @@ test('cadastro cria sessão e retorna ao destino solicitado', async ({ page }) =
   await page.getByLabel('Email').fill('nova@example.test')
   await page.getByRole('textbox', { name: 'Senha', exact: true }).fill('nova-senha-123')
   await page.getByRole('textbox', { name: 'Confirmar senha' }).fill('nova-senha-123')
-  await page.getByRole('button', { name: 'Criar perfil' }).click()
+  await page.getByRole('button', { name: registerButtonName(page) }).click()
   await expect(page).toHaveURL(/\/profile$/)
   await expect(page.getByRole('heading', { name: 'Perfil do colecionador' })).toBeVisible()
   await expect(page.getByText('Nova Colecionadora', { exact: true })).toBeVisible()
@@ -67,7 +67,7 @@ test('erro de confirmação de senha fica associado ao campo', async ({ page }) 
   await page.getByRole('textbox', { name: 'Senha', exact: true }).fill('senha-valida')
   const confirmation = page.getByRole('textbox', { name: 'Confirmar senha' })
   await confirmation.fill('senha-diferente')
-  await page.getByRole('button', { name: 'Criar perfil' }).click()
+  await page.getByRole('button', { name: registerButtonName(page) }).click()
   const describedBy = await confirmation.getAttribute('aria-describedby')
   expect(describedBy).toBeTruthy()
   await expect(page.locator(`#${describedBy}`)).toHaveText('As senhas precisam ser iguais')
@@ -96,7 +96,7 @@ test('favoritos não vazam ao trocar de usuário', async ({ page }) => {
 
 test('erros de validação e da API ficam associados aos campos', async ({ page }) => {
   await page.goto('/register')
-  await page.getByRole('button', { name: 'Criar perfil' }).click()
+  await page.getByRole('button', { name: registerButtonName(page) }).click()
   for (const [name, message] of [['Nome de usuário', 'Use pelo menos 3 caracteres'], ['Email', 'Informe um email válido'], ['Senha', 'Use pelo menos 8 caracteres']] as const) {
     const input = page.getByRole('textbox', { name, exact: true })
     await expect(input).toHaveAttribute('aria-invalid', 'true')
@@ -107,7 +107,7 @@ test('erros de validação e da API ficam associados aos campos', async ({ page 
   await page.getByLabel('Email').fill('ana@example.test')
   await page.getByRole('textbox', { name: 'Senha', exact: true }).fill('kurio-demo')
   await page.getByRole('textbox', { name: 'Confirmar senha' }).fill('kurio-demo')
-  await page.getByRole('button', { name: 'Criar perfil' }).click()
+  await page.getByRole('button', { name: registerButtonName(page) }).click()
   const email = page.getByLabel('Email')
   await expect(email).toHaveAttribute('aria-invalid', 'true')
   await expect(page.locator(`#${await email.getAttribute('aria-describedby')}`)).toHaveText('Este email já está cadastrado')
