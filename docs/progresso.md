@@ -15,8 +15,8 @@ Método de contagem: `wc -l src/css/styles.css` e classes distintas que aparecem
 | Confirmação de Pedido | concluída (sem frame mobile; adaptada) | 973 → 784 | 45 → 34 | ver git log |
 | Login | concluída (fundo só com o hero, desvio confirmado) | 784 → 605 | 93 → 61 (seletores de classe no início da linha) | `df50b07` |
 | Cadastro | concluída (mesmo componente do Login) | ver Login | ver Login | `df50b07` |
-| Perfil do Colecionador | concluída (sem frame mobile; adaptada) | 605 → 369 | 61 → 1 (seletores de classe no início da linha) | ver git log |
-| Carteiras | concluída (sem frame mobile; adaptada; mesmo painel e CSS do Perfil) | ver Perfil | ver Perfil | ver git log |
+| Perfil do Colecionador | concluída (sem frame mobile; adaptada) | 605 → 369 | 61 → 1 (seletores de classe no início da linha) | `22fbb66` (testes e docs: `22ad3cb`) |
+| Carteiras | concluída (sem frame mobile; adaptada; mesmo painel e CSS do Perfil) | ver Perfil | ver Perfil | `22fbb66` |
 
 ## Preparação
 
