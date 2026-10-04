@@ -26,9 +26,9 @@ export const paymentMethods: ReadonlyArray<{ value: PaymentMethod; label: string
 
 export const ensSuffixes = ['.eth'] as const
 
-// Carteira inicial: a principal, ou a primeira cadastrada.
-export function defaultWallet(wallets: readonly Wallet[]) {
-  return wallets.find((wallet) => wallet.primary) ?? wallets[0]
+// Carteira inicial: a conectada, senão a principal, senão a primeira cadastrada.
+export function defaultWallet(wallets: readonly Wallet[], connectedId?: string) {
+  return wallets.find((wallet) => wallet.id === connectedId) ?? wallets.find((wallet) => wallet.primary) ?? wallets[0]
 }
 
 export function initialForm(input: { profile?: Profile; email?: string; name?: string; wallet?: Wallet }): CheckoutForm {

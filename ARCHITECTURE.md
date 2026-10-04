@@ -116,7 +116,8 @@ As 76 classes `.figma-*` (cópia da lista de estilos do Figma em `px`) não eram
 - **Código de indicação obrigatório no desktop**, como indica o asterisco do frame; a API aceita só `KURIO-2026`. No mobile o frame não tem formulário: os dados do colecionador vêm do perfil e, se faltar algo, a tela pede para completar o perfil.
 - **Conexão de carteira simulada** (requisito do readme, sem frame próprio): uma linha de status ("Coinbase Wallet conectada · Desconectar", "Conectando…", recusa com "Tentar de novo") fica logo abaixo do botão no desktop e abaixo do total no mobile, para não deslocar o resto do frame.
 - **Revisão em diálogo.** O frame não tem etapa de revisão; o readme exige. "Confirmar compra" abre o diálogo "Revise sua compra" com a cotação revalidada; o envio é "Enviar pedido". Não há mais checkbox de consentimento.
-- **Carteira padrão.** O frame mobile mostra "Reserva" selecionada e em primeiro lugar; o app mantém a ordem da API e seleciona a carteira principal.
+- **Carteira padrão.** O frame mobile mostra "Reserva" selecionada sob "Carteira conectada". A fixture começa com a Reserva conectada e o pagamento seleciona a carteira conectada (sem conexão, a principal), nos dois layouts. A ordem continua a da API (Principal primeiro; no frame a Reserva vem antes).
+- **Título "Carteira conectada" (mobile).** Segue o estado da conexão: "Conectando carteira" e "Conectar carteira" quando não há conexão, para não afirmar uma conexão inexistente; o frame só desenha o estado conectado.
 - **Métodos no desktop.** A primeira opção do frame é o selo "METAMASK · WALLETCONNECT · COINBASE"; no app ela é a opção WalletConnect (nome acessível "WalletConnect").
 - **Aviso de mudança** (`nft.updated`) no pagamento usa `role="alert"`: exige ação antes de confirmar.
 

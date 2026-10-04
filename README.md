@@ -297,7 +297,7 @@ Para Lighthouse, execute `npm run build:demo` e `npm run preview` em um terminal
 
 ### Credenciais e cenários disponíveis
 
-As fixtures reservam `ana@example.test` / `kurio-demo` e `bruno@example.test` / `bruno-demo`. São credenciais fictícias exclusivas do modo demo; não usar dados reais. As senhas são persistidas apenas como hash com salt no mock. Novos cadastros também recebem hash e sessão automaticamente.
+As fixtures reservam `ana@example.test` / `kurio-demo` e `bruno@example.test` / `bruno-demo`. No pagamento desktop, o código de indicação (obrigatório) aceito é `KURIO-2026`. São credenciais fictícias exclusivas do modo demo; não usar dados reais. As senhas são persistidas apenas como hash com salt no mock. Novos cadastros também recebem hash e sessão automaticamente.
 
 Seleção de cenário no console do navegador da aplicação, com MSW ativo:
 
@@ -327,7 +327,7 @@ O preço persistido muda para `0.125` ETH, o mock emite pelo protocolo Socket.IO
 #### Pagamento
 
 - Código de indicação aceito: `KURIO-2026` (outro código → `422` com o erro no campo).
-- A carteira escolhida é conectada ao abrir o pagamento. Cenário `wallet-rejected`: a carteira recusa a conexão (`409 WALLET_REJECTED`). "Desconectar" desliga; o pedido exige carteira conectada.
+- A Ana começa com a carteira "Reserva" (`wallet-2`, Polygon) conectada via Coinbase Wallet, como no frame mobile; o pagamento abre com a carteira conectada selecionada (sem conexão, a principal) e a conecta se for preciso. Cenário `wallet-rejected`: a carteira recusa a conexão (`409 WALLET_REJECTED`). "Desconectar" desliga; o pedido exige carteira conectada.
 - "Confirmar compra" abre a revisão com a cotação revalidada; mudanças de preço, disponibilidade, cupom ou taxa aparecem listadas e exigem novo clique em "Enviar pedido".
 
 #### Cupons

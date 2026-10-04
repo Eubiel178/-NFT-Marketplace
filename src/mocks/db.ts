@@ -13,7 +13,7 @@ import {
 } from "@/contracts";
 import { createDefaultCart, createNfts, users } from "./fixtures";
 
-const key = "nft-marketplace:mock-db:v5";
+const key = "nft-marketplace:mock-db:v6";
 export interface MockDb {
   nfts: Nft[];
   users: Array<{
@@ -144,7 +144,8 @@ const initialState = (): MockDb => ({
   orders: [],
   quotes: {},
   idempotency: {},
-  walletConnections: {},
+  // A "Reserva" começa conectada, como no frame mobile do pagamento ("Carteira conectada").
+  walletConnections: { "collector-1": { walletId: "wallet-2", method: "coinbase" as const } },
 });
 function read() {
   try {

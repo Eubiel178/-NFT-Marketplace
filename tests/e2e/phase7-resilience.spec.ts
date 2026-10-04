@@ -69,11 +69,11 @@ test('chave de idempotência recupera o pedido e rejeita payload diferente', asy
     const quote = await quoteResponse.json() as { id: string; version: number }
     const headers = { 'Content-Type': 'application/json', 'Idempotency-Key': 'phase7-idempotency' }
     const collector = { displayName: 'Ana Demo', username: 'ana-kurio', profileName: 'Ana Demo', email: 'ana@example.test', walletAddress: '0xA91F...E82C', ens: '', referralCode: '', note: '' }
-    const body = JSON.stringify({ quoteId: quote.id, quoteVersion: quote.version, walletId: 'wallet-1', network: 'ethereum', collector })
+    const body = JSON.stringify({ quoteId: quote.id, quoteVersion: quote.version, walletId: 'wallet-2', network: 'polygon', collector })
     const first = await fetch('/api/orders', { method: 'POST', headers, body })
     const firstBody = await first.json() as { id: string }
     const second = await fetch('/api/orders', { method: 'POST', headers, body })
-    const conflict = await fetch('/api/orders', { method: 'POST', headers, body: JSON.stringify({ quoteId: quote.id, quoteVersion: quote.version, walletId: 'wallet-2', network: 'polygon', collector }) })
+    const conflict = await fetch('/api/orders', { method: 'POST', headers, body: JSON.stringify({ quoteId: quote.id, quoteVersion: quote.version, walletId: 'wallet-1', network: 'ethereum', collector }) })
     return { firstStatus: first.status, secondStatus: second.status, sameId: firstBody.id === (await second.json() as { id: string }).id, conflictStatus: conflict.status }
   })
   expect(result).toEqual({ firstStatus: 201, secondStatus: 200, sameId: true, conflictStatus: 409 })

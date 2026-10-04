@@ -76,7 +76,7 @@ interface CheckoutContentProps {
 // Só compõe: dados, formulário, conexão da carteira e envio vêm dos hooks.
 function CheckoutContent({ data, wallets, isDesktop }: CheckoutContentProps) {
   const realtimeConnected = useRealtimeConnected()
-  const checkout = useCheckoutForm(initialForm({ profile: data.profile.data, email: data.user?.email, name: data.user?.name, wallet: defaultWallet(wallets) }), isDesktop)
+  const checkout = useCheckoutForm(initialForm({ profile: data.profile.data, email: data.user?.email, name: data.user?.name, wallet: defaultWallet(wallets, data.connection.data?.walletId) }), isDesktop)
   const connection = useWalletConnection(data.userId, checkout.form.walletId)
   const order = usePlaceOrder({ userId: data.userId, items: data.items, coupon: data.coupon, quote: data.quote.data, onFieldErrors: checkout.showApiErrors })
   const liveNotice = useCheckoutLive(data.lines, order.refreshReview)
