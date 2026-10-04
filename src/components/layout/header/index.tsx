@@ -36,7 +36,7 @@ export function Header() {
 
   return (
     <header className="hidden lg:flex lg:justify-center">
-      <div className="flex h-17.25 max-w-content items-center justify-between border-b border-primary/25 w-full pt-6">
+      <div className="flex h-11.25 max-w-content items-center justify-between border-b border-primary/25 w-full pt-6">
         <Link
           to="/"
           className="font-mono text-sm font-bold leading-normal tracking-wide text-foreground"
