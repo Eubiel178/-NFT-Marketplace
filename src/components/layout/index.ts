@@ -1,8 +1,4 @@
-export { DesktopLayout } from './desktop-layout'
-export { Footer } from './footer'
-export { MarketplaceFooter } from './marketplace-footer'
-export { MarketplaceHeader } from './marketplace-header'
-export { MobileLayout } from './mobile-layout'
-export { RealtimeConnectionStatus } from './realtime-connection-status'
-export { Header } from './header'
-export { useLayoutMode } from './use-layout-mode'
+export { Footer } from "./footer";
+export { Header } from "./header";
+export { RealtimeConnectionStatus } from "./realtime-connection-status";
+export { TabBar } from "./tab-bar";

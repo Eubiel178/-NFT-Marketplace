@@ -96,7 +96,8 @@
      ========================================================================== */
   --shadow-cart-focus: 0 0.375rem 1.25rem 0 var(--shadow-color);
   --shadow-buy-bar: 0 0 1.25rem 0 var(--shadow-color);
-  --shadow-tab-bar: 0 -0.625rem 1.875rem 0 var(--shadow-color);
+  /* A barra inferior tem recorte: drop-shadow segue a forma, box-shadow não. */
+  --drop-shadow-tab-bar: 0 -0.625rem 1.875rem var(--shadow-color);
   --shadow-wallet-selected: 0 1.25rem 1.25rem 0 var(--shadow-color);
   --shadow-coinbase-selected: 0 0 2.5rem 0 var(--shadow-color);
 

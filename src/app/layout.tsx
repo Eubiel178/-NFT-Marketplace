@@ -1,14 +1,8 @@
 import { Outlet, useLocation } from "@tanstack/react-router";
 
-import {
-  DesktopLayout,
-  MarketplaceFooter,
-  MobileLayout,
-  RealtimeConnectionStatus,
-  TabBar,
-  useLayoutMode,
-} from "@/components";
+import { Footer, Header, RealtimeConnectionStatus, TabBar } from "@/components";
 import { AuthMarketplaceBackground } from "@/features/auth/auth-marketplace-background";
+import { cn } from "@/lib/utils";
 import { useRealtimeConnected } from "@/realtime";
 
 export { PendingFeature } from "./pending-feature";
@@ -16,7 +10,6 @@ export { PendingFeature } from "./pending-feature";
 export function Layout() {
   const connected = useRealtimeConnected();
   const location = useLocation();
-  const layoutMode = useLayoutMode();
 
   const hideMobileTabBar =
     [
@@ -29,18 +22,12 @@ export function Layout() {
       "/orders",
     ].some((path) => location.pathname.startsWith(path)) ||
     location.pathname.startsWith("/nfts/");
+
   const isAuthRoute =
     location.pathname === "/login" || location.pathname === "/register";
 
-  const content = (
-    <>
-      {isAuthRoute && <AuthMarketplaceBackground />}
-      <Outlet />
-    </>
-  );
-
   return (
-    <>
+    <div className="min-h-screen w-full max-sm:overflow-x-clip max-sm:rounded-t-40">
       <a
         href="#main"
         className="sr-only z-[60] focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:rounded-6 focus:bg-surface-card focus:p-4"
@@ -48,14 +35,24 @@ export function Layout() {
         Pular para o conteúdo
       </a>
 
-      {layoutMode === "desktop" ? (
-        <DesktopLayout footer={<MarketplaceFooter />}>{content}</DesktopLayout>
-      ) : (
-        <MobileLayout tabBar={hideMobileTabBar ? undefined : <TabBar />}>
-          {content}
-        </MobileLayout>
-      )}
+      <Header />
+
+      <main
+        id="main"
+        tabIndex={-1}
+        className={cn(
+          "mx-auto min-h-[60vh] w-full max-w-[calc(var(--container-content)+6rem)] px-6 pt-6 pb-[calc(8rem+env(safe-area-inset-bottom,0px))] md:px-12 lg:pb-24",
+          hideMobileTabBar && "max-lg:pb-8",
+        )}
+      >
+        {isAuthRoute && <AuthMarketplaceBackground />}
+        <Outlet />
+      </main>
+
+      <Footer />
+
+      {!hideMobileTabBar && <TabBar />}
       <RealtimeConnectionStatus connected={connected} />
-    </>
+    </div>
   );
 }
