@@ -25,10 +25,7 @@
      ========================================================================== */
   --font-mono: "Roboto Mono", monospace;
   --default-font-family: var(--font-mono);
-
-  --font-weight-regular: 400;
-  --font-weight-medium: 500;
-  --font-weight-bold: 700;
+  /* Pesos: padrão do Tailwind (normal 400, medium 500, bold 700). */
 
   --text-tiny-9: 0.5625rem;
   --text-tiny-10: 0.625rem;
@@ -307,12 +304,12 @@ textarea:focus-visible {
 }
 .text-title-22-regular {
   font-size: var(--text-title-22);
-  font-weight: var(--font-weight-regular);
+  font-weight: var(--font-weight-normal);
   line-height: var(--leading-16);
 }
 .text-title-21-regular {
   font-size: var(--text-title-21);
-  font-weight: var(--font-weight-regular);
+  font-weight: var(--font-weight-normal);
   line-height: var(--leading-auto);
 }
 .text-title-20-bold {
@@ -327,7 +324,7 @@ textarea:focus-visible {
 }
 .text-title-20-regular {
   font-size: var(--text-title-20);
-  font-weight: var(--font-weight-regular);
+  font-weight: var(--font-weight-normal);
   line-height: var(--leading-10);
 }
 
@@ -344,7 +341,7 @@ textarea:focus-visible {
 }
 .text-body-large-18-regular {
   font-size: var(--text-body-large-18);
-  font-weight: var(--font-weight-regular);
+  font-weight: var(--font-weight-normal);
   line-height: var(--leading-auto);
 }
 .text-body-large-17-bold {
@@ -354,7 +351,7 @@ textarea:focus-visible {
 }
 .text-body-large-17-regular {
   font-size: var(--text-body-large-17);
-  font-weight: var(--font-weight-regular);
+  font-weight: var(--font-weight-normal);
   line-height: var(--leading-10);
 }
 .text-body-large-16-bold {
@@ -369,7 +366,7 @@ textarea:focus-visible {
 }
 .text-body-large-16-regular {
   font-size: var(--text-body-large-16);
-  font-weight: var(--font-weight-regular);
+  font-weight: var(--font-weight-normal);
   line-height: var(--leading-10);
 }
 
@@ -387,7 +384,7 @@ textarea:focus-visible {
 }
 .text-body-15-regular {
   font-size: var(--text-body-15);
-  font-weight: var(--font-weight-regular);
+  font-weight: var(--font-weight-normal);
   line-height: var(--leading-16);
 }
 
@@ -405,7 +402,7 @@ textarea:focus-visible {
 }
 .text-body-14-regular {
   font-size: var(--text-body-14);
-  font-weight: var(--font-weight-regular);
+  font-weight: var(--font-weight-normal);
   line-height: var(--leading-24);
 }
 
@@ -417,7 +414,7 @@ textarea:focus-visible {
 }
 .text-caption-13-regular {
   font-size: var(--text-caption-13);
-  font-weight: var(--font-weight-regular);
+  font-weight: var(--font-weight-normal);
   line-height: var(--leading-22);
 }
 .text-caption-12-bold {
@@ -427,7 +424,7 @@ textarea:focus-visible {
 }
 .text-caption-12-regular {
   font-size: var(--text-caption-12);
-  font-weight: var(--font-weight-regular);
+  font-weight: var(--font-weight-normal);
   line-height: var(--leading-16);
 }
 
@@ -1444,7 +1441,7 @@ textarea:focus-visible {
 .cart-totals dd small {
   color: var(--color-text-accent);
   font-size: var(--text-caption-12);
-  font-weight: var(--font-weight-regular);
+  font-weight: var(--font-weight-normal);
 }
 .checkout-totals dd {
   display: flex;
@@ -1455,7 +1452,7 @@ textarea:focus-visible {
 .checkout-totals dd small {
   color: var(--color-text-accent);
   font-size: var(--text-caption-12);
-  font-weight: var(--font-weight-regular);
+  font-weight: var(--font-weight-normal);
 }
 .cart-total,
 .checkout-total {
@@ -2707,7 +2704,7 @@ textarea:focus-visible {
   color: var(--color-text-secondary);
   cursor: pointer;
   font-size: var(--text-body-14);
-  font-weight: var(--font-weight-regular);
+  font-weight: var(--font-weight-normal);
   line-height: var(--leading-16);
   padding: 0 0 8px;
 }
@@ -2778,7 +2775,7 @@ textarea:focus-visible {
 }
 
 .home-product-card-mobile h3 {
-  font-weight: var(--font-weight-regular);
+  font-weight: var(--font-weight-normal);
 }
 
 .home-product-card-mobile .text-body-large-16-bold,
