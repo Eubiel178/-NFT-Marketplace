@@ -1,3 +1,5 @@
+import { useState } from 'react'
+
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 
 import type { Profile } from '@/contracts'
@@ -8,9 +10,10 @@ import { useSessionUserId } from '@/shared/api/session'
 import { removeAvatar, uploadAvatar } from '../../api'
 
 // Upload simulado pelo MSW e remoção. Carregando e erro (de validação ou de rede) ficam disponíveis para a tela.
-export function useAvatar() {
+export function useAvatar(hasAvatar: boolean) {
   const client = useQueryClient()
   const userId = useSessionUserId()
+  const [notice, setNotice] = useState('')
   const onSuccess = (next: Profile) => client.setQueryData(keys.profile(userId), next)
 
   const upload = useMutation({ mutationFn: uploadAvatar, onSuccess })
@@ -22,12 +25,20 @@ export function useAvatar() {
     pending: upload.isPending || remove.isPending,
     uploading: upload.isPending,
     error: details ? (details.fields?.avatar ?? details.message ?? 'Não foi possível atualizar o avatar. Tente novamente.') : '',
+    // Sem avatar, remover não faz nada e avisa.
+    notice,
     upload: (file: File) => {
+      setNotice('')
       remove.reset()
       upload.mutate(file)
     },
     remove: () => {
       upload.reset()
+      if (!hasAvatar) {
+        setNotice('Não há avatar para remover.')
+        return
+      }
+      setNotice('')
       remove.mutate()
     },
   }

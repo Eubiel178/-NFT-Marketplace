@@ -173,7 +173,7 @@ As 76 classes `.figma-*` (cópia da lista de estilos do Figma em `px`) não eram
 - **Avatar** por upload simulado: `POST /api/profile/avatar` (multipart) com 700 ms de espera e validação de tipo (imagem) e de tamanho (512 KB), devolvendo `422` no campo `avatar`; `DELETE` remove. Estados: carregando (botão com `aria-busy`, avatar pulsando só sem movimento reduzido) e erro (ligado ao botão por `aria-describedby`).
 - **Senha:** só existe no estado do formulário (limpa depois de salvar); o MSW guarda hash com salt. "Senha atual incorreta" vem da API com `fields.currentPassword` (`422`; antes era `401`).
 - **Cenário `slow`** agora também atrasa `GET /api/profile` e `GET /api/wallets` em 2 s, para o skeleton ser verificável.
-- **Desvios do frame:** "Remover" fica desabilitado sem avatar (no frame aparece normal); a cor dos itens do painel e o ícone do avatar (lucide `ImageIcon`) são aproximações; "Adicionar" da seção secundária fica 6px à direita do frame (alinhado à borda direita do conteúdo, depois da opção "Igual à carteira principal").
+- **Desvios do frame:** ""Remover" segue o frame (sempre ativo); sem avatar não faz nada e avisa "Não há avatar para remover."; a cor dos itens do painel e o ícone do avatar (lucide `ImageIcon`) são aproximações; "Adicionar" da seção secundária fica 6px à direita do frame (alinhado à borda direita do conteúdo, depois da opção "Igual à carteira principal").
 - **Componentes compartilhados:** `TextField` (era do pagamento) foi para `@/components` e ganhou `labelClassName`, `inputClassName` e `prefix`; `Select` ganhou `variant="frame"`, `className` e `labelClassName` (o pagamento passou a usar a variante, com o mesmo resultado visual).
 
 ## Execução e deploy

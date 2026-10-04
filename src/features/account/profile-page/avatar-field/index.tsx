@@ -16,7 +16,7 @@ export function AvatarField({ avatar, className }: AvatarFieldProps) {
   const labelId = useId()
   const errorId = useId()
   const fileInput = useRef<HTMLInputElement>(null)
-  const { pending, uploading, error, upload, remove } = useAvatar()
+  const { pending, uploading, error, notice, upload, remove } = useAvatar(Boolean(avatar))
 
   function handleChange(event: ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0]
@@ -46,12 +46,12 @@ export function AvatarField({ avatar, className }: AvatarFieldProps) {
           >
             Alterar
           </Button>
-          <Button type="button" variant="ghost" size="sm" className="px-0 hover:bg-transparent hover:underline" onClick={remove} disabled={!avatar || pending}>
+          <Button type="button" variant="ghost" size="sm" className="px-0 text-foreground hover:bg-transparent hover:underline" onClick={remove} disabled={pending}>
             Remover
           </Button>
         </div>
       </div>
-      <p role="status" className="sr-only">{uploading ? 'Enviando avatar…' : ''}</p>
+      <p role="status" className={cn('text-caption-12 text-text-secondary', !notice && 'sr-only', notice && 'mt-2')}>{uploading ? 'Enviando avatar…' : notice}</p>
       {error && <p id={errorId} role="alert" className="mt-2 text-caption-12 text-error">{error}</p>}
     </div>
   )
