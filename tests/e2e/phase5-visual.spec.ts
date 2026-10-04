@@ -27,7 +27,8 @@ test('telas restantes nos viewports oficiais @visual', async ({ page }) => {
   await page.getByRole('button', { name: 'Entrar' }).click()
   await expect(page).toHaveURL(/\/cart$/)
   await expect(page.getByRole('list', { name: 'Itens do carrinho' }).getByRole('img')).toHaveCount(3)
-  await expect(page.getByRole('region', { name: 'Colecionadores também viram' }).getByRole('link')).toHaveCount(5)
+  // A seção não existe no frame mobile do carrinho: a contagem vale só a partir de 640px.
+  if ((page.viewportSize()?.width ?? 0) >= 640) await expect(page.getByRole('region', { name: 'Colecionadores também viram' }).getByRole('link')).toHaveCount(5)
   await waitForImages(page)
   await screenshot(page, 'cart')
   await page.getByRole('button', { name: /Conectar e finalizar/ }).click()

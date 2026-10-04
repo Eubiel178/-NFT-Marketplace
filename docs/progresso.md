@@ -248,3 +248,9 @@ Visuais (conhecidas):
 - CSS: classes `auth-*` removidas (784 → 605 linhas; 93 → 61 linhas com seletor de classe). Os três `auth-error` do perfil viraram `m-0 text-caption-13 text-error` (mesmo estilo).
 - Snapshot de estilos computados de Início, Detalhe, Carrinho, Pagamento, Perfil e Carteiras (1440 e 390), logado, antes × depois: **0 diferenças**.
 - Testes novos em `phase6-auth`: erros de validação e conflito da API associados aos campos; login social e recuperação sem simular sucesso; senha fora do armazenamento, redirect externo ignorado e sessão recuperada após refresh. No `phase5-visual`, o locator `.auth-marketplace-background` virou `getByTestId('auth-background')` (mesma asserção). Specs `phase6-auth`, `foundation`, `phase7-resilience`, `phase5-visual`, `phase14-visual-audit` e `phase12-accessibility` nos dois projetos: todos passam, exceto o `phase5-visual` mobile, que é a falha visual já conhecida ("Colecionadores também viram").
+
+### Decisões do usuário depois de Login e Cadastro
+
+- Fundo só com o hero: mantido e registrado como desvio confirmado em `ARCHITECTURE.md`.
+- Botão do cadastro por viewport ("Criar conta" no desktop, "Criar perfil" no mobile); os specs pegam o nome por `registerButtonName(page)`. `phase6-auth` e `phase7-resilience` nos dois projetos: 32 passaram.
+- `phase5-visual`: a contagem de "Colecionadores também viram" vale só a partir de 640px, porque a seção não existe no frame mobile. Nos dois projetos: 2 passaram.
