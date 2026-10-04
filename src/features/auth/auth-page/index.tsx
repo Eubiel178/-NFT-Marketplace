@@ -8,6 +8,7 @@ import { Button, Input, MobileSocialBlock, PasswordInput, SocialButton } from '@
 import { parseHttpError } from '@/lib/http'
 import { keys, queryClient } from '@/lib/query'
 import { clearUserItems } from '@/lib/user-storage'
+import { resetPrivateRealtime } from '@/realtime'
 
 import { login, register } from '../api'
 
@@ -32,6 +33,7 @@ export function AuthPage({ mode }: { mode: AuthMode }) {
       await queryClient.cancelQueries()
       const previousUserId = queryClient.getQueryData<Session>(keys.session)?.user?.id
       if (previousUserId && previousUserId !== session.user?.id) clearUserItems(previousUserId)
+      resetPrivateRealtime()
       queryClient.clear()
       queryClient.setQueryData(keys.session, session)
       await navigate({ to: search.redirect?.startsWith('/') ? search.redirect : '/' })

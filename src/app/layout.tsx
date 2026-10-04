@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 
 import { Outlet, useLocation } from "@tanstack/react-router";
 
@@ -11,12 +10,12 @@ import {
   useLayoutMode,
 } from "@/components";
 import { AuthMarketplaceBackground } from "@/features/auth/auth-marketplace-background";
-import { connectCatalog } from "@/lib/realtime";
+import { useRealtimeConnected } from "@/realtime";
 
 export { PendingFeature } from "./pending-feature";
 
 export function Layout() {
-  const [connected, setConnected] = useState<boolean | null>(null);
+  const connected = useRealtimeConnected();
   const location = useLocation();
   const layoutMode = useLayoutMode();
 
@@ -33,7 +32,6 @@ export function Layout() {
     location.pathname.startsWith("/nfts/");
   const isAuthRoute =
     location.pathname === "/login" || location.pathname === "/register";
-  useEffect(() => connectCatalog(setConnected), []);
 
   const content = (
     <>

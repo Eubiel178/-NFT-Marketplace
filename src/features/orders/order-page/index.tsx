@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 import { useQuery } from "@tanstack/react-query";
 import { Link, useNavigate } from "@tanstack/react-router";
@@ -8,8 +8,8 @@ import { Button, Image } from "@/components";
 import { sessionOptions } from "@/features/session/api";
 import { fromWei, toWei } from "@/lib/eth";
 import { parseHttpError } from "@/lib/http";
-import { connectOrder } from "@/lib/realtime";
 import { keys } from "@/lib/query";
+import { subscribeOrder, useRealtimeConnected } from "@/realtime";
 
 import { getOrder } from "../api";
 
@@ -27,7 +27,7 @@ function formatOrderDate(value: string) {
 
 export function OrderPage({ id }: { id: string }) {
   const navigate = useNavigate();
-  const [realtimeConnected, setRealtimeConnected] = useState<boolean | null>(null);
+  const realtimeConnected = useRealtimeConnected();
   const session = useQuery(sessionOptions);
   const userId = session.data?.user?.id ?? "";
   const order = useQuery({
@@ -40,7 +40,7 @@ export function OrderPage({ id }: { id: string }) {
   useEffect(
     () =>
       userId
-        ? connectOrder(userId, id, setRealtimeConnected)
+        ? subscribeOrder(userId, id)
         : undefined,
     [id, userId],
   );

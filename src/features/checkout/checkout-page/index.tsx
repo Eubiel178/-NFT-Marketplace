@@ -11,8 +11,8 @@ import { getWallets } from '@/features/account/api'
 import { isSessionExpired, sessionOptions } from '@/features/session/api'
 import { isAxiosTimeout, parseHttpError } from '@/lib/http'
 import { keys } from '@/lib/query'
-import { connectNftUpdates } from '@/lib/realtime'
 import { readUserItem, removeUserItem, writeUserItem } from '@/lib/user-storage'
+import { subscribeNftUpdates, useRealtimeConnected } from '@/realtime'
 import { createOrder, getOrderByKey } from '../api'
 import { CheckoutCustomerFields } from './checkout-customer-fields'
 import { CheckoutSummary } from './checkout-summary'
@@ -41,7 +41,7 @@ export function CheckoutPage() {
   const [coupon] = useState(() => readUserItem('checkout-coupon', userId) ?? '')
   const [quoteStale, setQuoteStale] = useState(false)
   const [liveNotice, setLiveNotice] = useState('')
-  const [realtimeConnected, setRealtimeConnected] = useState<boolean | null>(null)
+  const realtimeConnected = useRealtimeConnected()
   const staleQuoteId = useRef<string | undefined>(undefined)
   const orderSubmissionStarted = useRef(false)
   const walletsRef = useRef<HTMLFieldSetElement>(null)
@@ -65,13 +65,13 @@ export function CheckoutPage() {
     if (sessionExpired) void navigate({ to: '/login', search: { redirect: '/checkout', expired: true } })
   }, [navigate, sessionExpired])
   const itemIdsKey = items.map((item) => item.nftId).join('|')
-  useEffect(() => connectNftUpdates((event) => {
+  useEffect(() => subscribeNftUpdates((event) => {
     if (!itemIdsKey.split('|').includes(event.resourceId)) return
     staleQuoteId.current = quote.data?.id
     setQuoteStale(true)
     setAccepted(false)
     setLiveNotice(`O preço ou a disponibilidade de ${event.nft.name} mudou. Revise a cotação antes de confirmar.`)
-   }, setRealtimeConnected), [itemIdsKey, quote.data?.id])
+   }), [itemIdsKey, quote.data?.id])
   const orderMutation = useMutation({
     mutationFn: async () => {
       const currentQuote = quote.data

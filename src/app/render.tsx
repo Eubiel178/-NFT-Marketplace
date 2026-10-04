@@ -3,9 +3,11 @@ import { createRoot } from "react-dom/client";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { RouterProvider } from "@tanstack/react-router";
 import { queryClient } from "@/lib/query";
+import { startRealtime } from "@/realtime";
 import { router } from "./router";
 
 export function renderApp() {
+  startRealtime();
   createRoot(document.getElementById("root")!).render(
     <StrictMode>
       <QueryClientProvider client={queryClient}>

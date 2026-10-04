@@ -9,8 +9,8 @@ import type { Cart, CartItem, Quote } from '@/contracts'
 import { catalogOptions } from '@/features/catalog/api'
 import { sessionOptions } from '@/features/session/api'
 import { keys } from '@/lib/query'
-import { connectNftUpdates } from '@/lib/realtime'
 import { readUserItem, removeUserItem, writeUserItem } from '@/lib/user-storage'
+import { subscribeNftUpdates, useRealtimeConnected } from '@/realtime'
 import { cartOptions, createQuote, removeCartItem, updateCartItem } from '../api'
 import { CartLine } from './cart-line'
 import { CartRelated } from './cart-related'
@@ -37,7 +37,7 @@ function CartContent({ userId }: { userId: string | null }) {
   const [coupon, setCoupon] = useState(savedCoupon)
   const [appliedCoupon, setAppliedCoupon] = useState(savedCoupon)
   const [liveNotice, setLiveNotice] = useState('')
-  const [realtimeConnected, setRealtimeConnected] = useState<boolean | null>(null)
+  const realtimeConnected = useRealtimeConnected()
   const [quote, setQuote] = useState<Quote | null>(null)
   const lines = cart.data?.items ?? []
   const items = lines.map(({ nftId, editionId, quantity }) => ({ nftId, editionId, quantity }))
@@ -88,11 +88,11 @@ function CartContent({ userId }: { userId: string | null }) {
     }
     void navigate({ to: '/checkout' })
   }
-  useEffect(() => connectNftUpdates((event) => {
+  useEffect(() => subscribeNftUpdates((event) => {
      if (!itemIdsKey.split('|').includes(event.resourceId)) return
       setQuote(null)
       setLiveNotice(`O preço ou a disponibilidade de ${event.nft.name} mudou. O resumo foi atualizado.`)
-   }, setRealtimeConnected), [itemIdsKey])
+   }), [itemIdsKey])
 
   if (cart.isPending) return <CartSkeleton />
   if (cart.isError) return <section className="cart-page" role="alert"><h1>Não foi possível carregar o carrinho</h1><Button onClick={() => void cart.refetch()}>Tentar novamente</Button></section>

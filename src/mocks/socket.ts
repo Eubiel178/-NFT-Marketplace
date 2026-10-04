@@ -41,3 +41,6 @@ export function broadcastOrder(event: OrderUpdated) {
 export function disconnectSockets() {
   for (const client of clients) client.rawClient.close(1000, "mock disconnect");
 }
+export function openSocketCount() {
+  return clients.size;
+}

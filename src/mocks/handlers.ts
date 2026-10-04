@@ -12,7 +12,12 @@ import {
 import { fromWei, toWei } from "@/lib/eth";
 import { db, resetDb, saveDb } from "./db";
 import { getScenario, scenarios, setScenario } from "./scenarios";
-import { broadcastNft, broadcastOrder, disconnectSockets } from "./socket";
+import {
+  broadcastNft,
+  broadcastOrder,
+  disconnectSockets,
+  openSocketCount,
+} from "./socket";
 
 const error = (
   status: number,
@@ -467,6 +472,9 @@ export const handlers = [
     broadcastOrder(event);
     return HttpResponse.json(event);
   }),
+  http.get("/api/__mock/socket/clients", () =>
+    HttpResponse.json({ open: openSocketCount() }),
+  ),
   http.post("/api/__mock/socket/disconnect", () => {
     disconnectSockets();
     return new HttpResponse(null, { status: 204 });
