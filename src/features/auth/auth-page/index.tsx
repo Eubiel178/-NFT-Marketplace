@@ -2,11 +2,10 @@ import { useState } from 'react'
 
 import { Link, useNavigate, useSearch } from '@tanstack/react-router'
 import { useMutation } from '@tanstack/react-query'
-import axios from 'axios'
 import { X } from 'lucide-react'
 
 import { Button, Input, MobileSocialBlock, PasswordInput, SocialButton } from '@/components'
-import { apiErrorSchema } from '@/contracts'
+import { parseHttpError } from '@/lib/http'
 import { keys, queryClient } from '@/lib/query'
 
 import { login, register } from '../api'
@@ -33,9 +32,9 @@ export function AuthPage({ mode }: { mode: AuthMode }) {
       await navigate({ to: search.redirect?.startsWith('/') ? search.redirect : '/' })
     },
   })
-  const apiError = axios.isAxiosError(mutation.error) ? apiErrorSchema.safeParse(mutation.error.response?.data).data : undefined
-  const fieldErrors = apiError?.fields
-  const apiMessage = apiError?.message
+  const apiError = parseHttpError(mutation.error)
+  const fieldErrors = apiError.fields
+  const apiMessage = apiError.message
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     setFormError(undefined)

@@ -1,10 +1,9 @@
 import { useRef, useState, type ChangeEvent, type FormEvent } from 'react'
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import axios from 'axios'
 
 import { Button, Image, Input, PasswordInput } from '@/components'
-import { apiErrorSchema } from '@/contracts'
+import { parseHttpError } from '@/lib/http'
 import { keys } from '@/lib/query'
 
 import { AccountShell } from '../account-shell'
@@ -29,9 +28,9 @@ export function ProfilePage() {
     },
    onSuccess: (next) => { setFormError(''); setFieldErrors({}); queryClient.setQueryData(keys.profile, next) },
    onError: (error) => {
-     const apiError = axios.isAxiosError(error) ? apiErrorSchema.safeParse(error.response?.data).data : undefined
-     setFieldErrors(apiError?.fields ?? {})
-     setFormError(apiError?.message ?? (error instanceof Error ? error.message : 'Não foi possível salvar as alterações.'))
+      const apiError = parseHttpError(error)
+      setFieldErrors(apiError.fields ?? {})
+      setFormError(apiError.message ?? (error instanceof Error ? error.message : 'Não foi possível salvar as alterações.'))
    },
   })
   const avatarMutation = useMutation({

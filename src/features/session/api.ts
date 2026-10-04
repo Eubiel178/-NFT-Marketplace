@@ -1,8 +1,7 @@
 import { queryOptions } from '@tanstack/react-query'
-import axios from 'axios'
 
 import { sessionSchema } from '@/contracts'
-import { http } from '@/lib/http'
+import { http, parseHttpError } from '@/lib/http'
 import { keys } from '@/lib/query'
 
 export const sessionOptions = queryOptions({
@@ -11,5 +10,5 @@ export const sessionOptions = queryOptions({
 })
 
 export function isSessionExpired(error: unknown) {
-  return axios.isAxiosError(error) && error.response?.status === 401
+  return parseHttpError(error).status === 401
 }

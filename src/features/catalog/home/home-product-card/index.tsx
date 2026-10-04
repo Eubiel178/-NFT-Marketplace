@@ -1,8 +1,8 @@
 import { Link } from '@tanstack/react-router'
 
-import { NftCard } from '@/components'
-
 import type { Nft } from '@/contracts'
+
+import { NftCard } from '../nft-card'
 
 export interface HomeProductCardProps {
   nft: Nft
@@ -13,9 +13,11 @@ export interface HomeProductCardProps {
 }
 
 export function HomeProductCard({ nft, mobile = false, rare = false, promo = false, priority = false }: HomeProductCardProps) {
+  const Card = mobile ? NftCard.Mobile : NftCard.Desktop
+
   return (
     <Link to="/nfts/$nftId" params={{ nftId: nft.id }} className="home-product-card-link" aria-label={nft.name}>
-      <NftCard
+      <Card
         image={nft.image}
         imageAlt={nft.name}
         name={nft.name}
@@ -23,7 +25,6 @@ export function HomeProductCard({ nft, mobile = false, rare = false, promo = fal
         originalPrice={promo ? '2.29' : undefined}
         hasDiscount={promo}
         showRareBadge={rare}
-        isMobile={mobile}
         priority={priority}
         className={mobile ? 'home-product-card-mobile' : 'home-product-card-desktop'}
       />

@@ -1,11 +1,15 @@
-import type { ComponentProps } from 'react'
+import type { ComponentProps } from "react";
 
-import { cn } from '@/lib/utils'
+import { cn } from "@/lib/utils";
 
-export function WalletSelectorMethods({ className, children, ...props }: ComponentProps<'fieldset'>) {
+export function WalletSelectorMethods({
+  className,
+  children,
+  ...props
+}: ComponentProps<"fieldset">) {
   return (
-    <fieldset className={cn('wallet-selector-methods', className)} {...props}>
+    <fieldset className={cn("wallet-selector-methods", className)} {...props}>
       {children}
     </fieldset>
-  )
+  );
 }

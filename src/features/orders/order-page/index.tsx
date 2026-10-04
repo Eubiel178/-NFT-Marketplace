@@ -2,14 +2,13 @@ import { useEffect, useState } from "react";
 
 import { useQuery } from "@tanstack/react-query";
 import { Link, useNavigate } from "@tanstack/react-router";
-import axios from "axios";
 import { ExternalLink, X } from "lucide-react";
 
 import { Button, Image } from "@/components";
-import { catalogOptions } from "@/features/catalog/api";
 import { getOrder } from "@/features/checkout/api";
 import { sessionOptions } from "@/features/session/api";
 import { fromWei, toWei } from "@/lib/eth";
+import { parseHttpError } from "@/lib/http";
 import { connectOrder } from "@/lib/realtime";
 import { keys } from "@/lib/query";
 
@@ -23,16 +22,6 @@ export function OrderPage({ id }: { id: string }) {
     refetchInterval: (query) =>
       query.state.data?.status === "pending" ? 500 : false,
   });
-  const catalog = useQuery(
-    catalogOptions({
-      q: "",
-      category: "all",
-      collection: "all",
-      network: "all",
-      sort: "recent",
-      page: 1,
-    }),
-  );
   useEffect(
     () =>
       session.data?.user
@@ -51,8 +40,7 @@ export function OrderPage({ id }: { id: string }) {
       </section>
     );
   if (order.isError) {
-    const notFound =
-      axios.isAxiosError(order.error) && order.error.response?.status === 404;
+    const notFound = parseHttpError(order.error).status === 404;
     return (
       <section className="order-page" role="alert">
         <h1>
@@ -105,10 +93,7 @@ export function OrderPage({ id }: { id: string }) {
         </article>
       </section>
     );
-  const items = order.data.quote.items.map((item) => ({
-    item,
-    nft: catalog.data?.items.find((candidate) => candidate.id === item.nftId),
-  }));
+  const items = order.data.quote.items;
   return (
     <section className="order-page" aria-labelledby="order-title">
       <div className="order-scrim" aria-hidden="true" />
@@ -150,10 +135,10 @@ export function OrderPage({ id }: { id: string }) {
             <span>Edições</span>
             <span>Subtotal</span>
           </div>
-          {items.map(({ item, nft }) => {
-            const price = item.price ?? nft?.price;
-            const name = item.name ?? nft?.name ?? item.nftId;
-            const image = item.image ?? nft?.image;
+          {items.map((item) => {
+            const name = item.name ?? item.nftId;
+            const image = item.image;
+            const price = item.price;
             return (
               <div className="order-line" key={item.nftId}>
                 <div>

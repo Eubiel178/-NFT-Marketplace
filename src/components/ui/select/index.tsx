@@ -1,5 +1,4 @@
 import { forwardRef, useEffect, useId, useRef, useState } from 'react'
-import type { ComponentProps } from 'react'
 
 import { Check, ChevronDown, ChevronUp } from 'lucide-react'
 
@@ -11,7 +10,7 @@ export interface SelectOption {
   disabled?: boolean
 }
 
-export interface SelectProps extends Omit<ComponentProps<'select'>, 'onChange'> {
+export interface SelectProps {
   label?: string
   error?: string
   helperText?: string

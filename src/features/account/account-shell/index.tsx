@@ -2,11 +2,13 @@ import { Activity, Download, Heart, LogOut, MapPin, ShoppingBag, TriangleAlert, 
 import { Link, useLocation } from '@tanstack/react-router'
 
 import { useMutation, useQuery } from '@tanstack/react-query'
-import { AccountSidebar, Button } from '@/components'
+import { Button } from '@/components'
 import { logout } from '@/features/auth/api'
 import { sessionOptions } from '@/features/session/api'
 import { disconnectPrivateSubscriptions } from '@/lib/realtime'
 import { keys, queryClient } from '@/lib/query'
+
+import { AccountSidebar } from '../account-sidebar'
 
 const menu = [
   { label: 'Dados do perfil', icon: UserRound, to: '/profile' as const },

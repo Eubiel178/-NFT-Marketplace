@@ -1,5 +1,5 @@
 import { env } from "@/lib/env";
-import "./styles.css";
+import "./css/styles.css";
 
 async function bootstrap() {
   if (env.mocks) {

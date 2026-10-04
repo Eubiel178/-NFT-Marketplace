@@ -4,11 +4,10 @@ import {
   createRouter,
   redirect,
 } from "@tanstack/react-router";
-import axios from "axios";
 import { catalogSearchSchema } from "@/contracts";
+import { isSessionExpired, sessionOptions } from "@/features/session/api";
 import { queryClient } from "@/lib/query";
 import { Layout } from "./layout";
-import { sessionOptions } from "@/features/session/api";
 import { CatalogPage, NftPage } from "@/features/catalog/pages";
 import { AuthPage } from "@/features/auth/auth-page";
 import { CartPage } from "@/features/cart/cart-page";
@@ -73,7 +72,7 @@ const privateRoot = createRoute({
     try {
       session = await queryClient.fetchQuery(sessionOptions);
     } catch (error) {
-      if (axios.isAxiosError(error) && error.response?.status === 401) {
+      if (isSessionExpired(error)) {
         throw redirect({ to: "/login", search: { redirect: location.href, expired: true } });
       }
       throw error;

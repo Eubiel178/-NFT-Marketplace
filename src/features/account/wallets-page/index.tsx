@@ -1,10 +1,10 @@
 import { useState } from 'react'
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import axios from 'axios'
 
 import { Button, Checkbox, Input, Select } from '@/components'
 import type { Wallet } from '@/contracts'
+import { parseHttpError } from '@/lib/http'
 import { keys } from '@/lib/query'
 
 import { AccountShell } from '../account-shell'
@@ -20,11 +20,7 @@ function getWalletForm(wallet: Wallet): WalletForm {
 }
 
 function getErrorMessage(error: unknown) {
-  if (axios.isAxiosError(error)) {
-    const data: unknown = error.response?.data
-    if (typeof data === 'object' && data !== null && 'message' in data && typeof data.message === 'string') return data.message
-  }
-  return 'Não foi possível salvar a carteira. Confira os dados e tente novamente.'
+  return parseHttpError(error).message ?? 'Não foi possível salvar a carteira. Confira os dados e tente novamente.'
 }
 
 function WalletFields({ form, update, wallets, editingId, onSelect }: { form: WalletForm; update: (field: keyof WalletForm, value: string) => void; wallets: Wallet[]; editingId?: string; onSelect: (id: string) => void }) {

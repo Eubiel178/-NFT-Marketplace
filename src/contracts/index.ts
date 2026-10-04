@@ -2,6 +2,7 @@ import { z } from 'zod'
 
 export const ethSchema = z.string().regex(/^\d+(\.\d{1,18})?$/)
 export type Eth = z.infer<typeof ethSchema>
+export type Network = 'ethereum' | 'polygon'
 export const nftSchema = z.object({
   id: z.string(), name: z.string(), category: z.enum(['art', 'music', 'photography']),
   collection: z.string(), network: z.enum(['ethereum', 'polygon']), image: z.string(),

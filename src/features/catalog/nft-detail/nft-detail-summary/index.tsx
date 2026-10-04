@@ -15,14 +15,15 @@ export interface NftDetailSummaryProps {
   favoritePending: boolean
   favoriteError: boolean
   favoriteLoadError: boolean
+  selectedEdition: string
   onToggleFavorite: () => void
+  onEditionChange: (edition: string) => void
 }
 
-export function NftDetailSummary({ nft, favorite, favoritePending, favoriteError, favoriteLoadError, onToggleFavorite }: NftDetailSummaryProps) {
+export function NftDetailSummary({ nft, favorite, favoritePending, favoriteError, favoriteLoadError, selectedEdition, onToggleFavorite, onEditionChange }: NftDetailSummaryProps) {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
   const [quantity, setQuantity] = useState(1)
-  const [selectedEdition, setSelectedEdition] = useState(nft.editions?.[2] ?? '1/50')
   const editions = nft.editions ?? ['1/1', '1/10', '1/50', 'ABERTA']
   const description = nft.description ?? 'Um colecionável digital verificado na Ethereum, com procedência imutável e acesso para colecionadores.'
   const attributes = nft.attributes ?? ['Raro']
@@ -51,7 +52,7 @@ export function NftDetailSummary({ nft, favorite, favoritePending, favoriteError
       <h2 className="nft-detail-about-title">Sobre este NFT:</h2>
       <p className="nft-detail-summary-description">{description}</p>
       <h2>Edição:</h2>
-       <div className="nft-detail-editions">{editions.map((edition) => <button type="button" className={edition === selectedEdition ? 'is-selected' : ''} key={edition} onClick={() => setSelectedEdition(edition)}>{edition}</button>)}</div>
+       <div className="nft-detail-editions">{editions.map((edition) => <button type="button" className={edition === selectedEdition ? 'is-selected' : ''} key={edition} onClick={() => onEditionChange(edition)}>{edition}</button>)}</div>
          <div className="nft-detail-actions">
          <div className="nft-detail-stepper" aria-label="Quantidade">
            <button type="button" aria-label="Diminuir quantidade" disabled={quantity <= 1 || unavailable} onClick={() => setQuantity((value) => Math.max(1, value - 1))}><Minus aria-hidden="true" /></button>

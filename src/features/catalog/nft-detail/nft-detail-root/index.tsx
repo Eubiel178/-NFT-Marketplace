@@ -1,3 +1,5 @@
+import { useState } from 'react'
+
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Link, useLocation, useNavigate } from '@tanstack/react-router'
 
@@ -25,6 +27,8 @@ export function NftDetailRoot({ nft, related, relatedLoading = false, relatedErr
   const navigate = useNavigate()
   const location = useLocation()
   const queryClient = useQueryClient()
+  const [selectedImage, setSelectedImage] = useState(1)
+  const [selectedEdition, setSelectedEdition] = useState(nft.editions?.[2] ?? '1/50')
   const session = useQuery(sessionOptions)
   const favorites = useQuery({ queryKey: keys.favorites, queryFn: ({ signal }) => getFavorites(signal), enabled: Boolean(session.data?.user) })
   const favoriteMutation = useMutation({
@@ -55,8 +59,8 @@ export function NftDetailRoot({ nft, related, relatedLoading = false, relatedErr
         <span>Mercado</span>
       </nav>
       <div className="nft-detail-product">
-        <NftDetailGallery nft={nft} favorite={favorite} onToggleFavorite={toggleFavorite} />
-        <NftDetailSummary nft={nft} favorite={favorite} favoritePending={favoriteMutation.isPending} favoriteError={favoriteMutation.isError} favoriteLoadError={favorites.isError} onToggleFavorite={toggleFavorite} />
+        <NftDetailGallery nft={nft} favorite={favorite} selectedImage={selectedImage} onToggleFavorite={toggleFavorite} onImageChange={setSelectedImage} />
+        <NftDetailSummary nft={nft} favorite={favorite} favoritePending={favoriteMutation.isPending} favoriteError={favoriteMutation.isError} favoriteLoadError={favorites.isError} selectedEdition={selectedEdition} onToggleFavorite={toggleFavorite} onEditionChange={setSelectedEdition} />
       </div>
       <NftDetailDescription nft={nft} />
       {relatedLoading ? <section className="nft-detail-related" aria-label="Carregando recomendações" role="status"><Skeleton className="h-8 w-48" /><div className="nft-detail-related-grid">{Array.from({ length: 5 }, (_, index) => <Skeleton key={index} className="aspect-square" />)}</div></section> : relatedError ? <section className="nft-detail-related" role="alert"><h2>Não foi possível carregar recomendações</h2><Button onClick={onRetryRelated}>Tentar novamente</Button></section> : <NftDetailRelated nfts={related} />}

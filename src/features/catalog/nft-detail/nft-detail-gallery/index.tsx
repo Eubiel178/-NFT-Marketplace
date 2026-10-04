@@ -11,11 +11,12 @@ import type { Nft } from '@/contracts'
 export interface NftDetailGalleryProps {
   nft: Nft
   favorite: boolean
+  selectedImage: number
   onToggleFavorite: () => void
+  onImageChange: (index: number) => void
 }
 
-export function NftDetailGallery({ nft, favorite, onToggleFavorite }: NftDetailGalleryProps) {
-  const [selectedImage, setSelectedImage] = useState(1)
+export function NftDetailGallery({ nft, favorite, selectedImage, onToggleFavorite, onImageChange }: NftDetailGalleryProps) {
   const [isZoomOpen, setIsZoomOpen] = useState(false)
   const gallery = nft.gallery?.length ? nft.gallery : [nft.image, nft.image, nft.image, nft.image]
 
@@ -27,7 +28,7 @@ export function NftDetailGallery({ nft, favorite, onToggleFavorite }: NftDetailG
       </div>
       <div className="nft-detail-gallery-content">
         <div className="nft-detail-thumbnails">
-          {gallery.map((image, index) => <button type="button" className={index === selectedImage ? 'nft-detail-thumbnail is-selected' : 'nft-detail-thumbnail'} key={`${image}-${index}`} aria-label={`Selecionar imagem ${index + 1}`} aria-pressed={index === selectedImage} onClick={() => setSelectedImage(index)}><Image src={image} alt="" width={100} height={100} /></button>)}
+          {gallery.map((image, index) => <button type="button" className={index === selectedImage ? 'nft-detail-thumbnail is-selected' : 'nft-detail-thumbnail'} key={`${image}-${index}`} aria-label={`Selecionar imagem ${index + 1}`} aria-pressed={index === selectedImage} onClick={() => onImageChange(index)}><Image src={image} alt="" width={100} height={100} /></button>)}
         </div>
         <div className="nft-detail-main-image-wrap">
           <Image src={gallery[selectedImage]} alt={nft.name} width={404} height={404} className="nft-detail-main-image" priority />

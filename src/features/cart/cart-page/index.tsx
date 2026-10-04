@@ -2,17 +2,18 @@ import { useEffect, useState } from 'react'
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Link, useNavigate } from '@tanstack/react-router'
-import { ArrowLeft, ArrowRight, Trash2 } from 'lucide-react'
+import { ArrowLeft } from 'lucide-react'
 
-import { Button, Image, Input, Skeleton, Stepper } from '@/components'
+import { Button } from '@/components'
 import type { Cart, CartItem, Quote } from '@/contracts'
 import { catalogOptions } from '@/features/catalog/api'
-import { HomeProductCard } from '@/features/catalog/home/home-product-card'
 import { sessionOptions } from '@/features/session/api'
-import { fromWei, toWei } from '@/lib/eth'
 import { keys } from '@/lib/query'
 import { connectNftUpdates } from '@/lib/realtime'
 import { cartOptions, createQuote, removeCartItem, updateCartItem } from '../api'
+import { CartLine } from './cart-line'
+import { CartRelated } from './cart-related'
+import { CartSummary } from './cart-summary'
 
 const couponStorageKey = 'nft-marketplace:checkout-coupon'
 
@@ -27,8 +28,7 @@ export function CartPage() {
   const [liveNotice, setLiveNotice] = useState('')
   const [realtimeConnected, setRealtimeConnected] = useState<boolean | null>(null)
   const [quote, setQuote] = useState<Quote | null>(null)
-  const [optimisticallyRemoved, setOptimisticallyRemoved] = useState<string[]>([])
-  const lines = (cart.data?.items ?? []).filter((line) => !optimisticallyRemoved.includes(line.nftId))
+  const lines = cart.data?.items ?? []
   const items = lines.map(({ nftId, editionId, quantity }) => ({ nftId, editionId, quantity }))
   const mutation = useMutation({
     mutationFn: (input: CartItem) => updateCartItem(input),
@@ -51,7 +51,6 @@ export function CartPage() {
       return { previous, removed: previous?.items.find((line) => line.nftId === nftId) }
     },
     onError: (_error, _nftId, context) => {
-      setOptimisticallyRemoved((current) => current.filter((id) => id !== _nftId))
       if (!context?.removed) return
       const current = queryClient.getQueryData<Cart>(keys.cart)
       queryClient.setQueryData<Cart>(keys.cart, { items: [...(current?.items ?? []), context.removed] })
@@ -97,48 +96,31 @@ export function CartPage() {
          <div className="cart-layout">
           <div className="cart-items" role="list" aria-label="Itens do carrinho">
              <div className="cart-table-head"><span>NFTs</span><span>Preço</span><span>Edições</span><span>Total</span><span /></div>
-            {lines.map((line) => {
-              const total = `${fromWei(toWei(line.nft.price) * BigInt(line.quantity))} ETH`
-               return <article className="cart-line" role="listitem" key={line.nftId}>
-                 <Link to="/nfts/$nftId" params={{ nftId: line.nftId }} className="cart-line-item"><Image priority src={line.nft.image} alt={line.nft.name} width={70} height={70} /><span><strong>{line.nft.name}</strong><small>ID do token: {line.nft.tokenId ?? `#${line.nftId.replace('nft-', '').padStart(4, '0')}`}</small><em className="cart-line-mobile-total">{total}</em></span></Link>
-                <span className="cart-line-price">{line.nft.price} ETH</span>
-                 <Stepper value={line.quantity} max={line.nft.available} size="sm" disabled={mutation.isPending || removeMutation.isPending} ariaLabel={`Quantidade de ${line.nft.name}`} onChange={(value) => mutation.mutate({ nftId: line.nftId, editionId: line.editionId, quantity: value })} />
-                 <strong className="cart-line-total">{total}</strong>
-                  <Button variant="ghost" size="icon" aria-label={`Remover ${line.nft.name}`} aria-busy={removeMutation.isPending && removeMutation.variables === line.nftId} disabled={mutation.isPending} onClick={() => { setOptimisticallyRemoved((current) => current.includes(line.nftId) ? current : [...current, line.nftId]); removeMutation.mutate(line.nftId) }}><Trash2 aria-hidden="true" /></Button>
-              </article>
-            })}
+              {lines.map((line) => <CartLine key={line.nftId} line={line} quantityMutationPending={mutation.isPending} removeMutationPending={removeMutation.isPending && removeMutation.variables === line.nftId} onQuantityChange={(quantity) => mutation.mutate({ nftId: line.nftId, editionId: line.editionId, quantity })} onRemove={() => removeMutation.mutate(line.nftId)} />)}
           </div>
-          <aside className="cart-summary" aria-labelledby="cart-summary-title">
-            <h2 id="cart-summary-title">Resumo da carteira</h2>
-             <div className="cart-coupon"><Input label="Código promocional" value={coupon} onChange={(event) => setCoupon(event.target.value)} placeholder="Digite o código promocional..." /><Button variant="apply" size="sm" onClick={() => applyCoupon.mutate()} loading={applyCoupon.isPending} disabled={!coupon.trim()}>Aplicar</Button></div>
-               {realtimeConnected === false && <p className="cart-error" role="alert">As atualizações em tempo real estão indisponíveis. O carrinho continua sincronizado ao tentar novamente.</p>}
-              {!session.isPending && !authenticated && <p className="cart-notice" role="status">Entre para consultar a cotação e finalizar sua compra.</p>}
-              {liveNotice && <p className="cart-notice" role="status">{liveNotice}</p>}
-              {mutation.isError && <p className="cart-error" role="alert">Não foi possível atualizar a quantidade. Tente novamente.</p>}
-              {removeMutation.isError && <p className="cart-error" role="alert">Não foi possível remover o item. Tente novamente.</p>}
-              {applyCoupon.isError && <p className="cart-error" role="alert">Cupom inválido ou expirado.</p>}
-              {baseQuote.isError && <p className="cart-error" role="alert">Não foi possível atualizar o resumo. <Button variant="link" size="sm" onClick={() => void baseQuote.refetch()}>Tentar novamente</Button></p>}
-             {coupon && <Button variant="ghost" size="sm" onClick={() => { setCoupon(''); setAppliedCoupon(''); setQuote(null); localStorage.removeItem(couponStorageKey) }}>Remover cupom</Button>}
-             {quoteLoading && <p className="checkout-status" role="status">Calculando resumo...</p>}
-             <dl className="cart-totals" aria-busy={quoteLoading}>
-               <div><dt>Subtotal</dt><dd>{quoteLoading ? <Skeleton className="h-4 w-20" /> : `${displayedQuote?.subtotal ?? '—'} ETH`}</dd></div>
-                <div><dt>Desconto do lançamento</dt><dd>{quoteLoading ? <Skeleton className="h-4 w-20" /> : `-${displayedQuote?.discount ?? '0'} ETH`}</dd></div>
-                <div><dt>Taxa de rede</dt><dd>{quoteLoading ? <Skeleton className="h-4 w-20" /> : <><span>{displayedQuote?.networkFee ?? '0.016'} ETH</span><small>Taxa estimada</small></>}</dd></div>
-               <div className="cart-total"><dt>Total</dt><dd>{quoteLoading ? <Skeleton className="h-4 w-20" /> : `${displayedQuote?.total ?? '—'} ETH`}</dd></div>
-            </dl>
-              <Button className="cart-checkout" size="sm" disabled={session.isPending || (authenticated && (!displayedQuote || baseQuote.isFetching || baseQuote.isError)) || mutation.isPending || removeMutation.isPending} onClick={goToCheckout}>Conectar e finalizar <ArrowRight aria-hidden="true" /></Button>
-            <Link className="cart-continue" to="/">Continuar explorando</Link>
-          </aside>
+           <CartSummary
+             coupon={coupon}
+             onCouponChange={setCoupon}
+             onApplyCoupon={() => applyCoupon.mutate()}
+             applyCouponPending={applyCoupon.isPending}
+             realtimeConnected={realtimeConnected}
+             authenticated={authenticated}
+             sessionPending={session.isPending}
+             liveNotice={liveNotice}
+             quantityMutationError={mutation.isError}
+             removeMutationError={removeMutation.isError}
+             applyCouponError={applyCoupon.isError}
+             quoteError={baseQuote.isError}
+             onRetryQuote={() => void baseQuote.refetch()}
+             hasCoupon={Boolean(coupon)}
+             onRemoveCoupon={() => { setCoupon(''); setAppliedCoupon(''); setQuote(null); localStorage.removeItem(couponStorageKey) }}
+             quoteLoading={quoteLoading}
+             displayedQuote={displayedQuote}
+             checkoutDisabled={session.isPending || (authenticated && (!displayedQuote || baseQuote.isFetching || baseQuote.isError)) || mutation.isPending || removeMutation.isPending}
+             onCheckout={goToCheckout}
+           />
         </div>
-        <section className="cart-related" aria-labelledby="cart-related-title">
-          <h2 id="cart-related-title">Colecionadores também viram</h2>
-           <div className="cart-related-grid">
-             {related.isPending && Array.from({ length: 5 }, (_, index) => <Skeleton key={index} className="h-48" />)}
-              {related.isError && <p className="cart-error" role="alert">Não foi possível carregar as recomendações. <Button variant="link" size="sm" onClick={() => void related.refetch()}>Tentar novamente</Button></p>}
-             {related.data?.items.slice(3, 8).map((nft) => <HomeProductCard key={nft.id} nft={nft} priority />)}
-           </div>
-         <div className="cart-related-dots" aria-hidden="true"><span /><span className="is-active" /><span /></div>
-        </section>
+         <CartRelated isPending={related.isPending} isError={related.isError} items={related.data?.items ?? []} onRetry={() => void related.refetch()} />
         </>
       )}
     </section>
