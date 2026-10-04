@@ -43,3 +43,17 @@ test('header mostra sessão e carrinho e encerra a sessão', async ({ page }) =>
   await expect(header.getByRole('link', { name: 'Entrar' })).toBeVisible()
   await expect(header.getByRole('link', { name: 'Perfil de Ana Demo' })).toHaveCount(0)
 })
+
+test('tab bar segue o staticData das rotas', async ({ page }) => {
+  if ((page.viewportSize()?.width ?? 0) >= 1024) return
+
+  const tabBar = page.getByRole('navigation', { name: 'Navegação principal' })
+  await expect(tabBar).toBeVisible()
+  for (const path of ['/nfts/nft-1', '/cart', '/login']) {
+    await page.goto(path)
+    await expect(page.locator('main')).toBeVisible()
+    await expect(tabBar).toHaveCount(0)
+  }
+  await page.goto('/')
+  await expect(tabBar).toBeVisible()
+})

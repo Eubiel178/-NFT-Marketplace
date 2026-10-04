@@ -1,4 +1,4 @@
-import { Outlet, useLocation } from "@tanstack/react-router";
+import { Outlet, useLocation, useMatches } from "@tanstack/react-router";
 
 import { Footer, Header, RealtimeConnectionStatus, TabBar } from "@/components";
 import { AuthMarketplaceBackground } from "@/features/auth/auth-marketplace-background";
@@ -11,18 +11,9 @@ export function Layout() {
   const connected = useRealtimeConnected();
   const location = useLocation();
 
-  const hideMobileTabBar =
-    [
-      "/cart",
-      "/checkout",
-      "/login",
-      "/register",
-      "/profile",
-      "/wallets",
-      "/orders",
-    ].some((path) => location.pathname.startsWith(path)) ||
-    location.pathname.startsWith("/nfts/");
-
+  const hideMobileTabBar = useMatches({
+    select: (matches) => matches.some((match) => match.staticData.hideTabBar),
+  });
   const isAuthRoute =
     location.pathname === "/login" || location.pathname === "/register";
 

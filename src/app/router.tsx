@@ -42,6 +42,7 @@ const home = createRoute({
 const nft = createRoute({
   getParentRoute: () => root,
   path: "/nfts/$nftId",
+  staticData: { hideTabBar: true },
   component: function Detail() {
     const { nftId } = nft.useParams();
     return <NftPage id={nftId} />;
@@ -50,17 +51,20 @@ const nft = createRoute({
 const cart = createRoute({
   getParentRoute: () => root,
   path: "/cart",
+  staticData: { hideTabBar: true },
   component: CartPage,
 });
 const login = createRoute({
   getParentRoute: () => root,
   path: "/login",
+  staticData: { hideTabBar: true },
   validateSearch: authSearch,
   component: () => <AuthPage mode="login" />,
 });
 const register = createRoute({
   getParentRoute: () => root,
   path: "/register",
+  staticData: { hideTabBar: true },
   validateSearch: authSearch,
   component: () => <AuthPage mode="register" />,
 });
@@ -84,21 +88,25 @@ const privateRoot = createRoute({
 const checkout = createRoute({
   getParentRoute: () => privateRoot,
   path: "/checkout",
+  staticData: { hideTabBar: true },
   component: CheckoutPage,
 });
 const profile = createRoute({
   getParentRoute: () => privateRoot,
   path: "/profile",
+  staticData: { hideTabBar: true },
   component: ProfilePage,
 });
 const wallets = createRoute({
   getParentRoute: () => privateRoot,
   path: "/wallets",
+  staticData: { hideTabBar: true },
   component: WalletsPage,
 });
 const order = createRoute({
   getParentRoute: () => privateRoot,
   path: "/orders/$orderId",
+  staticData: { hideTabBar: true },
   component: function OrderRoute() {
     const { orderId } = order.useParams();
     return <OrderPage id={orderId} />;
@@ -116,6 +124,10 @@ export const router = createRouter({
   defaultPreload: "intent",
 });
 declare module "@tanstack/react-router" {
+  // Rotas com barra de compra ou formulário próprio escondem a tab bar mobile.
+  interface StaticDataRouteOption {
+    hideTabBar?: boolean;
+  }
   interface Register {
     router: typeof router;
   }
