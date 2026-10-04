@@ -13,8 +13,8 @@ Método de contagem: `wc -l src/css/styles.css` e classes distintas que aparecem
 | Carrinho | concluída (visual do usuário mantido; diferenças do Figma listadas abaixo) | 1.709 → 1.328 | 97 → 68 | ver git log |
 | Pagamento | concluída | 1.328 → 973 | 68 → 45 | ver git log |
 | Confirmação de Pedido | concluída (sem frame mobile; adaptada) | 973 → 784 | 45 → 34 | ver git log |
-| Login | concluída (ressalvas: fundo só com o hero) | 784 → 605 | 93 → 61 (seletores de classe no início da linha) | ver git log |
-| Cadastro | concluída (mesmo componente do Login) | ver Login | ver Login | ver git log |
+| Login | concluída (ressalvas: fundo só com o hero) | 784 → 605 | 93 → 61 (seletores de classe no início da linha) | `df50b07` |
+| Cadastro | concluída (mesmo componente do Login) | ver Login | ver Login | `df50b07` |
 | Perfil do Colecionador | pendente | | | |
 | Carteiras | pendente | | | |
 
