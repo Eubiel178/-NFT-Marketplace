@@ -3,7 +3,7 @@ import type { CatalogSearch, Nft } from '@/contracts'
 
 import { HomeFeatured } from '../../home-featured'
 import { HomeFilters } from '../../home-filters'
-import { HomeProductCard } from '../../home-product-card'
+import { CatalogProductCard } from '../../../product-card'
 import { isCatalogSort } from '../home-search-params'
 
 interface HomeCatalogDesktopProps {
@@ -53,7 +53,7 @@ export function HomeCatalogDesktop({ items, search, collections, tabs, pageCount
         </div>
         <p role="status" className="home-results-status sr-only">{isFetching ? 'Atualizando catálogo…' : `${total} NFTs encontrados`}</p>
         <ul className="home-product-grid">
-          {items.slice(0, 9).map((nft, index) => <li key={`${nft.id}-${index}`}><HomeProductCard nft={nft} promo={index === 2} /></li>)}
+          {items.slice(0, 9).map((nft, index) => <li key={`${nft.id}-${index}`}><CatalogProductCard nft={nft} promo={index === 2} /></li>)}
         </ul>
         <div className="home-pagination-row">
           <Pagination currentPage={search.page} totalPages={pageCount} onPageChange={onPageChange} showFirstLast={false} showPrevNext={false} maxVisiblePages={4} />

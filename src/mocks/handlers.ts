@@ -808,6 +808,7 @@ export const handlers = [
       userId: user.id,
       version: 1,
       status,
+      createdAt: new Date().toISOString(),
       quote: fullQuote,
       transactionRef: status === "confirmed" ? "0xA91F…E82C" : null,
       wallet: {

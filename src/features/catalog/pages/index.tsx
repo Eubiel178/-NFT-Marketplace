@@ -4,9 +4,9 @@ import { Button, Skeleton } from '@/components'
 import type { CatalogSearch } from '@/contracts'
 import { parseHttpError } from '@/lib/http'
 
-import { catalogOptions, nftOptions } from './api'
-import { HomePage } from './home'
-import { NftDetail } from './nft-detail'
+import { catalogOptions, nftOptions } from '../api'
+import { HomePage } from '../home'
+import { NftDetail } from '../nft-detail'
 
 export { HomePage }
 

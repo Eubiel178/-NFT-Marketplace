@@ -1,4 +1,3 @@
-export { AuthMarketplaceBackground } from './auth-marketplace-background'
 export { DesktopLayout } from './desktop-layout'
 export { Footer } from './footer'
 export { MarketplaceFooter } from './marketplace-footer'

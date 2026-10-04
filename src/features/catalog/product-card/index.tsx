@@ -4,7 +4,7 @@ import type { Nft } from '@/contracts'
 
 import { NftCard } from '../nft-card'
 
-export interface HomeProductCardProps {
+export interface CatalogProductCardProps {
   nft: Nft
   mobile?: boolean
   rare?: boolean
@@ -12,7 +12,7 @@ export interface HomeProductCardProps {
   priority?: boolean
 }
 
-export function HomeProductCard({ nft, mobile = false, rare = false, promo = false, priority = false }: HomeProductCardProps) {
+export function CatalogProductCard({ nft, mobile = false, rare = false, promo = false, priority = false }: CatalogProductCardProps) {
   const Card = mobile ? NftCard.Mobile : NftCard.Desktop
 
   return (

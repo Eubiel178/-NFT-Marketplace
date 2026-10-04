@@ -5,12 +5,25 @@ import { Link, useNavigate } from "@tanstack/react-router";
 import { ExternalLink, X } from "lucide-react";
 
 import { Button, Image } from "@/components";
-import { getOrder } from "@/features/checkout/api";
 import { sessionOptions } from "@/features/session/api";
 import { fromWei, toWei } from "@/lib/eth";
 import { parseHttpError } from "@/lib/http";
 import { connectOrder } from "@/lib/realtime";
 import { keys } from "@/lib/query";
+
+import { getOrder } from "../api";
+
+function formatOrderDate(value: string) {
+  const parts = new Intl.DateTimeFormat("en-GB", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  }).formatToParts(new Date(value));
+  const day = parts.find((part) => part.type === "day")?.value ?? "";
+  const month = parts.find((part) => part.type === "month")?.value ?? "";
+  const year = parts.find((part) => part.type === "year")?.value ?? "";
+  return `${day} ${month}, ${year}`;
+}
 
 export function OrderPage({ id }: { id: string }) {
   const navigate = useNavigate();
@@ -94,6 +107,7 @@ export function OrderPage({ id }: { id: string }) {
       </section>
     );
   const items = order.data.quote.items;
+  const networkLabel = order.data.wallet.network === "polygon" ? "Polygon" : "Ethereum";
   return (
     <section className="order-page" aria-labelledby="order-title">
       <div className="order-scrim" aria-hidden="true" />
@@ -117,7 +131,7 @@ export function OrderPage({ id }: { id: string }) {
           </div>
           <div>
             <dt>Data</dt>
-            <dd>29 Jul, 2026</dd>
+             <dd>{formatOrderDate(order.data.createdAt)}</dd>
           </div>
           <div>
             <dt>Total</dt>
@@ -169,7 +183,7 @@ export function OrderPage({ id }: { id: string }) {
         </div>
         <footer className="order-footer">
           <p>
-            Transação confirmada na Ethereum. A propriedade foi transferida para
+            Transação confirmada na {networkLabel}. A propriedade foi transferida para
             sua carteira conectada e registrada na rede.
           </p>
           <a

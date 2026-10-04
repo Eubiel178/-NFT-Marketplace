@@ -27,8 +27,19 @@ export function NftDetailRoot({ nft, related, relatedLoading = false, relatedErr
   const navigate = useNavigate()
   const location = useLocation()
   const queryClient = useQueryClient()
-  const [selectedImage, setSelectedImage] = useState(1)
-  const [selectedEdition, setSelectedEdition] = useState(nft.editions?.[2] ?? '1/50')
+  const editions = nft.editions ?? ['1/1', '1/10', '1/50', 'ABERTA']
+  const defaultEdition = editions[2] ?? editions[0] ?? '1/50'
+  const galleryLength = nft.gallery?.length || 4
+  const [selection, setSelection] = useState({ nftId: nft.id, image: 0, edition: defaultEdition })
+  const selectedImage = selection.nftId === nft.id ? selection.image : 0
+  const selectedEdition = selection.nftId === nft.id && editions.includes(selection.edition) ? selection.edition : defaultEdition
+  const validSelectedImage = Math.min(selectedImage, galleryLength - 1)
+  const setSelectedImage = (image: number) => {
+    setSelection((current) => ({ nftId: nft.id, image, edition: current.nftId === nft.id ? current.edition : defaultEdition }))
+  }
+  const setSelectedEdition = (edition: string) => {
+    setSelection((current) => ({ nftId: nft.id, image: current.nftId === nft.id ? current.image : 0, edition }))
+  }
   const session = useQuery(sessionOptions)
   const favorites = useQuery({ queryKey: keys.favorites, queryFn: ({ signal }) => getFavorites(signal), enabled: Boolean(session.data?.user) })
   const favoriteMutation = useMutation({
@@ -59,7 +70,7 @@ export function NftDetailRoot({ nft, related, relatedLoading = false, relatedErr
         <span>Mercado</span>
       </nav>
       <div className="nft-detail-product">
-        <NftDetailGallery nft={nft} favorite={favorite} selectedImage={selectedImage} onToggleFavorite={toggleFavorite} onImageChange={setSelectedImage} />
+        <NftDetailGallery nft={nft} favorite={favorite} selectedImage={validSelectedImage} onToggleFavorite={toggleFavorite} onImageChange={setSelectedImage} />
         <NftDetailSummary nft={nft} favorite={favorite} favoritePending={favoriteMutation.isPending} favoriteError={favoriteMutation.isError} favoriteLoadError={favorites.isError} selectedEdition={selectedEdition} onToggleFavorite={toggleFavorite} onEditionChange={setSelectedEdition} />
       </div>
       <NftDetailDescription nft={nft} />

@@ -35,7 +35,7 @@ Credenciais fictícias ficam no fixture como hash SHA-256 com salt; a API nunca 
 | Favoritos | GET /favorites; PUT /favorites/:nftId; DELETE /favorites/:nftId, sempre no usuário autenticado |
 | Carrinho | GET /cart; POST /cart/items `{nftId,editionId,quantity}`; PATCH /cart/items/:id `{quantity}`; DELETE /cart/items/:id; POST /cart/merge após login |
 | Cotação | POST /quotes `{items,couponCode?,walletId,network}` → `{id,version,expiresAt,items,subtotal,discount,networkFee,total}`; cupom inválido/expirado retorna 422 específico |
-| Pedidos | POST /orders com header `Idempotency-Key` e `{quoteId,quoteVersion,walletId,network}` → pedido pendente/confirmado/recusado; GET /orders/:id; GET /orders/by-key/:key para recuperar após timeout |
+| Pedidos | POST /orders com header `Idempotency-Key` e `{quoteId,quoteVersion,walletId,network}` → pedido pendente/confirmado/recusado com `createdAt`; GET /orders/:id; GET /orders/by-key/:key para recuperar após timeout |
 | Perfil | GET /profile; PATCH /profile `{displayName,username,bio,ens,website}`; PATCH /profile/avatar `{avatar: string|null}`; PATCH /profile/password `{currentPassword,newPassword,confirmPassword}` |
 | Carteiras | GET /wallets; POST /wallets; PATCH /wallets/:id com `{address,network,primary}` |
 
@@ -46,6 +46,6 @@ Handlers privados validam sessão e propriedade (401/403). Conta repetida, cota�
 Transporte: WebSocket (`transports: ['websocket']`), namespace padrão, endpoint `/socket.io/`, origem atual por padrão. MSW intercepta rede e `@mswjs/socket.io-binding@0.2.0` codifica frames/handshake; heartbeat textual é mantido pelo mock. Não há servidor ou blockchain real.
 
 - Implementado: `nft.updated = {eventId,resourceId,version,nft}`. Handler REST altera a DB, persiste e emite pelo binding. Cliente valida o NFT e a versão, ignora versões repetidas/antigas conhecidas e invalida consultas públicas, que recuperam REST.
-- Implementado: `order.updated = {eventId,resourceId,version,userId,status}`. O cliente filtra identidade/recurso, reconcilia por REST na conexão/reconexão e encerra a subscription ao desmontar ou no logout. Pedidos confirmados e recusados são terminais; pedidos pendentes são consultados até a transição.
+- Implementado: `order.updated = {eventId,resourceId,version,userId,status}`. O cliente registra uma subscription para o próprio usuário e pedido; o mock entrega o evento somente ao socket inscrito. O cliente ainda valida identidade/recurso, reconcilia por REST na conexão/reconexão e encerra a subscription ao desmontar ou no logout. Pedidos confirmados e recusados são terminais; pedidos pendentes são consultados até a transição.
 
 O binding publicado não oferece paridade completa (rooms, namespaces e broadcasting); envio para clientes é explicitamente percorrido no mock público. Nunca utilizar esse broadcast público para pedidos privados. Documentação da versão instalada em `node_modules/@mswjs/socket.io-binding/README.md`; [repositório oficial](https://github.com/mswjs/socket.io-binding) pode descrever uma API mais nova que a publicada. Polling, anexos binários, múltiplas abas e implantação real ainda não foram validados.

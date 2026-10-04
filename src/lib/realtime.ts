@@ -67,7 +67,11 @@ export function connectOrder(userId: string, orderId: string, onConnection?: (co
   const socket = io(env.socketUrl, { transports: ['websocket'], autoConnect: false })
   const versions = new Map<string, number>()
   function reconcile() { void queryClient.invalidateQueries({ queryKey: keys.order(orderId) }) }
-  function onConnect() { onConnection?.(true); reconcile() }
+  function onConnect() {
+    socket.emit('order.subscribe', { userId, orderId })
+    onConnection?.(true)
+    reconcile()
+  }
   function onDisconnect() { onConnection?.(false) }
   function onOrder(event: OrderUpdated) {
     const parsed = orderUpdatedSchema.safeParse(event)

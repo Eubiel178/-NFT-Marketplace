@@ -251,6 +251,14 @@ body {
   line-height: var(--leading-24);
 }
 
+#root {
+  min-height: 100dvh;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 a,
 button,
 input {
@@ -1128,23 +1136,11 @@ textarea:focus-visible {
   padding: var(--container-padding-mobile);
 }
 
-.desktop-layout {
-  display: none;
-  min-height: 100vh;
-  flex-direction: column;
-}
-
 .mobile-layout {
   display: flex;
   min-height: 100vh;
   flex-direction: column;
   min-width: 0;
-}
-
-.desktop-layout > .layout-main,
-.mobile-layout > .layout-main {
-  min-width: 0;
-  flex: 1;
 }
 
 .mobile-layout > .layout-main {

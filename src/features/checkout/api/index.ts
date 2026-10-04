@@ -1,4 +1,4 @@
-import { orderSchema, quoteSchema, type Order } from '@/contracts'
+import { orderSchema, quoteSchema } from '@/contracts'
 import { http } from '@/lib/http'
 
 export async function createOrder(input: { quoteId: string; quoteVersion: number; walletId: string; network: 'ethereum' | 'polygon'; idempotencyKey: string }) {
@@ -7,10 +7,6 @@ export async function createOrder(input: { quoteId: string; quoteVersion: number
 
 export async function getOrderByKey(idempotencyKey: string) {
   return orderSchema.parse((await http.get(`/orders/by-key/${encodeURIComponent(idempotencyKey)}`)).data)
-}
-
-export async function getOrder(id: string, signal?: AbortSignal): Promise<Order> {
-  return orderSchema.parse((await http.get(`/orders/${encodeURIComponent(id)}`, { signal })).data)
 }
 
 export const parseQuote = (value: unknown) => quoteSchema.parse(value)

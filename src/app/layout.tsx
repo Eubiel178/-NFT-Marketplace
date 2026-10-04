@@ -1,32 +1,19 @@
 import { useEffect, useState } from "react";
 
-import { useQuery } from "@tanstack/react-query";
 import { Outlet, useLocation } from "@tanstack/react-router";
 
 import {
-  AuthMarketplaceBackground,
   DesktopLayout,
   MarketplaceFooter,
-  MarketplaceHeader,
   MobileLayout,
   RealtimeConnectionStatus,
-  Skeleton,
   TabBar,
   useLayoutMode,
 } from "@/components";
-import type { CatalogSearch } from "@/contracts";
-import { catalogOptions } from "@/features/catalog/api";
-import { HomeHero } from "@/features/catalog/home/home-hero";
+import { AuthMarketplaceBackground } from "@/features/auth/auth-marketplace-background";
 import { connectCatalog } from "@/lib/realtime";
 
-const backgroundSearch = {
-  q: "",
-  category: "all",
-  collection: "all",
-  network: "all",
-  sort: "recent",
-  page: 1,
-} satisfies CatalogSearch;
+export { PendingFeature } from "./pending-feature";
 
 export function Layout() {
   const [connected, setConnected] = useState<boolean | null>(null);
@@ -46,27 +33,11 @@ export function Layout() {
     location.pathname.startsWith("/nfts/");
   const isAuthRoute =
     location.pathname === "/login" || location.pathname === "/register";
-  const backgroundCatalog = useQuery({
-    ...catalogOptions(backgroundSearch),
-    enabled: isAuthRoute,
-  });
-  const backgroundArtwork = backgroundCatalog.data?.items[0];
-
   useEffect(() => connectCatalog(setConnected), []);
 
   const content = (
     <>
-      {isAuthRoute && (
-        <AuthMarketplaceBackground>
-          {backgroundArtwork ? (
-            <HomeHero artwork={backgroundArtwork} />
-          ) : (
-            <section className="home-hero-desktop">
-              <Skeleton className="home-loading-hero" />
-            </section>
-          )}
-        </AuthMarketplaceBackground>
-      )}
+      {isAuthRoute && <AuthMarketplaceBackground />}
       <Outlet />
     </>
   );
@@ -79,13 +50,9 @@ export function Layout() {
       >
         Pular para o conteúdo
       </a>
+
       {layoutMode === "desktop" ? (
-        <DesktopLayout
-          header={<MarketplaceHeader />}
-          footer={<MarketplaceFooter />}
-        >
-          {content}
-        </DesktopLayout>
+        <DesktopLayout footer={<MarketplaceFooter />}>{content}</DesktopLayout>
       ) : (
         <MobileLayout tabBar={hideMobileTabBar ? undefined : <TabBar />}>
           {content}
@@ -93,16 +60,5 @@ export function Layout() {
       )}
       <RealtimeConnectionStatus connected={connected} />
     </>
-  );
-}
-
-export function PendingFeature({ name }: { name: string }) {
-  return (
-    <section>
-      <h1 className="text-3xl font-bold">{name}</h1>
-      <p className="mt-4">
-        Rota preparada. Este fluxo ainda não foi implementado.
-      </p>
-    </section>
   );
 }

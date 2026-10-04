@@ -1,6 +1,6 @@
 import { Button, Skeleton } from '@/components'
 import type { Nft } from '@/contracts'
-import { HomeProductCard } from '@/features/catalog/home/home-product-card'
+import { CatalogProductCard } from '@/features/catalog/product-card'
 
 interface CartRelatedProps {
   isPending: boolean
@@ -16,7 +16,7 @@ export function CartRelated({ isPending, isError, items, onRetry }: CartRelatedP
       <div className="cart-related-grid">
         {isPending && Array.from({ length: 5 }, (_, index) => <Skeleton key={index} className="h-48" />)}
         {isError && <p className="cart-error" role="alert">Não foi possível carregar as recomendações. <Button variant="link" size="sm" onClick={onRetry}>Tentar novamente</Button></p>}
-        {items.slice(3, 8).map((nft) => <HomeProductCard key={nft.id} nft={nft} priority />)}
+        {items.slice(3, 8).map((nft) => <CatalogProductCard key={nft.id} nft={nft} priority />)}
       </div>
       <div className="cart-related-dots" aria-hidden="true"><span /><span className="is-active" /><span /></div>
     </section>

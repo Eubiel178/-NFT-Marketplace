@@ -1,23 +1,21 @@
 import type { ReactNode } from "react";
 
+import { Header } from "./header";
+
 export interface DesktopLayoutProps {
   children: ReactNode;
-  header: ReactNode;
   footer: ReactNode;
 }
 
-export function DesktopLayout({
-  children,
-  header,
-  footer,
-}: DesktopLayoutProps) {
+export function DesktopLayout({ children, footer }: DesktopLayoutProps) {
   return (
-    <div className="desktop-layout">
-      {header}
+    <div className="flex flex-col items-stretch min-h-screen w-full max-w-[62.5vw]">
+      <Header />
 
-      <main id="main" tabIndex={-1} className="layout-main container-content">
+      <main tabIndex={-1} className="layout-main container-content">
         {children}
       </main>
+
       {footer}
     </div>
   );
