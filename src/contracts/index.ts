@@ -41,8 +41,42 @@ export const cartLineSchema = cartItemSchema.extend({ nft: nftSchema })
 export const cartSchema = z.object({ items: z.array(cartLineSchema) })
 export const favoritesSchema = z.object({ items: z.array(z.string()) })
 export const quoteSchema = z.object({ id: z.string(), version: z.number().int().positive(), expiresAt: z.string(), items: z.array(cartItemSchema), subtotal: ethSchema, discount: ethSchema, networkFee: ethSchema, total: ethSchema })
-export const walletSchema = z.object({ id: z.string(), userId: z.string(), name: z.string(), alias: z.string(), address: z.string(), network: z.enum(['ethereum', 'polygon']), label: z.string(), tag: z.string(), ens: z.string(), primary: z.boolean() })
-export const profileSchema = z.object({ userId: z.string(), displayName: z.string(), username: z.string(), bio: z.string(), ens: z.string(), website: z.string(), avatar: z.string().nullable() })
+export const walletTypes = ['Hot wallet', 'Cold wallet'] as const
+export const walletSchema = z.object({ id: z.string(), userId: z.string(), name: z.string(), alias: z.string(), address: z.string(), network: z.enum(['ethereum', 'polygon']), label: z.string(), tag: z.string(), ens: z.string(), profileName: z.string(), referralCode: z.string(), email: z.string(), primary: z.boolean() })
+export const profileSchema = z.object({ userId: z.string(), displayName: z.string(), username: z.string(), email: z.string(), ens: z.string(), walletAlias: z.string(), avatar: z.string().nullable() })
+// Mesmas regras no formulário e no MSW (como collectorSchema). O ENS é guardado completo ("ana.kurio.eth").
+const ensSchema = z.string().trim().min(1, { message: 'Informe o nome ENS', abort: true }).regex(/^[a-z0-9-]+(\.[a-z0-9-]+)*\.eth$/i, 'Use só letras, números, hífen e ponto no nome ENS')
+export const profileInputSchema = z.object({
+  displayName: z.string().trim().min(1, 'Informe o nome de exibição'),
+  username: z.string().trim().min(3, 'Use pelo menos 3 caracteres no nome de usuário'),
+  email: z.string().trim().email('Informe um e-mail válido'),
+  ens: ensSchema,
+  walletAlias: z.string().trim().min(1, 'Informe o apelido da carteira'),
+})
+export type ProfileInput = z.infer<typeof profileInputSchema>
+export const passwordChangeSchema = z
+  .object({
+    currentPassword: z.string().min(1, 'Informe a senha atual'),
+    newPassword: z.string().min(8, 'Use pelo menos 8 caracteres'),
+    confirmPassword: z.string().min(1, 'Confirme a nova senha'),
+  })
+  .refine((value) => !value.confirmPassword || value.newPassword === value.confirmPassword, { path: ['confirmPassword'], message: 'As senhas não conferem' })
+export type PasswordChange = z.infer<typeof passwordChangeSchema>
+// Endereço completo (40 hex) ou abreviado como as carteiras cadastradas (0xA91F…E82C).
+export const walletRegistrationAddressPattern = /^0x(?:[0-9a-fA-F]{40}|[0-9a-fA-F]{4}(?:\.\.\.|…)[0-9a-fA-F]{4})$/
+export const walletInputSchema = z.object({
+  name: z.string().trim().min(1, 'Informe o nome de exibição'),
+  alias: z.string().trim().min(1, 'Informe o apelido da carteira'),
+  network: z.enum(['ethereum', 'polygon'], { message: 'Selecione uma rede' }),
+  profileName: z.string().trim().min(1, 'Informe o nome do perfil'),
+  address: z.string().trim().regex(walletRegistrationAddressPattern, 'Informe um endereço 0x válido'),
+  label: z.string().trim().max(60, 'Use no máximo 60 caracteres'),
+  tag: z.enum(walletTypes, { message: 'Selecione o tipo de carteira' }),
+  referralCode: z.string().trim().min(1, { message: 'Informe o código de indicação', abort: true }).regex(/^[A-Za-z0-9-]{4,20}$/, 'Use de 4 a 20 letras, números ou hífen'),
+  email: z.string().trim().email('Informe um e-mail válido'),
+  ens: ensSchema,
+})
+export type WalletInput = z.infer<typeof walletInputSchema>
 export const orderStatusSchema = z.enum(['pending', 'confirmed', 'declined'])
 export const paymentMethodSchema = z.enum(['walletconnect', 'metamask', 'coinbase'])
 export type PaymentMethod = z.infer<typeof paymentMethodSchema>
@@ -68,7 +102,7 @@ export interface CartItem { nftId: string; editionId: string; quantity: number; 
 export interface Quote { id: string; version: number; expiresAt: string; items: CartItem[]; subtotal: Eth; discount: Eth; networkFee: Eth; total: Eth }
 export type OrderStatus = 'pending' | 'confirmed' | 'declined'
 export interface Order { id: string; userId: string; version: number; status: OrderStatus; createdAt: string; quote: Quote; transactionRef: string | null; wallet: { address: string; network: 'ethereum' | 'polygon'; name: string; method: PaymentMethod } }
-export interface Wallet { id: string; userId: string; name: string; alias: string; address: string; network: 'ethereum' | 'polygon'; label: string; tag: string; ens: string; primary: boolean }
+export interface Wallet { id: string; userId: string; name: string; alias: string; address: string; network: 'ethereum' | 'polygon'; label: string; tag: string; ens: string; profileName: string; referralCode: string; email: string; primary: boolean }
 export type CartLine = z.infer<typeof cartLineSchema>
 export type Cart = z.infer<typeof cartSchema>
 export type Favorites = z.infer<typeof favoritesSchema>

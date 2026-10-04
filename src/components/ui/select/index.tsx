@@ -11,7 +11,19 @@ export interface SelectOption {
   disabled?: boolean
 }
 
+// "frame" é o campo dos formulários do Figma: sem fundo, 40px e rótulo regular.
+const variants = {
+  default: { label: '', trigger: '' },
+  frame: {
+    label: 'mb-1.75 text-body-15 font-normal tracking-normal text-foreground',
+    trigger: 'h-10 rounded-none bg-transparent px-3 text-text-secondary',
+  },
+}
+
 export interface SelectProps {
+  variant?: keyof typeof variants
+  className?: string
+  labelClassName?: string
   label?: string
   error?: string
   helperText?: string
@@ -25,6 +37,9 @@ export interface SelectProps {
 }
 
 export function Select({
+  variant = 'default',
+  className,
+  labelClassName,
   label,
   error,
   helperText,
@@ -45,9 +60,9 @@ export function Select({
   const items = options.filter((option) => option.value !== '')
 
   return (
-    <div className="relative w-full">
+    <div className={cn('relative w-full', className)}>
       {label && (
-        <label htmlFor={selectId} className="mb-2 block text-left text-body-14 font-medium leading-16 tracking-wide text-text-secondary">
+        <label htmlFor={selectId} className={cn('mb-2 block text-left text-body-14 font-medium leading-16 tracking-wide text-text-secondary', variants[variant].label, labelClassName)}>
           {label}
           {required && <span className="ml-1 text-error" aria-hidden="true">*</span>}
         </label>
@@ -63,6 +78,7 @@ export function Select({
             'focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-ink focus-visible:outline-none',
             'disabled:pointer-events-none disabled:opacity-50',
             error && 'border-error focus-visible:ring-error',
+            variants[variant].trigger,
           )}
         >
           <span className="truncate">

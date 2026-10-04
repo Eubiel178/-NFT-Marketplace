@@ -1,6 +1,7 @@
 export { Button } from "./button";
 export { Skeleton } from "./skeleton";
 export { Input } from "./input";
+export { TextField } from "./text-field";
 export { PasswordInput } from "./input/password-input";
 export { Image } from "./image";
 export { Badge } from "./badge";

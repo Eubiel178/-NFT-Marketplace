@@ -13,7 +13,9 @@ import {
 } from "@/contracts";
 import { createDefaultCart, createNfts, users } from "./fixtures";
 
-const key = "nft-marketplace:mock-db:v7";
+// O e-mail do perfil vive no usuário (é o login); o perfil guarda o resto.
+export type StoredProfile = Omit<Profile, "email">;
+const key = "nft-marketplace:mock-db:v8";
 export interface MockDb {
   nfts: Nft[];
   users: Array<{
@@ -27,7 +29,7 @@ export interface MockDb {
   sessionExpired: boolean;
   carts: Record<string, CartItem[]>;
   favorites: Record<string, string[]>;
-  profiles: Record<string, Profile>;
+  profiles: Record<string, StoredProfile>;
   wallets: Record<string, Wallet[]>;
   orders: Order[];
   quotes: Record<string, { quote: Quote; coupon?: string }>;
@@ -64,9 +66,8 @@ const schema = z.object({
       userId: z.string(),
       displayName: z.string(),
       username: z.string(),
-      bio: z.string(),
       ens: z.string(),
-      website: z.string(),
+      walletAlias: z.string(),
       avatar: z.string().nullable(),
     }),
   ),
@@ -83,6 +84,9 @@ const schema = z.object({
         label: z.string(),
         tag: z.string(),
         ens: z.string(),
+        profileName: z.string(),
+        referralCode: z.string(),
+        email: z.string(),
         primary: z.boolean(),
       }),
     ),
@@ -107,9 +111,16 @@ const initialState = (): MockDb => ({
       userId: "collector-1",
       displayName: "Ana Demo",
       username: "ana-kurio",
-      bio: "Colecionadora de arte digital e histórias da internet.",
       ens: "ana.kurio.eth",
-      website: "https://kurio.example",
+      walletAlias: "Carteira principal",
+      avatar: null,
+    },
+    "collector-2": {
+      userId: "collector-2",
+      displayName: "Bruno Demo",
+      username: "bruno-kurio",
+      ens: "bruno.kurio.eth",
+      walletAlias: "Carteira do Bruno",
       avatar: null,
     },
   },
@@ -123,8 +134,11 @@ const initialState = (): MockDb => ({
         address: "0xA91F…E82C",
         network: "ethereum" as const,
         label: "Rede principal Ethereum",
-        tag: "Principal",
-        ens: "",
+        tag: "Hot wallet",
+        ens: "principal.kurio.eth",
+        profileName: "Ana Demo",
+        referralCode: "KURIO-2026",
+        email: "ana@example.test",
         primary: true,
       },
       {
@@ -135,8 +149,11 @@ const initialState = (): MockDb => ({
         address: "0xA91F…E82C",
         network: "polygon" as const,
         label: "Rede Polygon",
-        tag: "Reserva",
+        tag: "Cold wallet",
         ens: "nova.kurio.eth",
+        profileName: "Ana Reserva",
+        referralCode: "KURIO-2026",
+        email: "ana@example.test",
         primary: false,
       },
     ],

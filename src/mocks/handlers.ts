@@ -4,6 +4,9 @@ import {
   catalogSearchSchema,
   cartItemSchema,
   collectorSchema,
+  passwordChangeSchema,
+  profileInputSchema,
+  walletInputSchema,
   orderStatusSchema,
   paymentMethodSchema,
   type CartItem,
@@ -12,7 +15,7 @@ import {
   type Wallet,
 } from "@/contracts";
 import { fromWei, toWei } from "@/lib/eth";
-import { db, resetDb, saveDb } from "./db";
+import { db, resetDb, saveDb, type StoredProfile } from "./db";
 import { catalogCollections, catalogNetworks } from "./fixtures";
 import { getScenario, scenarios, setScenario } from "./scenarios";
 import {
@@ -51,35 +54,7 @@ const quoteBodySchema = z.object({
   items: z.array(cartItemSchema),
   coupon: z.string().optional(),
 });
-const profileBodySchema = z.object({
-  displayName: z.string().min(1),
-  username: z.string().min(3),
-  bio: z.string(),
-  ens: z.string(),
-  website: z.string(),
-});
-const avatarBodySchema = z.object({ avatar: z.string().nullable() });
-const passwordBodySchema = z.object({
-  currentPassword: z.string().min(1),
-  newPassword: z.string().min(8),
-  confirmPassword: z.string().min(8),
-});
-const walletAddressSchema = z
-  .string()
-  .regex(
-    /^0x(?:[0-9a-fA-F]{40}|[0-9a-fA-F]{4}(?:\.\.\.|…)[0-9a-fA-F]{4})$/,
-    "Informe um endereço 0x válido",
-  );
-const walletBodySchema = z.object({
-  id: z.string().optional(),
-  name: z.string().min(1),
-  alias: z.string(),
-  address: walletAddressSchema,
-  network: z.enum(["ethereum", "polygon"]),
-  label: z.string(),
-  tag: z.string(),
-  ens: z.string(),
-});
+const walletCreateSchema = walletInputSchema.extend({ primary: z.boolean().optional() });
 // Códigos de indicação aceitos pela API (só ela sabe quais existem).
 const referralCodes = ["KURIO-2026"];
 const orderBodySchema = z.object({
@@ -121,6 +96,32 @@ function findSessionUser() {
 }
 function publicUser(user: (typeof db.users)[number]) {
   return { id: user.id, name: user.name, email: user.email };
+}
+function profileFor(user: { id: string; name: string; email: string }): Profile {
+  const stored: StoredProfile = db.profiles[user.id] ?? {
+    userId: user.id,
+    displayName: user.name,
+    username: user.name.toLowerCase().replaceAll(" ", "-"),
+    ens: "",
+    walletAlias: "",
+    avatar: null,
+  };
+  db.profiles[user.id] = stored;
+  return { ...stored, email: user.email };
+}
+const avatarMaxBytes = 512 * 1024;
+function toDataUrl(bytes: Uint8Array, type: string) {
+  let binary = "";
+  for (let index = 0; index < bytes.length; index += 0x8000)
+    binary += String.fromCharCode(...bytes.subarray(index, index + 0x8000));
+  return `data:${type};base64,${btoa(binary)}`;
+}
+function unknownReferral(code: string) {
+  return referralCodes.includes(code.trim().toUpperCase())
+    ? null
+    : error(422, "VALIDATION_ERROR", "Confira os dados da carteira", {
+        referralCode: "Código de indicação não encontrado",
+      });
 }
 function currentUser() {
   const user = findSessionUser();
@@ -343,9 +344,8 @@ export const handlers = [
       userId: user.id,
       displayName: body.data.username,
       username: body.data.username,
-      bio: "",
       ens: "",
-      website: "",
+      walletAlias: "",
       avatar: null,
     };
     db.carts[user.id] = mergeCartItems(
@@ -635,29 +635,20 @@ export const handlers = [
     saveDb();
     return HttpResponse.json(quote);
   }),
-  http.get("/api/profile", () => {
+  http.get("/api/profile", async () => {
     const user = currentUser();
     if (!user) return userError();
+    if (getScenario() === "slow") await delay(2_000);
     if (getScenario() === "profile-error")
       return error(
         503,
         "TRANSIENT_FAILURE",
         "Não foi possível carregar o perfil",
       );
-    const profile = db.profiles[user.id] ?? {
-      userId: user.id,
-      displayName: user.name,
-      username: user.name.toLowerCase().replaceAll(" ", "-"),
-      bio: "",
-      ens: "",
-      website: "",
-      avatar: null,
-    };
-    db.profiles[user.id] = profile;
-    return HttpResponse.json(profile);
+    return HttpResponse.json(profileFor(user));
   }),
   http.patch("/api/profile", async ({ request }) => {
-    const user = currentUser();
+    const user = findSessionUser();
     if (!user) return userError();
     if (getScenario() === "profile-error")
       return error(
@@ -665,59 +656,100 @@ export const handlers = [
         "TRANSIENT_FAILURE",
         "Não foi possível salvar o perfil",
       );
-    const body = profileBodySchema.safeParse(await request.json());
+    const body = profileInputSchema.safeParse(await request.json());
     if (!body.success)
-      return error(422, "VALIDATION_ERROR", "Confira os dados do perfil");
-    const profile: Profile = {
+      return error(
+        422,
+        "VALIDATION_ERROR",
+        "Confira os dados do perfil",
+        fieldErrors(body.error.issues),
+      );
+    const username = body.data.username.toLowerCase();
+    if (
+      Object.values(db.profiles).some(
+        (other) => other.userId !== user.id && other.username.toLowerCase() === username,
+      )
+    )
+      return error(409, "USERNAME_TAKEN", "Revise os campos destacados", {
+        username: "Este nome de usuário já está em uso",
+      });
+    const email = body.data.email.toLowerCase();
+    if (db.users.some((other) => other.id !== user.id && other.email.toLowerCase() === email))
+      return error(409, "EMAIL_CONFLICT", "Revise os campos destacados", {
+        email: "Este e-mail já está em uso",
+      });
+    const profile = profileFor(publicUser(user));
+    db.profiles[user.id] = {
       userId: user.id,
-      ...body.data,
-      avatar: db.profiles[user.id]?.avatar ?? null,
+      displayName: body.data.displayName,
+      username: body.data.username,
+      ens: body.data.ens,
+      walletAlias: body.data.walletAlias,
+      avatar: profile.avatar,
     };
-    db.profiles[user.id] = profile;
-    db.users.find((candidate) => candidate.id === user.id)!.name =
-      body.data.displayName;
+    user.name = body.data.displayName;
+    user.email = body.data.email;
     saveDb();
-    return HttpResponse.json(profile);
+    return HttpResponse.json(profileFor(publicUser(user)));
   }),
-  http.patch("/api/profile/avatar", async ({ request }) => {
+  // Upload simulado: valida o arquivo, demora um pouco e guarda a imagem como data URL.
+  http.post("/api/profile/avatar", async ({ request }) => {
     const user = currentUser();
     if (!user) return userError();
-    const body = avatarBodySchema.safeParse(await request.json());
-    if (!body.success) return error(422, "VALIDATION_ERROR", "Avatar inválido");
-    const current = db.profiles[user.id] ?? {
-      userId: user.id,
-      displayName: user.name,
-      username: user.name.toLowerCase().replaceAll(" ", "-"),
-      bio: "",
-      ens: "",
-      website: "",
-      avatar: null,
-    };
-    const profile: Profile = { ...current, avatar: body.data.avatar };
-    db.profiles[user.id] = profile;
+    if (getScenario() === "profile-error")
+      return error(503, "TRANSIENT_FAILURE", "Não foi possível enviar o avatar");
+    const file = (await request.formData().catch(() => null))?.get("avatar");
+    const invalid = (message: string) =>
+      error(422, "VALIDATION_ERROR", "Avatar inválido", { avatar: message });
+    if (!(file instanceof File)) return invalid("Escolha uma imagem para enviar");
+    if (!file.type.startsWith("image/"))
+      return invalid("Use um arquivo de imagem (PNG, JPG ou SVG)");
+    if (file.size > avatarMaxBytes) return invalid("A imagem deve ter até 512 KB");
+    await delay(700);
+    const avatar = toDataUrl(new Uint8Array(await file.arrayBuffer()), file.type);
+    profileFor(user);
+    db.profiles[user.id] = { ...db.profiles[user.id], avatar };
     saveDb();
-    return HttpResponse.json(profile);
+    return HttpResponse.json(profileFor(user));
+  }),
+  http.delete("/api/profile/avatar", () => {
+    const user = currentUser();
+    if (!user) return userError();
+    if (getScenario() === "profile-error")
+      return error(503, "TRANSIENT_FAILURE", "Não foi possível remover o avatar");
+    profileFor(user);
+    db.profiles[user.id] = { ...db.profiles[user.id], avatar: null };
+    saveDb();
+    return HttpResponse.json(profileFor(user));
   }),
   http.patch("/api/profile/password", async ({ request }) => {
     const user = findSessionUser();
     if (!user) return userError();
-    const body = passwordBodySchema.safeParse(await request.json());
-    if (!body.success || body.data.newPassword !== body.data.confirmPassword)
-      return error(422, "VALIDATION_ERROR", "Confira as senhas");
+    const body = passwordChangeSchema.safeParse(await request.json());
+    if (!body.success)
+      return error(
+        422,
+        "VALIDATION_ERROR",
+        "Confira as senhas",
+        fieldErrors(body.error.issues),
+      );
     if (
       (await hashPassword(body.data.currentPassword, user.passwordSalt)) !==
       user.passwordHash
     )
-      return error(401, "INVALID_PASSWORD", "A senha atual está incorreta");
+      return error(422, "INVALID_PASSWORD", "Confira as senhas", {
+        currentPassword: "A senha atual está incorreta",
+      });
     const passwordSalt = createSalt();
     user.passwordSalt = passwordSalt;
     user.passwordHash = await hashPassword(body.data.newPassword, passwordSalt);
     saveDb();
     return new HttpResponse(null, { status: 204 });
   }),
-  http.get("/api/wallets", () => {
+  http.get("/api/wallets", async () => {
     const user = currentUser();
     if (!user) return userError();
+    if (getScenario() === "slow") await delay(2_000);
     if (getScenario() === "wallets-error")
       return error(
         503,
@@ -735,16 +767,30 @@ export const handlers = [
         "TRANSIENT_FAILURE",
         "Não foi possível salvar a carteira",
       );
-    const body = walletBodySchema.safeParse(await request.json());
+    const body = walletCreateSchema.safeParse(await request.json());
     if (!body.success)
-      return error(422, "VALIDATION_ERROR", "Confira os dados da carteira");
+      return error(
+        422,
+        "VALIDATION_ERROR",
+        "Confira os dados da carteira",
+        fieldErrors(body.error.issues),
+      );
+    const rejected = unknownReferral(body.data.referralCode);
+    if (rejected) return rejected;
+    const { primary: wantsPrimary, ...input } = body.data;
+    const owned = db.wallets[user.id] ?? [];
+    // A principal é única: a primeira carteira vira principal e uma nova principal rebaixa a anterior.
+    const primary = owned.length === 0 || wantsPrimary === true;
     const wallet: Wallet = {
-      ...body.data,
+      ...input,
       id: `wallet-${Date.now()}`,
       userId: user.id,
-      primary: (db.wallets[user.id] ?? []).length === 0,
+      primary,
     };
-    db.wallets[user.id] = [...(db.wallets[user.id] ?? []), wallet];
+    db.wallets[user.id] = [
+      ...owned.map((item) => (primary ? { ...item, primary: false } : item)),
+      wallet,
+    ];
     saveDb();
     return HttpResponse.json(wallet, { status: 201 });
   }),
@@ -784,7 +830,7 @@ export const handlers = [
         "TRANSIENT_FAILURE",
         "Não foi possível salvar a carteira",
       );
-    const body = walletBodySchema.safeParse(await request.json());
+    const body = walletInputSchema.safeParse(await request.json());
     const belongsToAnotherUser = Object.entries(db.wallets).some(
       ([userId, wallets]) =>
         userId !== user.id &&
@@ -794,17 +840,46 @@ export const handlers = [
     const wallet = (db.wallets[user.id] ?? []).find(
       (item) => item.id === params.walletId,
     );
-    if (!body.success || !wallet)
+    if (!wallet) return error(404, "NOT_FOUND", "Carteira não encontrada");
+    if (!body.success)
       return error(
-        body.success ? 404 : 422,
-        body.success ? "NOT_FOUND" : "VALIDATION_ERROR",
-        body.success
-          ? "Carteira não encontrada"
-          : "Confira os dados da carteira",
+        422,
+        "VALIDATION_ERROR",
+        "Confira os dados da carteira",
+        fieldErrors(body.error.issues),
       );
+    const rejected = unknownReferral(body.data.referralCode);
+    if (rejected) return rejected;
     Object.assign(wallet, body.data);
     saveDb();
     return HttpResponse.json(wallet);
+  }),
+  // Troca a principal: a anterior vira secundária no mesmo passo, então só existe uma principal.
+  http.patch("/api/wallets/:walletId/primary", async ({ params }) => {
+    const user = currentUser();
+    if (!user) return userError();
+    if (getScenario() === "wallets-error")
+      return error(
+        503,
+        "TRANSIENT_FAILURE",
+        "Não foi possível trocar a carteira principal",
+      );
+    const belongsToAnotherUser = Object.entries(db.wallets).some(
+      ([userId, wallets]) =>
+        userId !== user.id &&
+        wallets.some((wallet) => wallet.id === params.walletId),
+    );
+    if (belongsToAnotherUser) return permissionError();
+    const owned = db.wallets[user.id] ?? [];
+    if (!owned.some((wallet) => wallet.id === params.walletId))
+      return error(404, "NOT_FOUND", "Carteira não encontrada");
+    await delay(300);
+    db.wallets[user.id] = owned.map((wallet) => ({
+      ...wallet,
+      primary: wallet.id === params.walletId,
+    }));
+    saveDb();
+    return HttpResponse.json({ items: db.wallets[user.id] });
   }),
   http.post("/api/orders", async ({ request }) => {
     const user = currentUser();
