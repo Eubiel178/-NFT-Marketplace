@@ -30,3 +30,49 @@ test('carrinho em cache da Ana não aparece para Bruno após troca de usuário s
   await expect(page.getByRole('link', { name: /Emerald Ape #042/ })).toHaveCount(0)
   expect(await page.evaluate(() => (window as Window & { sameDocument?: boolean }).sameDocument)).toBe(true)
 })
+
+async function applyAnaCoupon(page: Page) {
+  await page.goto('/login?redirect=%2Fcart&expired=false')
+  await submitLogin(page, 'ana@example.test', 'kurio-demo')
+  await expect(page).toHaveURL(/\/cart$/)
+  await page.getByLabel('Código promocional').fill('KURIO10')
+  await page.getByRole('button', { name: 'Aplicar' }).click()
+  await expect(page.getByText('Remover cupom')).toBeVisible()
+}
+
+function storedCheckoutItems(page: Page) {
+  return page.evaluate(() => Object.keys(localStorage).filter((key) => key.startsWith('nft-marketplace:checkout-')))
+}
+
+test('cupom da Ana fica restrito a ela e é apagado na troca de usuário', async ({ page }) => {
+  await applyAnaCoupon(page)
+  expect(await storedCheckoutItems(page)).toEqual(['nft-marketplace:checkout-coupon:collector-1'])
+
+  await navigateInApp(page, '/login?redirect=%2Fcart&expired=false')
+  await submitLogin(page, 'bruno@example.test', 'bruno-demo')
+  await expect(page).toHaveURL(/\/cart$/)
+  expect(await storedCheckoutItems(page)).toEqual([])
+
+  await page.evaluate(async () => {
+    await fetch('/api/cart/items', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ nftId: 'nft-2', editionId: '1/1', quantity: 1 }) })
+  })
+  await page.reload()
+  await expect(page.getByRole('link', { name: /Sage Nomad #009/ })).toBeVisible()
+  await expect(page.getByLabel('Código promocional')).toHaveValue('')
+  await expect(page.getByText('Remover cupom')).toHaveCount(0)
+})
+
+test('logout apaga cupom e chave de idempotência do usuário', async ({ page }) => {
+  await applyAnaCoupon(page)
+  await page.goto('/checkout')
+  await expect(page.getByRole('button', { name: 'Confirmar compra' })).toBeVisible()
+  expect((await storedCheckoutItems(page)).sort()).toEqual([
+    'nft-marketplace:checkout-coupon:collector-1',
+    'nft-marketplace:checkout-idempotency:collector-1',
+  ])
+
+  await page.goto('/profile')
+  await page.getByRole('button', { name: 'Sair' }).click()
+  await expect(page).toHaveURL(/\/$/)
+  expect(await storedCheckoutItems(page)).toEqual([])
+})

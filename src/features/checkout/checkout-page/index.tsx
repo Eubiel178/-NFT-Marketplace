@@ -12,12 +12,10 @@ import { isSessionExpired, sessionOptions } from '@/features/session/api'
 import { isAxiosTimeout, parseHttpError } from '@/lib/http'
 import { keys } from '@/lib/query'
 import { connectNftUpdates } from '@/lib/realtime'
+import { readUserItem, removeUserItem, writeUserItem } from '@/lib/user-storage'
 import { createOrder, getOrderByKey } from '../api'
 import { CheckoutCustomerFields } from './checkout-customer-fields'
 import { CheckoutSummary } from './checkout-summary'
-
-const idempotencyStorageKey = 'nft-marketplace:checkout-idempotency'
-const couponStorageKey = 'nft-marketplace:checkout-coupon'
 
 function quotesMatch(first: Quote, second: Quote) {
   return first.subtotal === second.subtotal && first.discount === second.discount && first.networkFee === second.networkFee && first.total === second.total && first.items.every((item, index) => {
@@ -40,7 +38,7 @@ export function CheckoutPage() {
   const [walletAddress, setWalletAddress] = useState('')
   const [accepted, setAccepted] = useState(false)
   const [paymentMethod, setPaymentMethod] = useState<'walletconnect' | 'metamask' | 'coinbase'>('coinbase')
-  const [coupon] = useState(() => localStorage.getItem(couponStorageKey) ?? '')
+  const [coupon] = useState(() => readUserItem('checkout-coupon', userId) ?? '')
   const [quoteStale, setQuoteStale] = useState(false)
   const [liveNotice, setLiveNotice] = useState('')
   const [realtimeConnected, setRealtimeConnected] = useState<boolean | null>(null)
@@ -48,10 +46,10 @@ export function CheckoutPage() {
   const orderSubmissionStarted = useRef(false)
   const walletsRef = useRef<HTMLFieldSetElement>(null)
   const [idempotencyKey] = useState(() => {
-    const existing = localStorage.getItem(idempotencyStorageKey)
+    const existing = readUserItem('checkout-idempotency', userId)
     if (existing) return existing
     const next = crypto.randomUUID()
-    localStorage.setItem(idempotencyStorageKey, next)
+    writeUserItem('checkout-idempotency', userId, next)
     return next
   })
   const lines = cart.data?.items ?? []
@@ -95,7 +93,7 @@ export function CheckoutPage() {
         throw error
       }
     },
-    onSuccess: (order) => { localStorage.removeItem(idempotencyStorageKey); void navigate({ to: '/orders/$orderId', params: { orderId: order.id } }) },
+    onSuccess: (order) => { removeUserItem('checkout-idempotency', userId); void navigate({ to: '/orders/$orderId', params: { orderId: order.id } }) },
     onError: (error) => {
       orderSubmissionStarted.current = false
       if (error instanceof Error && error.name === 'QUOTE_STALE' || parseHttpError(error).code === 'QUOTE_STALE') {

@@ -7,6 +7,7 @@ import { logout } from '@/features/auth/api'
 import { sessionOptions } from '@/features/session/api'
 import { disconnectPrivateSubscriptions } from '@/lib/realtime'
 import { keys, queryClient } from '@/lib/query'
+import { clearUserItems } from '@/lib/user-storage'
 
 import { AccountSidebar } from '../account-sidebar'
 
@@ -23,6 +24,6 @@ const menu = [
 export function AccountShell({ children }: { children: React.ReactNode }) {
   const location = useLocation()
   const session = useQuery(sessionOptions)
-  const logoutMutation = useMutation({ mutationFn: logout, onSuccess: async () => { await queryClient.cancelQueries(); disconnectPrivateSubscriptions(); queryClient.clear(); queryClient.setQueryData(keys.session, { user: null }); window.location.assign('/') } })
+  const logoutMutation = useMutation({ mutationFn: logout, onSuccess: async () => { await queryClient.cancelQueries(); disconnectPrivateSubscriptions(); if (session.data?.user) clearUserItems(session.data.user.id); queryClient.clear(); queryClient.setQueryData(keys.session, { user: null }); window.location.assign('/') } })
   return <section className="account-page"><AccountSidebar userName={session.data?.user?.name ?? 'Colecionador'} aria-label="Navegação da conta" logout={<Button variant="ghost" className="account-logout" onClick={() => logoutMutation.mutate()} loading={logoutMutation.isPending}><LogOut aria-hidden="true" />Sair</Button>}><nav>{menu.map(({ label, icon: Icon, to }) => to ? <Link className={location.pathname === to ? 'is-active' : ''} to={to} key={label}><Icon aria-hidden="true" />{label}</Link> : <span className="account-sidebar-action" key={label}><Icon aria-hidden="true" />{label}</span>)}</nav></AccountSidebar><div className="account-content">{children}</div></section>
 }

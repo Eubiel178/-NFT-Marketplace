@@ -21,6 +21,7 @@ export const catalogSearchSchema = z.object({
 export type CatalogSearch = z.infer<typeof catalogSearchSchema>
 export const catalogSchema = z.object({ items: z.array(nftSchema), total: z.number().int(), page: z.number().int(), pageSize: z.number().int() })
 export const sessionSchema = z.object({ user: z.object({ id: z.string(), name: z.string(), email: z.string().email() }).nullable() })
+export type Session = z.infer<typeof sessionSchema>
 export const apiErrorSchema = z.object({ code: z.string(), message: z.string(), fields: z.record(z.string(), z.string()).optional() })
 export const cartItemSchema = z.object({
   nftId: z.string(), editionId: z.string(), quantity: z.number().int().positive(), price: ethSchema.optional(),

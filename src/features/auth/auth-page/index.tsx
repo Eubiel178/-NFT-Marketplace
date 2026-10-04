@@ -7,8 +7,11 @@ import { X } from 'lucide-react'
 import { Button, Input, MobileSocialBlock, PasswordInput, SocialButton } from '@/components'
 import { parseHttpError } from '@/lib/http'
 import { keys, queryClient } from '@/lib/query'
+import { clearUserItems } from '@/lib/user-storage'
 
 import { login, register } from '../api'
+
+import type { Session } from '@/contracts'
 
 type AuthMode = 'login' | 'register'
 
@@ -27,6 +30,8 @@ export function AuthPage({ mode }: { mode: AuthMode }) {
     mutationFn: () => isLogin ? login({ email, password }) : register({ username, email, password, confirmPassword }),
     onSuccess: async (session) => {
       await queryClient.cancelQueries()
+      const previousUserId = queryClient.getQueryData<Session>(keys.session)?.user?.id
+      if (previousUserId && previousUserId !== session.user?.id) clearUserItems(previousUserId)
       queryClient.clear()
       queryClient.setQueryData(keys.session, session)
       await navigate({ to: search.redirect?.startsWith('/') ? search.redirect : '/' })

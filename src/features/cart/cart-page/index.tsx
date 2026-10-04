@@ -10,12 +10,11 @@ import { catalogOptions } from '@/features/catalog/api'
 import { sessionOptions } from '@/features/session/api'
 import { keys } from '@/lib/query'
 import { connectNftUpdates } from '@/lib/realtime'
+import { readUserItem, removeUserItem, writeUserItem } from '@/lib/user-storage'
 import { cartOptions, createQuote, removeCartItem, updateCartItem } from '../api'
 import { CartLine } from './cart-line'
 import { CartRelated } from './cart-related'
 import { CartSummary } from './cart-summary'
-
-const couponStorageKey = 'nft-marketplace:checkout-coupon'
 
 function CartSkeleton() {
   return <section className="cart-page"><div className="cart-skeleton" role="status" aria-label="Carregando carrinho" /></section>
@@ -34,7 +33,7 @@ function CartContent({ userId }: { userId: string | null }) {
   const cartKey = keys.cart(userId)
   const cart = useQuery(cartOptions(userId))
   const related = useQuery(catalogOptions({ q: '', category: 'all', collection: 'all', network: 'all', sort: 'recent', page: 1 }))
-  const savedCoupon = localStorage.getItem(couponStorageKey) ?? ''
+  const savedCoupon = userId ? readUserItem('checkout-coupon', userId) ?? '' : ''
   const [coupon, setCoupon] = useState(savedCoupon)
   const [appliedCoupon, setAppliedCoupon] = useState(savedCoupon)
   const [liveNotice, setLiveNotice] = useState('')
@@ -75,7 +74,7 @@ function CartContent({ userId }: { userId: string | null }) {
   })
   const applyCoupon = useMutation({
     mutationFn: () => createQuote(items, coupon.trim()),
-    onSuccess: (next) => { const value = coupon.trim(); setAppliedCoupon(value); localStorage.setItem(couponStorageKey, value); setQuote(next) },
+    onSuccess: (next) => { const value = coupon.trim(); setAppliedCoupon(value); if (userId) writeUserItem('checkout-coupon', userId, value); setQuote(next) },
   })
   const itemIdsKey = items.map((item) => item.nftId).join('|')
   const baseQuote = useQuery({ queryKey: keys.cartQuote(userId ?? '', items, appliedCoupon), queryFn: () => createQuote(items, appliedCoupon || undefined), enabled: items.length > 0 && Boolean(userId) })
@@ -124,7 +123,7 @@ function CartContent({ userId }: { userId: string | null }) {
              quoteError={baseQuote.isError}
              onRetryQuote={() => void baseQuote.refetch()}
              hasCoupon={Boolean(coupon)}
-             onRemoveCoupon={() => { setCoupon(''); setAppliedCoupon(''); setQuote(null); localStorage.removeItem(couponStorageKey) }}
+             onRemoveCoupon={() => { setCoupon(''); setAppliedCoupon(''); setQuote(null); if (userId) removeUserItem('checkout-coupon', userId) }}
              quoteLoading={quoteLoading}
              displayedQuote={displayedQuote}
              checkoutDisabled={(authenticated && (!displayedQuote || baseQuote.isFetching || baseQuote.isError)) || mutation.isPending || removeMutation.isPending}
