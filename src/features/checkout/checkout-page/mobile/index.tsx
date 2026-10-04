@@ -7,6 +7,14 @@ import { MobileMethods } from '../methods'
 import type { CheckoutViewProps } from '../view-props'
 import { WalletCards } from '../wallet-cards'
 
+// O frame mostra "Carteira conectada"; nos outros estados o título não afirma uma conexão que não existe.
+const walletTitles = {
+  connected: 'Carteira conectada',
+  connecting: 'Conectando carteira',
+  disconnected: 'Conectar carteira',
+  rejected: 'Conectar carteira',
+} as const
+
 // Frame mobile: carteiras cadastradas, método de conexão, total e botão fixo no rodapé.
 export function Mobile({ quote, quoteLoading, quoteError, onRetryQuote, form, errors, wallets, onWallet, method, onMethod, connection, liveNotice, canConfirm, onConfirm }: CheckoutViewProps) {
   const fieldErrors = Object.values(errors)
@@ -19,7 +27,7 @@ export function Mobile({ quote, quoteLoading, quoteError, onRetryQuote, form, er
         <h1 className="text-title-20-bold leading-24">Pagamento com carteira</h1>
       </div>
       <div className="mt-6.5 flex items-center justify-between">
-        <h2 className="text-body-large-16-bold">Carteira conectada</h2>
+        <h2 className="text-body-large-16-bold">{walletTitles[connection.status]}</h2>
         <a href="#checkout-wallets" className="text-body-14 font-bold leading-16 text-text-accent">Trocar carteira</a>
       </div>
       <div className="mt-4">

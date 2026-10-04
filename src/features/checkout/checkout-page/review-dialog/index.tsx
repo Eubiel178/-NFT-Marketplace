@@ -10,6 +10,7 @@ export interface ReviewDialogProps {
   reviewError: boolean
   submitting: boolean
   orderError: string
+  liveNotice: string
   walletName: string
   networkLabel: string
   methodLabel: string
@@ -21,7 +22,7 @@ export interface ReviewDialogProps {
 
 // Etapa de revisão: a cotação acabou de ser revalidada; qualquer mudança aparece
 // em destaque e o envio só acontece com um novo clique em "Enviar pedido".
-export function ReviewDialog({ open, review, reviewing, reviewError, submitting, orderError, walletName, networkLabel, methodLabel, collector, onClose, onRetry, onSubmit }: ReviewDialogProps) {
+export function ReviewDialog({ open, review, reviewing, reviewError, submitting, orderError, liveNotice, walletName, networkLabel, methodLabel, collector, onClose, onRetry, onSubmit }: ReviewDialogProps) {
   return (
     <Modal.Root isOpen={open} onClose={onClose} size="md">
       <Modal.Header>
@@ -43,12 +44,19 @@ export function ReviewDialog({ open, review, reviewing, reviewError, submitting,
               <Button variant="link" size="sm" className="min-h-0 p-0" onClick={onRetry}>Tentar novamente</Button>
             </p>
           )}
-          {review && review.changes.length > 0 && (
+          {/* Com o diálogo aberto o resto da página fica inerte: o aviso do nft.updated
+              é repetido aqui, no mesmo alerta das mudanças da cotação. */}
+          {(liveNotice || (review && review.changes.length > 0)) && (
             <div role="alert" className="rounded-6 border border-primary p-3">
-              <p className="font-bold text-text-accent">A cotação mudou. Confira e confirme de novo.</p>
-              <ul className="mt-1 list-disc pl-5 text-text-secondary">
-                {review.changes.map((change) => <li key={change}>{change}</li>)}
-              </ul>
+              {liveNotice && <p className="text-text-secondary">{liveNotice}</p>}
+              {review && review.changes.length > 0 && (
+                <>
+                  <p className="font-bold text-text-accent">A cotação mudou. Confira e confirme de novo.</p>
+                  <ul className="mt-1 list-disc pl-5 text-text-secondary">
+                    {review.changes.map((change) => <li key={change}>{change}</li>)}
+                  </ul>
+                </>
+              )}
             </div>
           )}
           {review && (

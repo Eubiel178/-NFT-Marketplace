@@ -17,6 +17,9 @@ export function useWalletConnection(userId: string, walletId: string) {
   const queryClient = useQueryClient()
   const key = keys.walletConnection(userId)
   const [method, setMethod] = useState<PaymentMethod>('coinbase')
+  // Até o usuário desconectar, a carteira sem conexão está prestes a ser conectada
+  // automaticamente: o estado é "conectando", não "desconectada".
+  const [disconnectedByUser, setDisconnectedByUser] = useState(false)
   const connection = useQuery({ queryKey: key, queryFn: ({ signal }) => getWalletConnection(signal), enabled: Boolean(userId) })
   const connect = useMutation({
     mutationFn: (input: { walletId: string; method: PaymentMethod }) => connectWallet(input.walletId, input.method),
@@ -42,7 +45,9 @@ export function useWalletConnection(userId: string, walletId: string) {
       ? 'rejected'
       : connectedHere
         ? 'connected'
-        : 'disconnected'
+        : connection.isPending || (walletId && !disconnectedByUser)
+          ? 'connecting'
+          : 'disconnected'
 
   return {
     status,
@@ -55,6 +60,7 @@ export function useWalletConnection(userId: string, walletId: string) {
     },
     reconnect: (nextWalletId: string) => connect.mutate({ walletId: nextWalletId, method: connectedHere && current ? current.method : method }),
     disconnect: () => {
+      setDisconnectedByUser(true)
       if (current) disconnect.mutate(current.walletId)
       connect.reset()
     },

@@ -123,6 +123,7 @@ function CheckoutContent({ data, wallets, isDesktop }: CheckoutContentProps) {
         reviewError={order.reviewError}
         submitting={order.submitting}
         orderError={order.orderError}
+        liveNotice={liveNotice}
         walletName={wallet?.name ?? ''}
         networkLabel={networkLabels[network]}
         methodLabel={methodLabel}
