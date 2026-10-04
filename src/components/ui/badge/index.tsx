@@ -8,9 +8,9 @@ export interface BadgeProps extends ComponentProps<'span'> {
 
 export function Badge({ className, variant = 'default', size = 'md', children, ...props }: BadgeProps) {
   const sizeStyles = {
-    sm: 'text-caption-12 font-normal leading-16 px-2 py-0.5 rounded-[4px]',
-    md: 'text-caption-13 font-medium leading-16 px-2.5 py-1 rounded-[6px]',
-    lg: 'text-body-14 font-medium leading-16 tracking-wide px-3 py-1.5 rounded-[8px]',
+    sm: 'text-caption-12 font-normal leading-16 px-2 py-0.5 rounded-4',
+    md: 'text-caption-13 font-medium leading-16 px-2.5 py-1 rounded-6',
+    lg: 'text-body-14 font-medium leading-16 tracking-wide px-3 py-1.5 rounded-8',
   }
 
   const variantStyles = {
@@ -20,7 +20,7 @@ export function Badge({ className, variant = 'default', size = 'md', children, .
     limited: 'bg-error/20 text-error border border-error/30',
   }
 
-  const rareStyles = variant === 'rare' && size === 'sm' ? 'h-8 min-w-[68px] justify-center rounded-32 bg-primary text-ink border-0 text-caption-13 font-medium leading-16' : undefined
+  const rareStyles = variant === 'rare' && size === 'sm' ? 'h-8 min-w-17 justify-center rounded-32 bg-primary text-ink border-0 text-caption-13 font-medium leading-16' : undefined
   const borderClass = rareStyles ? 'border-0' : 'border'
 
   return (

@@ -53,6 +53,18 @@ Medidas e método em `docs/figma-medidas.md`.
 - **Destaque de opção no Select:** com o Radix, o foco vai para a opção. O destaque usa `surface-raised`, porque o tom anterior era igual ao fundo da lista e deixava o foco invisível (foco visível é obrigatório).
 - **Animação de abertura de overlays:** as animações do shadcn/ui dependem do pacote `tw-animate-css`, que não foi instalado. Dialog, Sheet e Select abrem sem transição.
 
+### Tipografia composta (decisão de 04/10/2026)
+
+Os 30 estilos compostos do Figma (`text-body-14-bold`, `text-display-43-bold`…) deixaram de ser classes CSS e viraram **tokens de texto no `@theme`**, com as propriedades associadas do Tailwind v4 (`--text-<nome>--line-height`, `--font-weight` e `--letter-spacing`). Motivos:
+
+- é o mecanismo nativo do Tailwind para "tamanho + entrelinha + peso": gera o utilitário `text-<nome>`, funciona com variantes (`lg:text-heading-28-bold`) e continua sobrescrevível por `leading-*`, `font-*` e `tracking-*`, o que um `@utility` com propriedades fixas não garante;
+- os valores do Figma ficam uma vez só no tema, como pede o `AGENTS.md`;
+- o `cn()` (`src/lib/utils.ts`) recebeu os 30 nomes, senão o tailwind-merge os trataria como cor e descartaria o tamanho ao lado de `text-text-secondary`.
+
+O único estilo com alinhamento (`display-32-bold`, centralizado) não leva o `text-align` no token, porque um token de texto não carrega alinhamento: quem usar escreve `text-center` no JSX. Hoje nenhum componente o usa.
+
+As 76 classes `.figma-*` (cópia da lista de estilos do Figma em `px`) não eram usadas por nenhum componente e foram removidas. O snapshot de estilos computados de 9 telas em 1440 e 390 deu 0 diferenças antes e depois.
+
 ## Execução e deploy
 
 Vite é a ferramenta complementar escolhida; todas as tecnologias obrigatórias têm dependência/configuração dedicada. REST, Socket.IO, Router, Query, Axios, Tailwind e componentes iniciais já têm caminho de execução. Playwright exercita a infraestrutura. Lighthouse tem script preparado, sem atestar metas finais. Build de demonstração ativa MSW inclusive em produção; build normal permite API configurada, mas não existe backend externo entregue.

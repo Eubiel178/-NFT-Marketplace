@@ -44,6 +44,104 @@
   --text-display-32: 2rem;
   --text-display-43: 2.6875rem;
 
+  /* Estilos compostos do Figma: tamanho + line-height + peso (+ tracking).
+     Uso: text-body-14-bold. Alinhamento fica no JSX (text-center). */
+  --text-display-43-bold: var(--text-display-43);
+  --text-display-43-bold--line-height: var(--leading-auto);
+  --text-display-43-bold--font-weight: var(--font-weight-bold);
+  --text-display-32-bold: var(--text-display-32);
+  --text-display-32-bold--line-height: var(--leading-auto);
+  --text-display-32-bold--font-weight: var(--font-weight-bold);
+  --text-display-32-bold--letter-spacing: var(--tracking-wide);
+  --text-heading-28-bold: var(--text-heading-28);
+  --text-heading-28-bold--line-height: var(--leading-auto);
+  --text-heading-28-bold--font-weight: var(--font-weight-bold);
+  --text-heading-24-bold: var(--text-heading-24);
+  --text-heading-24-bold--line-height: var(--leading-auto);
+  --text-heading-24-bold--font-weight: var(--font-weight-bold);
+  --text-title-22-bold: var(--text-title-22);
+  --text-title-22-bold--line-height: var(--leading-16);
+  --text-title-22-bold--font-weight: var(--font-weight-bold);
+  --text-title-22-regular: var(--text-title-22);
+  --text-title-22-regular--line-height: var(--leading-16);
+  --text-title-22-regular--font-weight: var(--font-weight-normal);
+  --text-title-21-regular: var(--text-title-21);
+  --text-title-21-regular--line-height: var(--leading-auto);
+  --text-title-21-regular--font-weight: var(--font-weight-normal);
+  --text-title-20-bold: var(--text-title-20);
+  --text-title-20-bold--line-height: var(--leading-16);
+  --text-title-20-bold--font-weight: var(--font-weight-bold);
+  --text-title-20-medium: var(--text-title-20);
+  --text-title-20-medium--line-height: var(--leading-16);
+  --text-title-20-medium--font-weight: var(--font-weight-medium);
+  --text-title-20-regular: var(--text-title-20);
+  --text-title-20-regular--line-height: var(--leading-10);
+  --text-title-20-regular--font-weight: var(--font-weight-normal);
+  --text-body-large-18-bold: var(--text-body-large-18);
+  --text-body-large-18-bold--line-height: var(--leading-16);
+  --text-body-large-18-bold--font-weight: var(--font-weight-bold);
+  --text-body-large-18-medium: var(--text-body-large-18);
+  --text-body-large-18-medium--line-height: var(--leading-auto);
+  --text-body-large-18-medium--font-weight: var(--font-weight-medium);
+  --text-body-large-18-regular: var(--text-body-large-18);
+  --text-body-large-18-regular--line-height: var(--leading-auto);
+  --text-body-large-18-regular--font-weight: var(--font-weight-normal);
+  --text-body-large-17-bold: var(--text-body-large-17);
+  --text-body-large-17-bold--line-height: var(--leading-auto);
+  --text-body-large-17-bold--font-weight: var(--font-weight-bold);
+  --text-body-large-17-regular: var(--text-body-large-17);
+  --text-body-large-17-regular--line-height: var(--leading-10);
+  --text-body-large-17-regular--font-weight: var(--font-weight-normal);
+  --text-body-large-16-bold: var(--text-body-large-16);
+  --text-body-large-16-bold--line-height: var(--leading-16);
+  --text-body-large-16-bold--font-weight: var(--font-weight-bold);
+  --text-body-large-16-medium: var(--text-body-large-16);
+  --text-body-large-16-medium--line-height: var(--leading-16);
+  --text-body-large-16-medium--font-weight: var(--font-weight-medium);
+  --text-body-large-16-regular: var(--text-body-large-16);
+  --text-body-large-16-regular--line-height: var(--leading-10);
+  --text-body-large-16-regular--font-weight: var(--font-weight-normal);
+  --text-body-15-bold: var(--text-body-15);
+  --text-body-15-bold--line-height: var(--leading-16);
+  --text-body-15-bold--font-weight: var(--font-weight-bold);
+  --text-body-15-medium: var(--text-body-15);
+  --text-body-15-medium--line-height: var(--leading-16);
+  --text-body-15-medium--font-weight: var(--font-weight-medium);
+  --text-body-15-medium--letter-spacing: var(--tracking-wide);
+  --text-body-15-regular: var(--text-body-15);
+  --text-body-15-regular--line-height: var(--leading-16);
+  --text-body-15-regular--font-weight: var(--font-weight-normal);
+  --text-body-14-bold: var(--text-body-14);
+  --text-body-14-bold--line-height: var(--leading-16);
+  --text-body-14-bold--font-weight: var(--font-weight-bold);
+  --text-body-14-bold--letter-spacing: var(--tracking-wide);
+  --text-body-14-medium: var(--text-body-14);
+  --text-body-14-medium--line-height: var(--leading-16);
+  --text-body-14-medium--font-weight: var(--font-weight-medium);
+  --text-body-14-medium--letter-spacing: var(--tracking-wide);
+  --text-body-14-regular: var(--text-body-14);
+  --text-body-14-regular--line-height: var(--leading-24);
+  --text-body-14-regular--font-weight: var(--font-weight-normal);
+  --text-caption-13-medium: var(--text-caption-13);
+  --text-caption-13-medium--line-height: var(--leading-16);
+  --text-caption-13-medium--font-weight: var(--font-weight-medium);
+  --text-caption-13-regular: var(--text-caption-13);
+  --text-caption-13-regular--line-height: var(--leading-22);
+  --text-caption-13-regular--font-weight: var(--font-weight-normal);
+  --text-caption-12-bold: var(--text-caption-12);
+  --text-caption-12-bold--line-height: var(--leading-16);
+  --text-caption-12-bold--font-weight: var(--font-weight-bold);
+  --text-caption-12-regular: var(--text-caption-12);
+  --text-caption-12-regular--line-height: var(--leading-16);
+  --text-caption-12-regular--font-weight: var(--font-weight-normal);
+  --text-tiny-10-medium: var(--text-tiny-10);
+  --text-tiny-10-medium--line-height: var(--leading-auto);
+  --text-tiny-10-medium--font-weight: var(--font-weight-medium);
+  --text-tiny-9-bold: var(--text-tiny-9);
+  --text-tiny-9-bold--line-height: var(--leading-auto);
+  --text-tiny-9-bold--font-weight: var(--font-weight-bold);
+  --text-tiny-9-bold--letter-spacing: var(--tracking-tight);
+
   --leading-10: 0.625rem;
   --leading-15: 0.9375rem;
   --leading-16: 1rem;
@@ -266,647 +364,6 @@ textarea:focus-visible {
   }
 }
 
-/* ==========================================================================
-   UTILITÁRIOS DE TIPOGRAFIA (classes utilitárias para os 76 estilos)
-   ========================================================================== */
-
-/* Display */
-.text-display-43-bold {
-  font-size: var(--text-display-43);
-  font-weight: var(--font-weight-bold);
-  line-height: var(--leading-auto);
-}
-.text-display-32-bold {
-  font-size: var(--text-display-32);
-  font-weight: var(--font-weight-bold);
-  line-height: var(--leading-auto);
-  letter-spacing: var(--tracking-wide);
-  text-align: center;
-}
-
-/* Heading */
-.text-heading-28-bold {
-  font-size: var(--text-heading-28);
-  font-weight: var(--font-weight-bold);
-  line-height: var(--leading-auto);
-}
-.text-heading-24-bold {
-  font-size: var(--text-heading-24);
-  font-weight: var(--font-weight-bold);
-  line-height: var(--leading-auto);
-}
-
-/* Title */
-.text-title-22-bold {
-  font-size: var(--text-title-22);
-  font-weight: var(--font-weight-bold);
-  line-height: var(--leading-16);
-}
-.text-title-22-regular {
-  font-size: var(--text-title-22);
-  font-weight: var(--font-weight-normal);
-  line-height: var(--leading-16);
-}
-.text-title-21-regular {
-  font-size: var(--text-title-21);
-  font-weight: var(--font-weight-normal);
-  line-height: var(--leading-auto);
-}
-.text-title-20-bold {
-  font-size: var(--text-title-20);
-  font-weight: var(--font-weight-bold);
-  line-height: var(--leading-16);
-}
-.text-title-20-medium {
-  font-size: var(--text-title-20);
-  font-weight: var(--font-weight-medium);
-  line-height: var(--leading-16);
-}
-.text-title-20-regular {
-  font-size: var(--text-title-20);
-  font-weight: var(--font-weight-normal);
-  line-height: var(--leading-10);
-}
-
-/* Body Large */
-.text-body-large-18-bold {
-  font-size: var(--text-body-large-18);
-  font-weight: var(--font-weight-bold);
-  line-height: var(--leading-16);
-}
-.text-body-large-18-medium {
-  font-size: var(--text-body-large-18);
-  font-weight: var(--font-weight-medium);
-  line-height: var(--leading-auto);
-}
-.text-body-large-18-regular {
-  font-size: var(--text-body-large-18);
-  font-weight: var(--font-weight-normal);
-  line-height: var(--leading-auto);
-}
-.text-body-large-17-bold {
-  font-size: var(--text-body-large-17);
-  font-weight: var(--font-weight-bold);
-  line-height: var(--leading-auto);
-}
-.text-body-large-17-regular {
-  font-size: var(--text-body-large-17);
-  font-weight: var(--font-weight-normal);
-  line-height: var(--leading-10);
-}
-.text-body-large-16-bold {
-  font-size: var(--text-body-large-16);
-  font-weight: var(--font-weight-bold);
-  line-height: var(--leading-16);
-}
-.text-body-large-16-medium {
-  font-size: var(--text-body-large-16);
-  font-weight: var(--font-weight-medium);
-  line-height: var(--leading-16);
-}
-.text-body-large-16-regular {
-  font-size: var(--text-body-large-16);
-  font-weight: var(--font-weight-normal);
-  line-height: var(--leading-10);
-}
-
-/* Body */
-.text-body-15-bold {
-  font-size: var(--text-body-15);
-  font-weight: var(--font-weight-bold);
-  line-height: var(--leading-16);
-}
-.text-body-15-medium {
-  font-size: var(--text-body-15);
-  font-weight: var(--font-weight-medium);
-  line-height: var(--leading-16);
-  letter-spacing: var(--tracking-wide);
-}
-.text-body-15-regular {
-  font-size: var(--text-body-15);
-  font-weight: var(--font-weight-normal);
-  line-height: var(--leading-16);
-}
-
-.text-body-14-bold {
-  font-size: var(--text-body-14);
-  font-weight: var(--font-weight-bold);
-  line-height: var(--leading-16);
-  letter-spacing: var(--tracking-wide);
-}
-.text-body-14-medium {
-  font-size: var(--text-body-14);
-  font-weight: var(--font-weight-medium);
-  line-height: var(--leading-16);
-  letter-spacing: var(--tracking-wide);
-}
-.text-body-14-regular {
-  font-size: var(--text-body-14);
-  font-weight: var(--font-weight-normal);
-  line-height: var(--leading-24);
-}
-
-/* Caption */
-.text-caption-13-medium {
-  font-size: var(--text-caption-13);
-  font-weight: var(--font-weight-medium);
-  line-height: var(--leading-16);
-}
-.text-caption-13-regular {
-  font-size: var(--text-caption-13);
-  font-weight: var(--font-weight-normal);
-  line-height: var(--leading-22);
-}
-.text-caption-12-bold {
-  font-size: var(--text-caption-12);
-  font-weight: var(--font-weight-bold);
-  line-height: var(--leading-16);
-}
-.text-caption-12-regular {
-  font-size: var(--text-caption-12);
-  font-weight: var(--font-weight-normal);
-  line-height: var(--leading-16);
-}
-
-/* Tiny */
-.text-tiny-10-medium {
-  font-size: var(--text-tiny-10);
-  font-weight: var(--font-weight-medium);
-  line-height: var(--leading-auto);
-}
-.text-tiny-9-bold {
-  font-size: var(--text-tiny-9);
-  font-weight: var(--font-weight-bold);
-  line-height: var(--leading-auto);
-  letter-spacing: var(--tracking-tight);
-}
-
-/* Mapeamento explícito das 76 entradas tipográficas documentadas no Figma. */
-.figma-tiny-9-bold {
-  font-size: 9px;
-  font-weight: 700;
-  line-height: normal;
-  letter-spacing: 0.0111em;
-  text-align: left;
-}
-.figma-tiny-10-medium {
-  font-size: 10px;
-  font-weight: 500;
-  line-height: normal;
-  text-align: left;
-}
-.figma-text-style {
-  font-size: 12px;
-  font-weight: 400;
-  line-height: normal;
-  text-align: left;
-}
-.figma-style-125a5a15 {
-  font-size: 12px;
-  font-weight: 500;
-  line-height: normal;
-  text-align: left;
-}
-.figma-caption-12-bold {
-  font-size: 12px;
-  font-weight: 700;
-  line-height: normal;
-  text-align: left;
-}
-.figma-caption-12-regular-16-left {
-  font-size: 12px;
-  font-weight: 400;
-  line-height: 16px;
-  text-align: left;
-}
-.figma-caption-12-regular-16-center {
-  font-size: 12px;
-  font-weight: 400;
-  line-height: 16px;
-  text-align: center;
-}
-.figma-caption-12-regular-18-left {
-  font-size: 12px;
-  font-weight: 400;
-  line-height: 18px;
-  text-align: left;
-}
-.figma-caption-13-medium-center {
-  font-size: 13px;
-  font-weight: 500;
-  line-height: normal;
-  text-align: center;
-}
-.figma-caption-13-medium-left {
-  font-size: 13px;
-  font-weight: 500;
-  line-height: normal;
-  text-align: left;
-}
-.figma-caption-13-regular-16-center {
-  font-size: 13px;
-  font-weight: 400;
-  line-height: 16px;
-  text-align: center;
-}
-.figma-caption-13-regular-16-left {
-  font-size: 13px;
-  font-weight: 400;
-  line-height: 16px;
-  text-align: left;
-}
-.figma-caption-13-regular-22-left {
-  font-size: 13px;
-  font-weight: 400;
-  line-height: 22px;
-  text-align: left;
-}
-.figma-body-14-bold-16-left {
-  font-size: 14px;
-  font-weight: 700;
-  line-height: 16px;
-  text-align: left;
-}
-.figma-body-14-bold-16-center {
-  font-size: 14px;
-  font-weight: 700;
-  line-height: 16px;
-  text-align: center;
-}
-.figma-body-14-bold-20-left {
-  font-size: 14px;
-  font-weight: 700;
-  line-height: 20px;
-  text-align: left;
-}
-.figma-body-14-bold-24-left {
-  font-size: 14px;
-  font-weight: 700;
-  line-height: 24px;
-  text-align: left;
-}
-.figma-body-14-bold-auto-wide-left {
-  font-size: 14px;
-  font-weight: 700;
-  line-height: normal;
-  letter-spacing: 0.1em;
-  text-align: left;
-}
-.figma-body-14-bold-auto-left {
-  font-size: 14px;
-  font-weight: 700;
-  line-height: normal;
-  letter-spacing: 0;
-  text-align: left;
-}
-.figma-body-14-medium-16-wide-left {
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 16px;
-  letter-spacing: 0.1em;
-  text-align: left;
-}
-.figma-body-14-medium-16-center {
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 16px;
-  letter-spacing: 0;
-  text-align: center;
-}
-.figma-body-14-medium-16-left {
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 16px;
-  letter-spacing: 0;
-  text-align: left;
-}
-.figma-body-14-medium-20-left {
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 20px;
-  text-align: left;
-}
-.figma-body-14-regular-15-left {
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 15px;
-  text-align: left;
-}
-.figma-body-14-regular-16-left {
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 16px;
-  text-align: left;
-}
-.figma-body-14-regular-16-center {
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 16px;
-  text-align: center;
-}
-.figma-body-14-regular-22-left {
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 22px;
-  text-align: left;
-}
-.figma-body-14-regular-22-center {
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 22px;
-  text-align: center;
-}
-.figma-body-14-regular-24-left {
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 24px;
-  text-align: left;
-}
-.figma-body-14-regular-24-right {
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 24px;
-  text-align: right;
-}
-.figma-body-14-regular-30-left {
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 30px;
-  text-align: left;
-}
-.figma-body-14-regular-30-center {
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 30px;
-  text-align: center;
-}
-.figma-body-15-bold-15-left {
-  font-size: 15px;
-  font-weight: 700;
-  line-height: 15px;
-  text-align: left;
-}
-.figma-body-15-bold-16-left {
-  font-size: 15px;
-  font-weight: 700;
-  line-height: 16px;
-  text-align: left;
-}
-.figma-body-15-bold-16-center {
-  font-size: 15px;
-  font-weight: 700;
-  line-height: 16px;
-  text-align: center;
-}
-.figma-body-15-bold-40-right {
-  font-size: 15px;
-  font-weight: 700;
-  line-height: 40px;
-  text-align: right;
-}
-.figma-body-15-medium {
-  font-size: 15px;
-  font-weight: 500;
-  line-height: normal;
-  text-align: left;
-}
-.figma-body-15-regular-15-left {
-  font-size: 15px;
-  font-weight: 400;
-  line-height: 15px;
-  text-align: left;
-}
-.figma-body-15-regular-16-left {
-  font-size: 15px;
-  font-weight: 400;
-  line-height: 16px;
-  text-align: left;
-}
-.figma-body-15-regular-40-left {
-  font-size: 15px;
-  font-weight: 400;
-  line-height: 40px;
-  text-align: left;
-}
-.figma-body-15-regular-40-right {
-  font-size: 15px;
-  font-weight: 400;
-  line-height: 40px;
-  text-align: right;
-}
-.figma-body-15-regular-45-left {
-  font-size: 15px;
-  font-weight: 400;
-  line-height: 45px;
-  text-align: left;
-}
-.figma-body-large-16-bold-16-left {
-  font-size: 16px;
-  font-weight: 700;
-  line-height: 16px;
-  text-align: left;
-}
-.figma-body-large-16-bold-16-center {
-  font-size: 16px;
-  font-weight: 700;
-  line-height: 16px;
-  text-align: center;
-}
-.figma-body-large-16-bold-20-left {
-  font-size: 16px;
-  font-weight: 700;
-  line-height: 20px;
-  text-align: left;
-}
-.figma-body-large-16-bold-auto-left {
-  font-size: 16px;
-  font-weight: 700;
-  line-height: normal;
-  text-align: left;
-}
-.figma-body-large-16-medium-16-left {
-  font-size: 16px;
-  font-weight: 500;
-  line-height: 16px;
-  text-align: left;
-}
-.figma-body-large-16-medium-auto-left {
-  font-size: 16px;
-  font-weight: 500;
-  line-height: normal;
-  text-align: left;
-}
-.figma-body-large-16-regular-10-left {
-  font-size: 16px;
-  font-weight: 400;
-  line-height: 10px;
-  text-align: left;
-}
-.figma-body-large-16-regular-16-left {
-  font-size: 16px;
-  font-weight: 400;
-  line-height: 16px;
-  text-align: left;
-}
-.figma-body-large-16-regular-16-right {
-  font-size: 16px;
-  font-weight: 400;
-  line-height: 16px;
-  text-align: right;
-}
-.figma-body-large-16-regular-auto-left {
-  font-size: 16px;
-  font-weight: 400;
-  line-height: normal;
-  text-align: left;
-}
-.figma-body-large-17-bold-left {
-  font-size: 17px;
-  font-weight: 700;
-  line-height: normal;
-  text-align: left;
-}
-.figma-body-large-17-bold-center {
-  font-size: 17px;
-  font-weight: 700;
-  line-height: normal;
-  text-align: center;
-}
-.figma-body-large-17-regular-10-left {
-  font-size: 17px;
-  font-weight: 400;
-  line-height: 10px;
-  text-align: left;
-}
-.figma-body-large-17-regular-16-left {
-  font-size: 17px;
-  font-weight: 400;
-  line-height: 16px;
-  text-align: left;
-}
-.figma-body-large-18-bold-16-left {
-  font-size: 18px;
-  font-weight: 700;
-  line-height: 16px;
-  text-align: left;
-}
-.figma-body-large-18-bold-16-right {
-  font-size: 18px;
-  font-weight: 700;
-  line-height: 16px;
-  text-align: right;
-}
-.figma-body-large-18-bold-24-right {
-  font-size: 18px;
-  font-weight: 700;
-  line-height: 24px;
-  text-align: right;
-}
-.figma-body-large-18-medium {
-  font-size: 18px;
-  font-weight: 500;
-  line-height: normal;
-  text-align: left;
-}
-.figma-body-large-18-regular-left {
-  font-size: 18px;
-  font-weight: 400;
-  line-height: normal;
-  text-align: left;
-}
-.figma-body-large-18-regular-right {
-  font-size: 18px;
-  font-weight: 400;
-  line-height: normal;
-  text-align: right;
-}
-.figma-style-7b9d1ac4 {
-  font-size: 18px;
-  font-weight: 400;
-  line-height: normal;
-  text-align: left;
-}
-.figma-title-20-bold-16-left {
-  font-size: 20px;
-  font-weight: 700;
-  line-height: 16px;
-  text-align: left;
-}
-.figma-title-20-bold-16-right {
-  font-size: 20px;
-  font-weight: 700;
-  line-height: 16px;
-  text-align: right;
-}
-.figma-title-20-medium {
-  font-size: 20px;
-  font-weight: 500;
-  line-height: normal;
-  text-align: left;
-}
-.figma-title-20-regular-10-left {
-  font-size: 20px;
-  font-weight: 400;
-  line-height: 10px;
-  text-align: left;
-}
-.figma-title-21-regular {
-  font-size: 21px;
-  font-weight: 400;
-  line-height: normal;
-  text-align: left;
-}
-.figma-title-22-bold {
-  font-size: 22px;
-  font-weight: 700;
-  line-height: normal;
-  text-align: left;
-}
-.figma-title-22-regular-right {
-  font-size: 22px;
-  font-weight: 400;
-  line-height: normal;
-  text-align: right;
-}
-.figma-title-22-regular-left {
-  font-size: 22px;
-  font-weight: 400;
-  line-height: normal;
-  text-align: left;
-}
-.figma-heading-24-bold-center {
-  font-size: 24px;
-  font-weight: 700;
-  line-height: normal;
-  text-align: center;
-}
-.figma-heading-24-bold-left {
-  font-size: 24px;
-  font-weight: 700;
-  line-height: normal;
-  text-align: left;
-}
-.figma-heading-28-bold {
-  font-size: 28px;
-  font-weight: 700;
-  line-height: normal;
-  text-align: left;
-}
-.figma-display-32-bold {
-  font-size: 32px;
-  font-weight: 700;
-  line-height: normal;
-  letter-spacing: 0.1em;
-  text-align: center;
-}
-.figma-display-43-bold {
-  font-size: 43px;
-  font-weight: 700;
-  line-height: normal;
-  text-align: left;
-}
-
-/* Alinhamentos */
 .text-right {
   text-align: right;
 }
