@@ -253,3 +253,46 @@ test.describe('carteiras', () => {
     await expect(page.getByText('Reserva Atualizada').locator('visible=true').first()).toBeVisible()
   })
 })
+
+test.describe('perfil: avatar e e-mail', () => {
+  test('remover sem avatar não faz nada e avisa, sem desabilitar o botão', async ({ page }) => {
+    await signIn(page, '/profile')
+    const remove = page.getByRole('button', { name: 'Remover' })
+    await expect(remove).toBeEnabled()
+    let requests = 0
+    page.on('request', (request) => {
+      if (request.url().includes('/api/profile/avatar')) requests += 1
+    })
+    await remove.click()
+    await expect(page.getByRole('status').filter({ hasText: 'Não há avatar para remover' })).toBeVisible()
+    expect(requests).toBe(0)
+  })
+
+  test('trocar o e-mail do perfil mantém a sessão e o carrinho', async ({ page }) => {
+    await signIn(page, '/profile')
+    const read = () =>
+      page.evaluate(async () => {
+        const [session, cart] = await Promise.all([fetch('/api/session'), fetch('/api/cart')])
+        const sessionBody = (await session.json()) as { user: { id: string; email: string } | null }
+        const cartBody = (await cart.json()) as { items: Array<{ nftId: string; editionId: string; quantity: number }> }
+        return { user: sessionBody.user, items: cartBody.items.map(({ nftId, editionId, quantity }) => ({ nftId, editionId, quantity })) }
+      })
+    const before = await read()
+    expect(before.items.length).toBeGreaterThan(0)
+
+    const form = page.getByRole('form', { name: 'Perfil do colecionador' })
+    await form.getByLabel('E-mail').fill('ana.nova@example.test')
+    await form.getByRole('button', { name: 'Salvar' }).click()
+    await expect(page.getByRole('status').filter({ hasText: 'Alterações salvas' })).toBeVisible()
+
+    const after = await read()
+    expect(after.user).toEqual({ ...before.user, email: 'ana.nova@example.test' })
+    expect(after.items).toEqual(before.items)
+    await expect(page).toHaveURL(/\/profile$/)
+
+    await page.reload()
+    await expect(page.getByRole('form', { name: 'Perfil do colecionador' }).getByLabel('E-mail')).toHaveValue('ana.nova@example.test')
+    await page.goto('/cart')
+    await expect(page.getByRole('list', { name: 'Itens do carrinho' }).getByRole('listitem')).toHaveCount(before.items.length)
+  })
+})
