@@ -41,15 +41,15 @@ const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
               'pointer-events-none absolute inset-0 rounded-4 border-2 border-border bg-surface-card transition-colors',
               'peer-checked:border-primary peer-checked:bg-primary',
               'peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-primary',
-              'peer-disabled:bg-muted peer-disabled:opacity-50',
+              'peer-disabled:bg-surface-card peer-disabled:opacity-50',
               error && 'border-error',
             )}
           />
-          <Check className="pointer-events-none absolute inset-0 z-0 hidden h-5 w-5 p-0.5 text-primary-foreground peer-checked:block" aria-hidden="true" />
+          <Check className="pointer-events-none absolute inset-0 z-0 hidden h-5 w-5 p-0.5 text-ink peer-checked:block" aria-hidden="true" />
         </div>
         {(label || description) && (
           <div className="flex flex-col gap-1">
-            {label && <label htmlFor={checkboxId} className="cursor-pointer text-body-14-medium text-text">{label}</label>}
+            {label && <label htmlFor={checkboxId} className="cursor-pointer text-body-14-medium text-foreground">{label}</label>}
             {description && <p id={descId} className="text-caption-12-regular text-text-secondary">{description}</p>}
           </div>
         )}

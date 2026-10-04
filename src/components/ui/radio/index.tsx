@@ -63,7 +63,7 @@ const Radio = forwardRef<HTMLInputElement, RadioProps>(
               'pointer-events-none absolute inset-0 rounded-full border-2 border-border bg-surface-card transition-colors',
               'peer-checked:border-primary',
               'peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-primary',
-              'peer-disabled:bg-muted peer-disabled:opacity-50',
+              'peer-disabled:bg-surface-card peer-disabled:opacity-50',
               error && 'border-error',
             )}
           />
@@ -75,7 +75,7 @@ const Radio = forwardRef<HTMLInputElement, RadioProps>(
         {(icon || label || description) && (
           <div className="flex flex-col gap-1">
             {icon && <span aria-hidden="true">{icon}</span>}
-            {label && <label htmlFor={radioId} className="cursor-pointer text-body-14-medium text-text">{label}</label>}
+            {label && <label htmlFor={radioId} className="cursor-pointer text-body-14-medium text-foreground">{label}</label>}
             {description && <p id={descriptionId} className="text-caption-12-regular text-text-secondary">{description}</p>}
           </div>
         )}

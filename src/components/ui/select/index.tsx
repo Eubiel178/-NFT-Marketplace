@@ -136,7 +136,7 @@ export const Select = forwardRef<HTMLDivElement, SelectProps>(
       <div
         ref={dropdownRef}
         id={listboxId}
-        className="absolute left-0 top-full z-50 mt-1 max-h-[240px] w-full overflow-y-auto rounded-md border border-border bg-surface-card shadow-cart-focus"
+        className="absolute left-0 top-full z-50 mt-1 max-h-[240px] w-full overflow-y-auto rounded-6 border border-border bg-surface-card shadow-cart-focus"
         role="listbox"
         aria-labelledby={selectId}
       >
@@ -153,11 +153,11 @@ export const Select = forwardRef<HTMLDivElement, SelectProps>(
               className={cn(
                 'px-4 py-3 text-body-14-regular',
                 option.disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer',
-                'hover:bg-muted',
-                'focus:bg-muted',
-                'data-[highlighted]:bg-muted',
+                'hover:bg-surface-card',
+                'focus:bg-surface-card',
+                'data-[highlighted]:bg-surface-card',
                 option.value === value && 'bg-primary/10 text-primary',
-                state.highlightedIndex === enabledIndex && !option.disabled && 'bg-muted',
+                state.highlightedIndex === enabledIndex && !option.disabled && 'bg-surface-card',
               )}
               data-highlighted={state.highlightedIndex === enabledIndex}
               data-selected={option.value === value}
@@ -213,12 +213,12 @@ export const Select = forwardRef<HTMLDivElement, SelectProps>(
             onKeyDown={handleKeyDown}
             className={cn(
               'w-full relative flex items-center justify-between',
-              'bg-surface-card border border-border rounded-md',
-              'text-text placeholder:text-text-secondary',
+              'bg-surface-card border border-border rounded-6',
+              'text-foreground placeholder:text-text-secondary',
               'transition-colors duration-200',
-              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background',
-              'disabled:opacity-50 disabled:pointer-events-none disabled:bg-muted',
-               'h-[50px] rounded-md px-4 text-body-14-regular',
+              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-ink',
+              'disabled:opacity-50 disabled:pointer-events-none disabled:bg-surface-card',
+               'h-[50px] rounded-6 px-4 text-body-14-regular',
               error && 'border-error focus-visible:ring-error'
             )}
           >

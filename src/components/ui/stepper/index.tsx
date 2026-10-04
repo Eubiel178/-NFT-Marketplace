@@ -50,7 +50,7 @@ export function Stepper({
       role="group"
       aria-label={ariaLabel}
       className={cn(
-        'inline-flex items-center overflow-hidden rounded-md border border-border bg-surface-card',
+        'inline-flex items-center overflow-hidden rounded-6 border border-border bg-surface-card',
         'disabled:opacity-50',
         sizeStyles[size],
         className,

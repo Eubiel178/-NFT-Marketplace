@@ -90,16 +90,16 @@ function ToastItem({ toast, onDismiss }: ToastItemProps) {
 
   const variantStyles = {
     default: 'bg-surface-card border-border',
-    success: 'bg-success/10 border-success',
+    success: 'bg-primary/10 border-primary',
     error: 'bg-error/10 border-error',
-    warning: 'bg-text-coral/10 border-text-coral',
+    warning: 'bg-error/10 border-error',
     info: 'bg-primary/10 border-primary',
   }
   const iconStyles = {
-    default: 'text-text',
-    success: 'text-success',
+    default: 'text-foreground',
+    success: 'text-primary',
     error: 'text-error',
-    warning: 'text-text-coral',
+    warning: 'text-error',
     info: 'text-primary',
   }
 
@@ -111,7 +111,7 @@ function ToastItem({ toast, onDismiss }: ToastItemProps) {
       className={cn(
         'relative flex items-start gap-3 p-4',
         'bg-surface-card border',
-        'rounded-lg shadow-cart-focus',
+        'rounded-10 shadow-cart-focus',
         'animate-slide-in',
         isExiting && 'animate-slide-out opacity-0',
         variantStyles[toast.variant]
@@ -121,7 +121,7 @@ function ToastItem({ toast, onDismiss }: ToastItemProps) {
     >
       <Icon className={cn('h-5 w-5 flex-shrink-0 mt-0.5', iconStyles[toast.variant])} aria-hidden="true" />
       <div className="flex-1 min-w-0">
-        <p className="text-body-14-medium text-text">{toast.title}</p>
+        <p className="text-body-14-medium text-foreground">{toast.title}</p>
         {toast.description && (
           <p className="mt-1 text-body-14-regular text-text-secondary">{toast.description}</p>
         )}
@@ -142,7 +142,7 @@ function ToastItem({ toast, onDismiss }: ToastItemProps) {
         <button
           type="button"
           onClick={() => onDismiss(toast.id)}
-          className="p-1 text-text-secondary hover:text-text transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded"
+          className="p-1 text-text-secondary hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded"
            aria-label="Fechar notificação"
         >
           <X className="h-4 w-4" aria-hidden="true" />

@@ -1,4 +1,3 @@
-
 import { Outlet, useLocation } from "@tanstack/react-router";
 
 import {
@@ -44,7 +43,7 @@ export function Layout() {
     <>
       <a
         href="#main"
-        className="sr-only z-[60] focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:rounded-md focus:bg-surface-card focus:p-4"
+        className="sr-only z-[60] focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:rounded-6 focus:bg-surface-card focus:p-4"
       >
         Pular para o conteúdo
       </a>

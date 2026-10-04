@@ -14,13 +14,13 @@ export function Badge({ className, variant = 'default', size = 'md', children, .
   }
 
   const variantStyles = {
-    default: 'bg-muted text-text border border-border',
+    default: 'bg-surface-card text-foreground border border-border',
     rare: 'bg-primary/20 text-primary border border-primary/30',
     featured: 'bg-gradient-to-r from-primary/20 to-primary/10 text-primary border border-primary/30',
-    limited: 'bg-text-coral/20 text-text-coral border border-text-coral/30',
+    limited: 'bg-error/20 text-error border border-error/30',
   }
 
-  const rareStyles = variant === 'rare' && size === 'sm' ? 'h-8 min-w-[68px] justify-center rounded-32 bg-primary text-primary-foreground border-0 text-caption-13-medium' : undefined
+  const rareStyles = variant === 'rare' && size === 'sm' ? 'h-8 min-w-[68px] justify-center rounded-32 bg-primary text-ink border-0 text-caption-13-medium' : undefined
   const borderClass = rareStyles ? 'border-0' : 'border'
 
   return (

@@ -15,7 +15,7 @@ export function Pagination({ currentPage, totalPages, onPageChange, showFirstLas
   if (totalPages <= 1) return null
 
   const pages = getVisiblePages(currentPage, totalPages, maxVisiblePages)
-  const controlClassName = 'rounded-4 p-1 transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary disabled:pointer-events-none disabled:opacity-50'
+  const controlClassName = 'rounded-4 p-1 transition-colors hover:bg-surface-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary disabled:pointer-events-none disabled:opacity-50'
 
   return (
     <nav aria-label={ariaLabel} className={cn('flex items-center justify-center gap-2', className)}>
@@ -40,7 +40,7 @@ export function Pagination({ currentPage, totalPages, onPageChange, showFirstLas
           <li key={page}>
             <button
               type="button"
-              className={cn('rounded-4 p-2 text-body-14-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary', page === currentPage ? 'bg-primary text-primary-foreground' : 'hover:bg-muted')}
+              className={cn('rounded-4 p-2 text-body-14-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary', page === currentPage ? 'bg-primary text-ink' : 'hover:bg-surface-card')}
               onClick={() => onPageChange(page)}
               disabled={page === currentPage}
               aria-label={`Página ${page}`}

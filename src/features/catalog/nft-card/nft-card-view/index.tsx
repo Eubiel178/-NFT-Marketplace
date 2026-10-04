@@ -30,7 +30,7 @@ export function NftCardView({
               'overflow-hidden',
               'transition-shadow duration-200 hover:shadow-cart-focus',
             ]
-          : ['bg-gradient-card-mobile', 'rounded-[20px]', 'p-[12px_4px_20px]', 'gap-[10px]', 'w-full'],
+          : ['bg-(image:--gradient-card-mobile)', 'rounded-[20px]', 'p-[12px_4px_20px]', 'gap-[10px]', 'w-full'],
         className,
       )}
     >

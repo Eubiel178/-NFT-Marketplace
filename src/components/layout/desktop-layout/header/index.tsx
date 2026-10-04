@@ -47,7 +47,7 @@ export function Header() {
         <Link
           to="/"
           aria-label="Buscar NFTs"
-          className="rounded-md p-2 text-text-secondary hover:bg-surface-card hover:text-foreground"
+          className="rounded-6 p-2 text-text-secondary hover:bg-surface-card hover:text-foreground"
         >
           <Image
             src="/assets/figma/mcp/svg/search.svg"
@@ -62,7 +62,7 @@ export function Header() {
           <Link
             to="/cart"
             aria-label="Carrinho"
-            className="header-cart-link rounded-md p-2 text-text-secondary hover:bg-surface-card hover:text-foreground"
+            className="header-cart-link rounded-6 p-2 text-text-secondary hover:bg-surface-card hover:text-foreground"
           >
             <Image
               src="/assets/figma/mcp/svg/shop.svg"
@@ -84,7 +84,7 @@ export function Header() {
         <Link
           to="/login"
           search={{ redirect: "/", expired: false }}
-          className="inline-flex min-h-10 items-center gap-2 rounded-6 bg-primary px-4 text-body-14-bold text-primary-foreground hover:opacity-90"
+          className="inline-flex min-h-10 items-center gap-2 rounded-6 bg-primary px-4 text-body-14-bold text-ink hover:opacity-90"
         >
           <Image
             src="/assets/figma/mcp/svg/iconly-curved-logout.svg"

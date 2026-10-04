@@ -38,12 +38,12 @@ export const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
             aria-invalid={error ? 'true' : 'false'}
             aria-describedby={describedBy}
              className={cn(
-               'w-full rounded-md border border-border bg-surface-card px-4 text-body-14-regular text-text',
+               'w-full rounded-6 border border-border bg-surface-card px-4 text-body-14-regular text-foreground',
                showToggle && 'pr-12',
               size === 'sm' ? 'h-10' : 'h-[50px]',
               'placeholder:text-text-secondary transition-colors duration-200',
-              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background',
-              'disabled:pointer-events-none disabled:bg-muted disabled:opacity-50',
+              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-ink',
+              'disabled:pointer-events-none disabled:bg-surface-card disabled:opacity-50',
               error && 'border-error focus-visible:ring-error',
             )}
             {...rest}
@@ -51,7 +51,7 @@ export const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
            {showToggle && <button
             type="button"
             onClick={() => setShowPassword((visible) => !visible)}
-            className="absolute right-3 top-1/2 -translate-y-1/2 rounded p-1 text-text-secondary transition-colors hover:text-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+            className="absolute right-3 top-1/2 -translate-y-1/2 rounded p-1 text-text-secondary transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
             aria-label={showPassword ? 'Ocultar senha' : 'Mostrar senha'}
             aria-pressed={showPassword}
             disabled={disabled}

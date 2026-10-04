@@ -33,17 +33,17 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
             aria-invalid={error ? 'true' : 'false'}
             aria-describedby={describedBy}
             className={cn(
-              'w-full bg-surface-card border border-border rounded-md',
-              'text-text placeholder:text-text-secondary',
+              'w-full bg-surface-card border border-border rounded-6',
+              'text-foreground placeholder:text-text-secondary',
               'transition-colors duration-200',
-              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background',
-              'disabled:opacity-50 disabled:pointer-events-none disabled:bg-muted',
+              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-ink',
+              'disabled:opacity-50 disabled:pointer-events-none disabled:bg-surface-card',
               leftIcon && 'pl-10',
               rightIcon && 'pr-10',
               error && 'border-error focus-visible:ring-error',
               'px-4',
               size === 'sm' ? 'h-10' : 'h-[50px]',
-              variant === 'promo' ? 'rounded-pill' : 'rounded-md',
+              variant === 'promo' ? 'rounded-40' : 'rounded-6',
             )}
             {...rest}
           />

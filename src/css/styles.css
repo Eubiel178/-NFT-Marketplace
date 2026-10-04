@@ -2,12 +2,11 @@
 
 @theme {
   /* ==========================================================================
-     CORES — tokens extraídos do Figma
+     CORES — tokens do Figma. Um nome por valor.
      ========================================================================== */
   --color-ink: #140d0a;
   --color-foreground: #f5f1eb;
   --color-primary: #d28a4c;
-  --color-primary-foreground: var(--color-ink);
   --color-secondary: #b39463;
   --color-surface-card: #241612;
   --color-surface-dark: #38220f;
@@ -16,144 +15,93 @@
   --color-border-soft: #55321f;
   --color-text-accent: #e89b55;
   --color-text-secondary: #cfb28c;
-  --color-text-coral: #f0805f;
-
-  /* Estados semânticos usam cores existentes do Figma. */
-  --color-hover: var(--color-text-accent);
-  --color-focus: var(--color-primary);
-  --color-disabled: var(--color-border-soft);
-  --color-error: var(--color-text-coral);
-  --color-error-foreground: var(--color-ink);
-  --color-success: var(--color-primary);
-  --color-success-foreground: var(--color-ink);
+  --color-error: #f0805f;
 
   /* Cor literal usada pela base das cinco sombras do Figma. */
   --shadow-color: rgba(10, 6, 4, 0.45);
 
-  /* Mapeamento semântico para uso nos componentes */
-  --color-background: var(--color-ink);
-  --color-text: var(--color-foreground);
-  --color-muted: var(--color-surface-card);
-  --color-border-base: var(--color-border);
-  --color-ring: var(--color-primary);
-
   /* ==========================================================================
-     TIPOGRAFIA — Roboto Mono, 16 tamanhos, 3 pesos
+     TIPOGRAFIA — Roboto Mono (variável 400–700), 16 tamanhos
      ========================================================================== */
-  --font-family-base: "Roboto Mono", monospace;
-  --font-family-mono: "Roboto Mono", monospace;
-  --font-sans: "Roboto Mono", monospace;
   --font-mono: "Roboto Mono", monospace;
+  --default-font-family: var(--font-mono);
 
-  /* Pesos */
   --font-weight-regular: 400;
   --font-weight-medium: 500;
   --font-weight-bold: 700;
 
-  /* Escala de tamanhos (16 tamanhos do Figma) */
-  --text-tiny-9: 9px;
-  --text-tiny-10: 10px;
-  --text-caption-12: 12px;
-  --text-caption-13: 13px;
-  --text-body-14: 14px;
-  --text-body-15: 15px;
-  --text-body-large-16: 16px;
-  --text-body-large-17: 17px;
-  --text-body-large-18: 18px;
-  --text-title-20: 20px;
-  --text-title-21: 21px;
-  --text-title-22: 22px;
-  --text-heading-24: 24px;
-  --text-heading-28: 28px;
-  --text-display-32: 32px;
-  --text-display-43: 43px;
+  --text-tiny-9: 0.5625rem;
+  --text-tiny-10: 0.625rem;
+  --text-caption-12: 0.75rem;
+  --text-caption-13: 0.8125rem;
+  --text-body-14: 0.875rem;
+  --text-body-15: 0.9375rem;
+  --text-body-large-16: 1rem;
+  --text-body-large-17: 1.0625rem;
+  --text-body-large-18: 1.125rem;
+  --text-title-20: 1.25rem;
+  --text-title-21: 1.3125rem;
+  --text-title-22: 1.375rem;
+  --text-heading-24: 1.5rem;
+  --text-heading-28: 1.75rem;
+  --text-display-32: 2rem;
+  --text-display-43: 2.6875rem;
 
-  /* Line heights (valores do Figma) */
-  --leading-10: 10px;
-  --leading-15: 15px;
-  --leading-16: 16px;
-  --leading-18: 18px;
-  --leading-20: 20px;
-  --leading-22: 22px;
-  --leading-24: 24px;
-  --leading-30: 30px;
-  --leading-40: 40px;
-  --leading-45: 45px;
+  --leading-10: 0.625rem;
+  --leading-15: 0.9375rem;
+  --leading-16: 1rem;
+  --leading-18: 1.125rem;
+  --leading-20: 1.25rem;
+  --leading-22: 1.375rem;
+  --leading-24: 1.5rem;
+  --leading-30: 1.875rem;
+  --leading-40: 2.5rem;
+  --leading-45: 2.8125rem;
   --leading-auto: normal;
 
-  /* Letter spacing */
   --tracking-tight: 0.0111em;
   --tracking-wide: 0.1em;
 
-  /* ==========================================================================
-     ESPAÇAMENTO — gaps do Figma (escala base 4px + valores específicos)
-     ========================================================================== */
-  --spacing: 4px;
-  --space-1: 4px;
-  --space-1-5: 6px;
-  --space-2: 8px;
-  --space-2-5: 10px;
-  --space-3: 12px;
-  --space-4: 16px;
-  --space-5: 20px;
-  --space-6: 24px;
-  --space-7: 28px;
-  --space-8: 32px;
-  --space-10: 40px;
-  --space-11: 44px;
-  --space-12: 48px;
-  --space-18: 72px;
-  --space-22: 88px;
-
-  /* Valor específico do overlap documentado no Figma. */
-  --space-negative-114: -114px;
+  /* Espaçamento: escala padrão do Tailwind (--spacing: 0.25rem). */
 
   /* ==========================================================================
-     RAIOS — 21 valores do Figma, escala sugerida 10 valores
+     RAIOS — valores do Figma; a escala padrão do Tailwind é descartada.
+     rounded-none e rounded-full continuam disponíveis (utilitários estáticos).
      ========================================================================== */
-  --radius-none: 0;
-  --radius-3: 3px;
-  --radius-4: 4px;
-  --radius-5: 5px;
-  --radius-6: 6px;
-  --radius-7: 7px;
-  --radius-8: 8px;
-  --radius-10: 10px;
-  --radius-11: 11px;
-  --radius-12: 12px;
-  --radius-13: 13px;
-  --radius-14: 14px;
-  --radius-15: 15px;
-  --radius-16: 16px;
-  --radius-17: 17px;
-  --radius-17-5: 17.5px;
-  --radius-18: 18px;
-  --radius-20: 20px;
-  --radius-22: 22px;
-  --radius-24: 24px;
-  --radius-25: 25px;
-  --radius-29: 29px;
-  --radius-31: 31px;
-  --radius-32: 32px;
-  --radius-40: 40px;
-
-  /* Aliases semânticos para uso comum */
-  --radius-sm: 4px;
-  --radius-md: 6px;
-  --radius-lg: 10px;
-  --radius-xl: 16px;
-  --radius-2xl: 24px;
-  --radius-pill: 40px;
-  --radius-full: 9999px;
+  --radius-*: initial;
+  --radius-3: 0.1875rem;
+  --radius-4: 0.25rem;
+  --radius-5: 0.3125rem;
+  --radius-6: 0.375rem;
+  --radius-7: 0.4375rem;
+  --radius-8: 0.5rem;
+  --radius-10: 0.625rem;
+  --radius-11: 0.6875rem;
+  --radius-12: 0.75rem;
+  --radius-13: 0.8125rem;
+  --radius-14: 0.875rem;
+  --radius-15: 0.9375rem;
+  --radius-16: 1rem;
+  --radius-17: 1.0625rem;
+  --radius-17-5: 1.09375rem;
+  --radius-18: 1.125rem;
+  --radius-20: 1.25rem;
+  --radius-22: 1.375rem;
+  --radius-24: 1.5rem;
+  --radius-25: 1.5625rem;
+  --radius-29: 1.8125rem;
+  --radius-31: 1.9375rem;
+  --radius-32: 2rem;
+  --radius-40: 2.5rem;
 
   /* ==========================================================================
-     SOMBRAS — 2 tokens globais + 3 inline do Figma
+     SOMBRAS — 5 do Figma
      ========================================================================== */
-  --shadow-cart-focus: 0 6px 20px 0 var(--shadow-color);
-  --shadow-buy-bar: 0 0 20px 0 var(--shadow-color);
-  --shadow-tab-bar: 0 -10px 30px 0 var(--shadow-color);
-  --shadow-wallet-selected: 0 20px 20px 0 var(--shadow-color);
-  --shadow-coinbase-selected: 0 0 40px 0 var(--shadow-color);
+  --shadow-cart-focus: 0 0.375rem 1.25rem 0 var(--shadow-color);
+  --shadow-buy-bar: 0 0 1.25rem 0 var(--shadow-color);
+  --shadow-tab-bar: 0 -0.625rem 1.875rem 0 var(--shadow-color);
+  --shadow-wallet-selected: 0 1.25rem 1.25rem 0 var(--shadow-color);
+  --shadow-coinbase-selected: 0 0 2.5rem 0 var(--shadow-color);
 
   /* ==========================================================================
      GRADIENTES — 4 globais + 5 inline do Figma
@@ -178,8 +126,6 @@
     var(--color-surface-card) 0%,
     var(--color-surface-card) 100%
   );
-
-  /* Gradientes inline (não tokenizados no Figma) */
   --gradient-featured-banner: linear-gradient(
     180deg,
     rgba(210, 138, 76, 0.1) 0%,
@@ -206,22 +152,25 @@
     rgba(210, 138, 76, 1) 100%
   );
 
-  /* ==========================================================================
-   BREAKPOINTS — 640 / 768 / 1024 (responsive layout)
-   ========================================================================== */
-  --breakpoint-mobile: 390px;
-  --breakpoint-tablet: 768px;
-  --breakpoint-desktop: 1440px;
-  --breakpoint-sm: 640px;
-  --breakpoint-md: 768px;
-  --breakpoint-lg: 1024px;
+  /* Breakpoints: padrão do Tailwind (sm 40rem, md 48rem, lg 64rem). */
 
   /* ==========================================================================
      CONTAINER — conteúdo desktop 1200px (1440 - 240)
      ========================================================================== */
-  --container-content: 1200px;
-  --container-padding-desktop: var(--space-6) 120px;
-  --container-padding-mobile: var(--space-6);
+  --container-content: 75rem;
+  --container-padding-desktop: 1.5rem 7.5rem;
+  --container-padding-mobile: 1.5rem;
+}
+
+@font-face {
+  font-family: "Roboto Mono";
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("/fonts/roboto-mono/roboto-mono-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
+    U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
 /* ==========================================================================
@@ -236,7 +185,7 @@
 }
 
 html {
-  font-family: var(--font-family-base);
+  font-family: var(--font-mono);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -244,9 +193,9 @@ html {
 body {
   margin: 0;
   min-width: 0;
-  background: var(--color-background);
-  color: var(--color-text);
-  font-family: var(--font-family-base);
+  background: var(--color-ink);
+  color: var(--color-foreground);
+  font-family: var(--font-mono);
   font-size: var(--text-body-14);
   line-height: var(--leading-24);
 }
@@ -270,7 +219,7 @@ button:focus-visible,
 input:focus-visible,
 select:focus-visible,
 textarea:focus-visible {
-  outline: 2px solid var(--color-focus);
+  outline: 2px solid var(--color-primary);
   outline-offset: 4px;
 }
 
@@ -972,161 +921,6 @@ textarea:focus-visible {
 }
 
 /* ==========================================================================
-   UTILITÁRIOS DE GRADIENTE
-   ========================================================================== */
-.bg-gradient-glow {
-  background-image: var(--gradient-glow);
-}
-.bg-gradient-card-mobile {
-  background-image: var(--gradient-card-mobile);
-}
-.bg-gradient-cta-checkout {
-  background-image: var(--gradient-cta-checkout);
-}
-.bg-gradient-cart-item-focus {
-  background-image: var(--gradient-cart-item-focus);
-}
-.bg-gradient-featured-banner {
-  background-image: var(--gradient-featured-banner);
-}
-.bg-gradient-green-stroke {
-  background-image: var(--gradient-green-stroke);
-}
-.bg-gradient-filter-btn {
-  background-image: var(--gradient-filter-btn);
-}
-.bg-gradient-tab-bar-notch {
-  background-image: var(--gradient-tab-bar-notch);
-}
-.bg-gradient-apply-coupon {
-  background-image: var(--gradient-apply-coupon);
-}
-
-/* ==========================================================================
-   UTILITÁRIOS DE SOMBRA
-   ========================================================================== */
-.shadow-cart-focus {
-  box-shadow: var(--shadow-cart-focus);
-}
-.shadow-buy-bar {
-  box-shadow: var(--shadow-buy-bar);
-}
-.shadow-tab-bar {
-  box-shadow: var(--shadow-tab-bar);
-}
-.shadow-wallet-selected {
-  box-shadow: var(--shadow-wallet-selected);
-}
-.shadow-coinbase-selected {
-  box-shadow: var(--shadow-coinbase-selected);
-}
-
-/* ==========================================================================
-   UTILITÁRIOS DE RAIO (semânticos)
-   ========================================================================== */
-.rounded-sm {
-  border-radius: var(--radius-sm);
-}
-.rounded-md {
-  border-radius: var(--radius-md);
-}
-.rounded-lg {
-  border-radius: var(--radius-lg);
-}
-.rounded-xl {
-  border-radius: var(--radius-xl);
-}
-.rounded-2xl {
-  border-radius: var(--radius-2xl);
-}
-.rounded-pill {
-  border-radius: var(--radius-pill);
-}
-.rounded-full {
-  border-radius: var(--radius-full);
-}
-
-/* Raios específicos do Figma */
-.rounded-3 {
-  border-radius: 3px;
-}
-.rounded-4 {
-  border-radius: 4px;
-}
-.rounded-5 {
-  border-radius: 5px;
-}
-.rounded-6 {
-  border-radius: 6px;
-}
-.rounded-7 {
-  border-radius: 7px;
-}
-.rounded-8 {
-  border-radius: 8px;
-}
-.rounded-10 {
-  border-radius: 10px;
-}
-.rounded-11 {
-  border-radius: 11px;
-}
-.rounded-12 {
-  border-radius: 12px;
-}
-.rounded-13 {
-  border-radius: 13px;
-}
-.rounded-14 {
-  border-radius: 14px;
-}
-.rounded-15 {
-  border-radius: 15px;
-}
-.rounded-16 {
-  border-radius: 16px;
-}
-.rounded-17 {
-  border-radius: 17px;
-}
-.rounded-17-5 {
-  border-radius: 17.5px;
-}
-.rounded-18 {
-  border-radius: 18px;
-}
-.rounded-20 {
-  border-radius: 20px;
-}
-.rounded-22 {
-  border-radius: 22px;
-}
-.rounded-24 {
-  border-radius: 24px;
-}
-.rounded-25 {
-  border-radius: 25px;
-}
-.rounded-29 {
-  border-radius: 29px;
-}
-.rounded-31 {
-  border-radius: 31px;
-}
-.rounded-32 {
-  border-radius: 32px;
-}
-.rounded-40 {
-  border-radius: 40px;
-}
-.rounded-40-t {
-  border-radius: 40px 40px 0 0;
-}
-.rounded-31-t {
-  border-radius: 31px 31px 0 0;
-}
-
-/* ==========================================================================
    CONTAINER / LAYOUT
    ========================================================================== */
 .container-content {
@@ -1155,26 +949,26 @@ textarea:focus-visible {
   min-width: 0;
 }
 
-@media (max-width: 639px) {
+@media (width < 40rem) {
   .mobile-layout {
     border-radius: 40px 40px 0 0;
     overflow-x: clip;
   }
 }
 
-@media (min-width: 768px) {
+@media (width >= 48rem) {
   .container-content {
     padding: 24px 48px;
   }
 }
 
-@media (min-width: 1440px) {
+@media (width >= 90rem) {
   .container-content {
     padding: var(--container-padding-desktop);
   }
 }
 
-@media (min-width: 1024px) {
+@media (width >= 64rem) {
   .desktop-layout {
     display: flex;
   }
@@ -1203,7 +997,7 @@ textarea:focus-visible {
   place-items: center;
   border-radius: 999px;
   background: var(--color-primary);
-  color: var(--color-primary-foreground);
+  color: var(--color-ink);
   font-size: var(--text-tiny-9);
   font-weight: var(--font-weight-bold);
 }
@@ -1333,7 +1127,7 @@ textarea:focus-visible {
 }
 .auth-tabs a.is-active {
   border-bottom: 2px solid var(--color-primary);
-  color: var(--color-text);
+  color: var(--color-foreground);
 }
 .auth-card h1 {
   margin: 2rem 0 0.5rem;
@@ -1405,7 +1199,7 @@ textarea:focus-visible {
   color: var(--color-primary);
 }
 
-@media (min-width: 640px) {
+@media (width >= 40rem) {
   .auth-card h1 {
     position: absolute;
     width: 1px;
@@ -1416,7 +1210,7 @@ textarea:focus-visible {
   }
 }
 
-@media (max-width: 639px) {
+@media (width < 40rem) {
   .mobile-tab-bar nav > ul {
     height: 95px;
   }
@@ -1436,7 +1230,7 @@ textarea:focus-visible {
   .auth-mobile-logo {
     display: block;
     margin: 0 auto;
-    color: var(--color-text);
+    color: var(--color-foreground);
     font-size: 2rem;
     font-weight: var(--font-weight-bold);
     letter-spacing: 0.08em;
@@ -1667,12 +1461,12 @@ textarea:focus-visible {
 .checkout-total {
   padding-top: 0.75rem;
   border-top: 1px solid var(--color-border);
-  color: var(--color-text);
+  color: var(--color-foreground);
   font-weight: var(--font-weight-bold);
 }
 .cart-total dd,
 .checkout-total dd {
-  color: var(--color-text);
+  color: var(--color-foreground);
 }
 .cart-checkout {
   width: 100%;
@@ -1767,7 +1561,7 @@ textarea:focus-visible {
   place-items: center;
   border: 1px solid var(--color-border);
   border-radius: 50%;
-  color: var(--color-text);
+  color: var(--color-foreground);
 }
 .checkout-heading h1 {
   margin: 0;
@@ -1842,7 +1636,7 @@ textarea:focus-visible {
   border: 1px solid var(--color-border);
   border-radius: 4px;
   background: transparent;
-  color: var(--color-text);
+  color: var(--color-foreground);
 }
 .checkout-items {
   display: grid;
@@ -1961,7 +1755,7 @@ textarea:focus-visible {
   border: 1px solid var(--color-border);
   border-radius: 15px;
   background: transparent;
-  color: var(--color-text);
+  color: var(--color-foreground);
   cursor: pointer;
 }
 .checkout-payment-methods button.is-selected {
@@ -1972,7 +1766,7 @@ textarea:focus-visible {
   color: var(--color-text-secondary);
 }
 
-@media (min-width: 640px) {
+@media (width >= 40rem) {
   .checkout-wallets {
     display: none;
   }
@@ -2117,7 +1911,7 @@ textarea:focus-visible {
   padding: 1rem;
   border-radius: 5px;
   background: var(--color-primary);
-  color: var(--color-primary-foreground);
+  color: var(--color-ink);
   font-weight: var(--font-weight-bold);
   text-decoration: none;
 }
@@ -2185,7 +1979,7 @@ textarea:focus-visible {
   gap: 0.75rem;
   border: 1px solid var(--color-border);
   background: var(--color-surface-card);
-  color: var(--color-text);
+  color: var(--color-foreground);
   cursor: pointer;
 }
 
@@ -2308,7 +2102,7 @@ textarea:focus-visible {
   white-space: nowrap;
 }
 
-@media (min-width: 640px) {
+@media (width >= 40rem) {
   .wallet-selector-methods {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
@@ -2366,7 +2160,7 @@ textarea:focus-visible {
 .account-sidebar nav a.is-active,
 .account-sidebar nav a:hover,
 .account-sidebar-action:hover {
-  color: var(--color-text);
+  color: var(--color-foreground);
   background: var(--color-surface-card);
 }
 .account-sidebar nav svg,
@@ -2428,7 +2222,7 @@ textarea:focus-visible {
   border: 1px solid var(--color-border);
   border-radius: 6px;
   background: var(--color-surface-card);
-  color: var(--color-text);
+  color: var(--color-foreground);
 }
 .avatar-field {
   display: grid;
@@ -2460,7 +2254,7 @@ textarea:focus-visible {
 }
 .account-success {
   margin: 0;
-  color: var(--color-success);
+  color: var(--color-primary);
 }
 .account-form > button {
   width: fit-content;
@@ -2487,7 +2281,7 @@ textarea:focus-visible {
   border-top: 1px solid var(--color-border);
 }
 
-@media (max-width: 639px) {
+@media (width < 40rem) {
   .cart-page,
   .checkout-page {
     width: calc(100% + 3rem);
@@ -2525,7 +2319,7 @@ textarea:focus-visible {
     place-items: center;
     border: 1px solid var(--color-border);
     border-radius: 50%;
-    color: var(--color-text);
+    color: var(--color-foreground);
   }
   .cart-header-mobile h1 {
     margin: 0;
@@ -2739,7 +2533,7 @@ textarea:focus-visible {
   }
 }
 
-@media (min-width: 640px) and (max-width: 1023px) {
+@media (40rem <= width < 64rem) {
   .account-fields .avatar-field > div {
     flex-wrap: wrap;
     gap: 0.75rem;
@@ -2831,7 +2625,7 @@ textarea:focus-visible {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  color: var(--color-text);
+  color: var(--color-foreground);
   font-size: var(--text-caption-12);
   font-weight: var(--font-weight-bold);
   line-height: var(--leading-16);
@@ -2896,7 +2690,7 @@ textarea:focus-visible {
 .home-mobile-tabs {
   display: flex;
   width: 100%;
-  gap: var(--space-5);
+  gap: calc(var(--spacing) * 5);
   overflow-x: auto;
   scrollbar-width: none;
 }
@@ -2919,7 +2713,7 @@ textarea:focus-visible {
 }
 
 .home-tab.is-active {
-  color: var(--color-text);
+  color: var(--color-foreground);
   font-weight: var(--font-weight-bold);
 }
 
@@ -2999,7 +2793,7 @@ textarea:focus-visible {
   border: 0;
   border-radius: 32px;
   background: var(--color-primary);
-  color: var(--color-primary-foreground);
+  color: var(--color-ink);
   font-size: var(--text-caption-13);
   font-weight: var(--font-weight-medium);
 }
@@ -3046,7 +2840,7 @@ textarea:focus-visible {
 }
 
 .home-filter-option[aria-pressed="true"] {
-  color: var(--color-text);
+  color: var(--color-foreground);
   font-weight: var(--font-weight-bold);
 }
 
@@ -3169,7 +2963,7 @@ textarea:focus-visible {
 }
 
 .home-featured-labels .home-featured-badge:last-child {
-  color: var(--color-text);
+  color: var(--color-foreground);
   font-size: var(--text-body-large-16);
   font-weight: var(--font-weight-bold);
 }
@@ -3211,7 +3005,7 @@ textarea:focus-visible {
   right: 70px;
 }
 
-@media (min-width: 640px) {
+@media (width >= 40rem) {
   .home-mobile-search,
   .home-hero-mobile,
   .home-products-mobile {
@@ -3223,7 +3017,7 @@ textarea:focus-visible {
     display: block;
     height: 450px;
     overflow: hidden;
-    background: var(--color-background);
+    background: var(--color-ink);
   }
 
   .home-hero-desktop::before,
@@ -3304,7 +3098,7 @@ textarea:focus-visible {
 
   .home-tabs {
     display: flex;
-    gap: var(--space-5);
+    gap: calc(var(--spacing) * 5);
   }
 
   .home-sort {
@@ -3319,7 +3113,7 @@ textarea:focus-visible {
     max-width: 190px;
     border: 0;
     background: transparent;
-    color: var(--color-text);
+    color: var(--color-foreground);
     cursor: pointer;
     font: inherit;
   }
@@ -3468,7 +3262,7 @@ textarea:focus-visible {
   }
 }
 
-@media (min-width: 1024px) {
+@media (width >= 64rem) {
   .home-products-desktop {
     display: grid;
     grid-template-columns: 19.375rem minmax(0, 1fr);
@@ -3486,7 +3280,7 @@ textarea:focus-visible {
   }
 }
 
-@media (min-width: 640px) and (max-width: 1023px) {
+@media (40rem <= width < 64rem) {
   .home-hero-content {
     grid-template-columns: minmax(0, 1fr) minmax(0, 44%);
     gap: 1rem;
@@ -3507,7 +3301,7 @@ textarea:focus-visible {
   }
 }
 
-@media (max-width: 639px) {
+@media (width < 40rem) {
   .mobile-tab-bar .tab-bar > ul > li:not(:nth-child(3)) span {
     display: none;
   }
@@ -3533,7 +3327,7 @@ textarea:focus-visible {
   }
 }
 
-@media (min-width: 1024px) {
+@media (width >= 64rem) {
   .desktop-header,
   .desktop-footer {
     display: block;
@@ -3557,7 +3351,7 @@ textarea:focus-visible {
   }
 }
 
-@media (min-width: 640px) and (max-width: 1023px) {
+@media (40rem <= width < 64rem) {
   .cart-layout {
     grid-template-columns: minmax(0, 1fr);
     gap: 2rem;
@@ -3586,7 +3380,7 @@ textarea:focus-visible {
 .nft-detail-breadcrumb {
   display: flex;
   gap: 0.75rem;
-  color: var(--color-text);
+  color: var(--color-foreground);
   font-size: var(--text-body-15);
   font-weight: var(--font-weight-bold);
   line-height: var(--leading-16);
@@ -3673,7 +3467,7 @@ textarea:focus-visible {
   border: 1px solid var(--color-border);
   border-radius: 999px;
   background: var(--color-surface-raised);
-  color: var(--color-text);
+  color: var(--color-foreground);
   cursor: pointer;
 }
 
@@ -3729,7 +3523,7 @@ textarea:focus-visible {
   display: none;
 }
 .nft-detail-desktop-review {
-  color: var(--color-text);
+  color: var(--color-foreground);
   font-size: var(--text-body-15);
   line-height: var(--leading-16);
 }
@@ -3801,7 +3595,7 @@ textarea:focus-visible {
   border: 0;
   border-radius: 999px;
   background: var(--color-primary);
-  color: var(--color-primary-foreground);
+  color: var(--color-ink);
   cursor: pointer;
 }
 .nft-detail-stepper svg {
@@ -3838,7 +3632,7 @@ textarea:focus-visible {
 }
 .nft-detail-token-info dt {
   font-weight: var(--font-weight-bold);
-  color: var(--color-text);
+  color: var(--color-foreground);
 }
 .nft-detail-token-info dd {
   margin: 0;
@@ -3894,7 +3688,7 @@ textarea:focus-visible {
   display: block;
 }
 .nft-detail-description dt {
-  color: var(--color-text);
+  color: var(--color-foreground);
   font-weight: var(--font-weight-bold);
 }
 .nft-detail-description dd {
@@ -3926,7 +3720,7 @@ textarea:focus-visible {
   min-width: 0;
   flex-direction: column;
   gap: 0.5rem;
-  color: var(--color-text);
+  color: var(--color-foreground);
   text-decoration: none;
 }
 .nft-detail-related-card img {
@@ -3967,13 +3761,13 @@ textarea:focus-visible {
   height: 1.5rem;
 }
 
-@media (min-width: 640px) {
+@media (width >= 40rem) {
   .nft-detail-breadcrumb + .nft-detail-product {
     margin-top: -5.9375rem;
   }
 }
 
-@media (min-width: 640px) and (max-width: 1023px) {
+@media (40rem <= width < 64rem) {
   .nft-detail-page {
     gap: 3rem;
   }
@@ -3991,7 +3785,7 @@ textarea:focus-visible {
   }
 }
 
-@media (min-width: 1024px) {
+@media (width >= 64rem) {
   .nft-detail-page {
     margin-bottom: 2.25rem;
   }
@@ -4000,7 +3794,7 @@ textarea:focus-visible {
   }
 }
 
-@media (max-width: 639px) {
+@media (width < 40rem) {
   .nft-detail-page {
     gap: 2rem;
     width: calc(100% + 3rem);
@@ -4035,7 +3829,7 @@ textarea:focus-visible {
     border: 1px solid var(--color-border);
     border-radius: 999px;
     background: var(--color-surface-raised);
-    color: var(--color-text);
+    color: var(--color-foreground);
     text-decoration: none;
   }
   .nft-detail-round-button svg {
@@ -4063,7 +3857,7 @@ textarea:focus-visible {
   .nft-detail-summary {
     z-index: 1;
     width: 100%;
-    margin-top: var(--space-negative-114);
+    margin-top: -7.125rem;
     padding: 2rem 1.5rem 11rem;
     border-radius: 31px 31px 0 0;
     background: var(--color-surface-card);
@@ -4131,14 +3925,14 @@ textarea:focus-visible {
   }
   .nft-detail-mobile-buybar strong,
   .nft-detail-buybar-price {
-    color: var(--color-text);
+    color: var(--color-foreground);
     font-size: var(--text-title-20);
   }
   .nft-detail-buybar-quantity {
     display: flex;
     align-items: center;
     gap: 0.75rem;
-    color: var(--color-text);
+    color: var(--color-foreground);
   }
   .nft-detail-buybar-quantity button {
     display: grid;
@@ -4148,7 +3942,7 @@ textarea:focus-visible {
     border: 0;
     border-radius: 999px;
     background: var(--color-primary);
-    color: var(--color-primary-foreground);
+    color: var(--color-ink);
   }
   .nft-detail-buybar-quantity svg {
     width: 1rem;
@@ -4193,7 +3987,7 @@ textarea:focus-visible {
   padding-bottom: 1.25rem;
   border: 0;
   background: transparent;
-  color: var(--color-text);
+  color: var(--color-foreground);
 }
 
 .marketplace-footer-feature-row,
@@ -4232,7 +4026,7 @@ textarea:focus-visible {
   margin-bottom: 1rem;
   border-radius: 999px;
   background: var(--color-primary);
-  color: var(--color-primary-foreground);
+  color: var(--color-ink);
   font-size: var(--text-heading-24);
   font-weight: var(--font-weight-bold);
 }
@@ -4259,13 +4053,13 @@ textarea:focus-visible {
   flex: 1;
   border: 0;
   background: var(--color-surface-dark);
-  color: var(--color-text);
+  color: var(--color-foreground);
   padding: 0.75rem;
 }
 .marketplace-footer-newsletter button {
   border: 0;
   background: var(--color-primary);
-  color: var(--color-primary-foreground);
+  color: var(--color-ink);
   padding: 0 1rem;
   font-weight: var(--font-weight-bold);
 }
@@ -4276,7 +4070,7 @@ textarea:focus-visible {
   padding-top: 1.25rem;
   padding-bottom: 1.25rem;
   background: var(--color-surface-dark);
-  color: var(--color-text);
+  color: var(--color-foreground);
   font-size: var(--text-body-14);
 }
 .marketplace-footer-contact-row strong {
@@ -4299,7 +4093,7 @@ textarea:focus-visible {
   gap: 0.75rem;
 }
 .marketplace-footer-links-row a {
-  color: var(--color-text);
+  color: var(--color-foreground);
   font-size: var(--text-body-14);
   text-decoration: none;
 }
@@ -4326,7 +4120,7 @@ textarea:focus-visible {
 }
 .marketplace-footer-copyright {
   margin: 1rem 0 0;
-  color: var(--color-text);
+  color: var(--color-foreground);
   text-align: center;
   font-size: var(--text-body-14);
 }
