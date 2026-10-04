@@ -53,7 +53,17 @@ const homeNfts: Nft[] = [
     editions: ["1/1", "1/10", "1/50", "ABERTA"],
     attributes: ["Óculos", "Esmeralda", "Raro"],
     reviews: 19,
+    rating: "4.8",
     gallery: [imagePaths[0], imagePaths[0], imagePaths[0], imagePaths[0]],
+    details: {
+      paragraphs: [
+        "Emerald Ape #042 é uma obra digital 1/50 finalizada à mão da coleção Kurio Editions. Cada atributo fica armazenado nos metadados do token e verificado na Ethereum. A obra explora identidade, movimento e luz em um mundo digital sem fronteiras.",
+        "A propriedade inclui a arte em alta resolução, lançamentos exclusivos para colecionadores e um registro permanente de procedência registrada na rede. Nova Sato recebe 5% de direitos autorais nas vendas secundárias, apoiando novos trabalhos e lançamentos da comunidade.",
+      ],
+      network: "Cunhado na Ethereum com procedência imutável e metadados armazenados no IPFS.",
+      contract: "0x7A42...19E8 • Contrato inteligente ERC-721 verificado.",
+      royalties: "Direitos autorais do criador: 5% nas vendas secundárias, pagos automaticamente pelos mercados compatíveis.",
+    },
   },
   {
     id: "nft-2",
@@ -87,6 +97,7 @@ const homeNfts: Nft[] = [
     network: "ethereum",
     image: imagePaths[1],
     price: "1.29",
+    soldOutEditions: ["1/1"],
     available: 5,
     version: 1,
   },
@@ -190,6 +201,40 @@ function generatedPrice(index: number, last: boolean) {
   return `${Math.floor(cents / 100)}.${String(cents % 100).padStart(2, "0")}`;
 }
 
+const networkLabels: Record<Nft["network"], string> = {
+  ethereum: "Ethereum",
+  polygon: "Polygon",
+  solana: "Solana",
+};
+
+// Campos do detalhe que o frame mostra para todo NFT. Quem já tem o campo na
+// fixture (nft-1) mantém o valor; os demais recebem um texto coerente com os dados.
+function withDetails(nft: Nft, index: number): Nft {
+  const network = networkLabels[nft.network];
+  const number = Number(nft.id.replace("nft-", ""));
+  return {
+    ...nft,
+    tokenId: nft.tokenId ?? `#${String(number).padStart(4, "0")}`,
+    description:
+      nft.description ??
+      `Um colecionável digital da coleção ${nft.collection}, verificado na ${network}, com acesso para colecionadores.`,
+    editions: nft.editions ?? ["1/1", "1/10", "1/50", "ABERTA"],
+    attributes: nft.attributes ?? [nft.collection, network],
+    reviews: nft.reviews ?? 3 + ((index * 7) % 40),
+    rating: nft.rating ?? `4.${(index * 3) % 10}`,
+    gallery: nft.gallery ?? [nft.image, nft.image, nft.image, nft.image],
+    details: nft.details ?? {
+      paragraphs: [
+        `${nft.name} faz parte da coleção ${nft.collection} e tem seus atributos registrados nos metadados do token, verificados na ${network}.`,
+        "A propriedade inclui a arte em alta resolução e um registro permanente de procedência na rede.",
+      ],
+      network: `Cunhado na ${network} com procedência imutável e metadados armazenados no IPFS.`,
+      contract: `0x${(0x7a42 + number).toString(16).toUpperCase()}...${(0x19e8 + number).toString(16).toUpperCase()} • Contrato inteligente ERC-721 verificado.`,
+      royalties: "Direitos autorais do criador: 5% nas vendas secundárias, pagos automaticamente pelos mercados compatíveis.",
+    },
+  };
+}
+
 export const createNfts = (): Nft[] => {
   const collections = interleave<string>([...catalogCollections, unlistedCollection], homeNfts.map((nft) => nft.collection));
   const networks = interleave<Nft["network"]>([...catalogNetworks], homeNfts.map((nft) => nft.network));
@@ -211,5 +256,5 @@ export const createNfts = (): Nft[] => {
         version: 1,
       };
     }),
-  ];
+  ].map(withDetails);
 };

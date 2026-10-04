@@ -86,6 +86,19 @@ As 76 classes `.figma-*` (cópia da lista de estilos do Figma em `px`) não eram
 - Título da página: o título visível do hero é o `h1`; "Marketplace de NFTs" (só para leitores de tela) virou `h2`, para a página ter um único `h1`.
 - Novo token `--leading-70` (4,375rem): entrelinha do título do hero, medida no frame (70px entre as duas linhas).
 
+### Detalhes do NFT: decisões e desvios (04/10/2026)
+
+- **Duas versões, uma no DOM.** Os frames têm estruturas diferentes: no desktop, trilha, miniaturas, imagem com lupa e resumo ao lado; no mobile, barra do topo, folha sobre a imagem e barra de compra fixa. A página escolhe `Desktop` ou `Mobile` com `useMediaQuery('(width >= 40rem)')`. As duas usam `useNftPurchase`, `useFavorite` e as mesmas partes (`Editions`, `Quantity`, `TokenInfo`, `Description`, `Related`). O preço existe uma única vez no DOM.
+- **Dados do detalhe vêm do MSW.** O contrato do NFT ganhou `rating`, `soldOutEditions` e `details` (parágrafos, rede, contrato, direitos autorais). As fixtures preenchem esses campos e os já existentes (edições, atributos, ID, avaliações, galeria) para todos os NFTs; o nft-1 tem os textos do frame. Os componentes não têm mais valores padrão inventados. A chave do banco mock passou para `v3`.
+- **Edição esgotada.** Fica desabilitada, riscada e com "(esgotada)" no nome acessível; se a edição escolhida estiver esgotada, a compra fica bloqueada com aviso. O MSW também recusa a edição no carrinho (409). A edição inicial é a 1/50, destacada no frame, quando estiver à venda; senão, a primeira disponível.
+- **Quantidade.** Inteira, entre 1 e o estoque atual do NFT. Se um `nft.updated` reduzir o estoque, a quantidade escolhida acompanha.
+- **Favorito.** `useFavorite` (feature `favorites`) faz a atualização otimista e volta ao estado anterior se a API falhar; o visitante é levado ao login e volta ao detalhe.
+- **Aviso ao vivo.** Um `role="status"` anuncia mudanças de preço e estoque que chegam pelo `nft.updated` (o socket invalida a query e o REST traz a nova versão).
+- **Seções abaixo da dobra no mobile.** O frame mobile termina na folha do resumo. "Detalhes do NFT" e "Mais desta coleção" continuam no mobile, abaixo da folha, com espaço para a barra fixa.
+- **Desvios de conteúdo entre os frames** (o app usa um dado só): descrição curta diferente no desktop e no mobile (no mobile quebra em 4 linhas, 24px a mais que o frame); "Kurio Apes" no frame e "Arte digital" nas fixtures; edições "1/10" repetidas no frame mobile; textos de "Contrato" e "Direitos autorais" trocados no frame desktop; o frame destaca a 2ª miniatura e o app começa na 1ª.
+- **Ícones.** Estrela, lupa, LinkedIn, mensagem, Twitter, carrinho e o botão "voltar" são os SVGs do Figma. − e + do seletor e o coração do favorito usam o lucide, porque não estão no export.
+- **`CarouselDots`:** pontos de 12px a cada 20px, como no frame (o componente só é usado aqui), mantendo a área de toque de 24px.
+
 ## Execução e deploy
 
 Vite é a ferramenta complementar escolhida; todas as tecnologias obrigatórias têm dependência/configuração dedicada. REST, Socket.IO, Router, Query, Axios, Tailwind e componentes iniciais já têm caminho de execução. Playwright exercita a infraestrutura. Lighthouse tem script preparado, sem atestar metas finais. Build de demonstração ativa MSW inclusive em produção; build normal permite API configurada, mas não existe backend externo entregue.

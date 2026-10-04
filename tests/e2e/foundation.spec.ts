@@ -7,7 +7,7 @@ test('catálogo REST e detalhe por acesso direto', async ({ page }) => {
   await page.getByRole('link', { name: /Emerald Ape #042/ }).first().click()
   await expect(page.getByRole('heading', { name: 'Emerald Ape #042' })).toBeVisible()
   await page.reload()
-  await expect(page.locator('.nft-detail-price:visible, .nft-detail-buybar-price:visible')).toHaveText('1.19 ETH')
+  await expect(page.getByTestId('nft-price')).toHaveText('1.19 ETH')
   await page.goto('/nfts/missing')
   await expect(page.getByRole('heading', { name: 'NFT não encontrado' })).toBeVisible()
 })
@@ -31,14 +31,14 @@ test('guarda privada preserva destino e rota desconhecida informa erro', async (
 
 test('evento Socket.IO reconcilia detalhe com REST e persiste após refresh', async ({ page }) => {
   await page.goto('/nfts/nft-1')
-  await expect(page.locator('.nft-detail-price:visible, .nft-detail-buybar-price:visible')).toHaveText('1.19 ETH')
+  await expect(page.getByTestId('nft-price')).toHaveText('1.19 ETH')
   // The updated price below confirms the Socket.IO event triggered reconciliation.
   await page.evaluate(async () => {
     await fetch('/api/__mock/nfts/nft-1/update', { method: 'POST' })
   })
-  await expect(page.locator('.nft-detail-price:visible, .nft-detail-buybar-price:visible')).toHaveText('0.125 ETH')
+  await expect(page.getByTestId('nft-price')).toHaveText('0.125 ETH')
   await page.reload()
-  await expect(page.locator('.nft-detail-price:visible, .nft-detail-buybar-price:visible')).toHaveText('0.125 ETH')
+  await expect(page.getByTestId('nft-price')).toHaveText('0.125 ETH')
 })
 
 test('skeleton, erro e recuperação usam MSW', async ({ page }) => {

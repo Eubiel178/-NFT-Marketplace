@@ -19,7 +19,7 @@ async function setScenario(page: Page, scenario: string) {
 }
 
 async function addCurrentNftToCart(page: Page) {
-  await expect(page.locator('.nft-detail-summary h1')).toBeVisible()
+  await expect(page.getByRole('heading', { level: 1 })).toBeVisible()
   const desktopButton = page.getByRole('button', { name: 'COMPRAR', exact: true })
   if (await desktopButton.isVisible()) {
     await desktopButton.click()

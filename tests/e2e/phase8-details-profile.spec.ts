@@ -17,7 +17,7 @@ test('detalhe direto permite galeria, limite de quantidade e carrinho', async ({
   const thumbnails = page.getByRole('button', { name: 'Selecionar imagem 2' })
   if ((page.viewportSize()?.width ?? 0) >= 640) {
     await thumbnails.click()
-    await expect(thumbnails).toHaveClass(/is-selected/)
+    await expect(thumbnails).toHaveAttribute('aria-pressed', 'true')
   }
 
   const increase = page.locator('button[aria-label="Aumentar quantidade"]:visible')
@@ -25,7 +25,7 @@ test('detalhe direto permite galeria, limite de quantidade e carrinho', async ({
   await increase.click()
   await increase.click()
   await expect(increase).toBeDisabled()
-  const visibleQuantity = (page.viewportSize()?.width ?? 0) < 640 ? page.locator('.nft-detail-buybar-quantity strong:visible') : page.locator('.nft-detail-stepper:visible span')
+  const visibleQuantity = page.getByRole('status', { name: 'Quantidade' })
   await expect(visibleQuantity).toHaveText('4')
 
   if ((page.viewportSize()?.width ?? 0) >= 640) await page.getByRole('button', { name: 'COMPRAR' }).click()

@@ -168,3 +168,47 @@ Data: 04/10/2026. Referências: `figma/Desktop/Início.png` (1440×3668) e `figm
 Em 390 (sem frame): colunas de 163px (x 24–186 e 203–365), gutter de 24px e gap de 16px; a segunda coluna desce 32px como no frame.
 
 Diferenças acima de 2px e o motivo estão em `docs/progresso.md` (seção Início, "Ressalvas").
+
+# Medidas contra o Figma — Detalhes do NFT
+
+Data: 04/10/2026. Referências: `figma/Desktop/Detalhes do NFT.png` (1440×2246) e `figma/Mobile/Detalhes do NFT.png` (414×896). Mesmo método: caixa e linhas de tinta nas duas imagens. Desktop: página inteira em 1440. Mobile: captura só da viewport em 414×896 (a barra de compra é fixa); o app fica 1px abaixo do frame inteiro.
+
+## Desktop (1440)
+
+| Bloco | Figma (x,y w×h) | App (x,y w×h) | Δx | Δy | Δw | Δh |
+| --- | --- | --- | ---: | ---: | ---: | ---: |
+| trilha "Início / Mercado" | 121,103 143x13 | 121,103 141x13 | 0 | 0 | −2 | 0 |
+| miniatura 1 | 120,129 100x100 | 120,129 100x100 | 0 | 0 | 0 | 0 |
+| moldura da imagem | 248,131 444x444 | 248,131 444x444 | 0 | 0 | 0 | 0 |
+| título | 727,137 266x27 | 726,137 267x27 | −1 | 0 | 1 | 0 |
+| estrelas + avaliações | 946,182 373x16 | 946,180 374x17 | 0 | −2 | 1 | 1 |
+| edições | 725,358 208x29 | 725,358 209x29 | 0 | 0 | 1 | 0 |
+| seletor de quantidade | 726,401 101x48 | 725,401 101x48 | −1 | 0 | 0 | 0 |
+| COMPRAR | 1052,400 123x41 | 1052,401 123x41 | 0 | 1 | 0 | 0 |
+| Favoritar | 1176,400 144x41 | 1178,401 142x41 | 2 | 1 | −2 | 0 |
+| resumo: linhas de tinta | 137, 181, 209, 226, 257, 281, 306, 333, 358, 400, 467, 499, 529, 560 | 137, 179, 211, 226, 258, 282, 306, 334, 358, 401, 467, 499, 529, 560 | | ≤2 | | |
+| detalhes: linhas de tinta | 674, 698, 719, 743, 791, 815, 851, 875, 911, 935, 971, 995 | 674, 698, 719, 743, 791, 815, 851, 875, 912, 935, 971, 995 | | ≤1 | | |
+| "Mais desta coleção" + linha | 1111, 1136 | 1111, 1136 | | 0 | | |
+| card relacionado 1 | 120,1169 219x255 | 120,1169 219x255 | 0 | 0 | 0 | 0 |
+| nome do relacionado | 120,1440 153x13 | 120,1439 153x13 | 0 | −1 | 0 | 0 |
+| preço do relacionado | 121,1458 75x12 | 121,1456 76x13 | 0 | −2 | 1 | 1 |
+| pontos | 694,1504 52x12 | 694,1502 52x12 | 0 | −2 | 0 | 0 |
+| início do footer | y 1612 | y 1612 | | 0 | | |
+
+## Mobile (414×896)
+
+| Bloco | Figma (x,y w×h) | App (x,y w×h) | Δx | Δy | Δw | Δh |
+| --- | --- | --- | ---: | ---: | ---: | ---: |
+| voltar | 28,23 35x35 | 28,24 35x35 | 0 | 1 | 0 | 0 |
+| favorito | 354,23 35x35 | 354,24 35x35 | 0 | 1 | 0 | 0 |
+| imagem | 28,66 361x324 | 28,67 361x323 | 0 | 1 | 0 | −1 |
+| título | 25,430 190x20 | 25,431 190x19 | 0 | 1 | 0 | −1 |
+| nota "4.8 (19)" | 307,424 81x27 | 306,423 82x27 | −1 | −1 | 1 | 0 |
+| descrição (1ª linha) | y 469 | y 468 | | −1 | | |
+| "Qtd." + seletor | 24,752 120x30 | 24,751 121x28 | 0 | −1 | 1 | −2 |
+| preço | 295,760 94x16 | 295,758 94x15 | 0 | −2 | 0 | −1 |
+| Comprar NFT | 24,802 196x60 | 24,800 196x60 | 0 | −2 | 0 | 0 |
+| carrinho | 232,802 60x60 | 232,800 60x60 | 0 | −2 | 0 | 0 |
+| abaixo da descrição (Edição, edições, ID, Coleção, Atributos) | 548, 570, 614, 646, 676 | 572, 596, 639, 671, 701 | | **+24** (1 linha a mais de descrição) | | |
+
+Descontada a linha a mais da descrição, os blocos abaixo dela ficam em −2…+1px. Em 390 a composição é a mesma, com a imagem e as colunas encolhendo.

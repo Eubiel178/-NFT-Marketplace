@@ -537,6 +537,8 @@ export const handlers = [
         item.nftId === body.data.nftId &&
         item.editionId === body.data.editionId,
     );
+    if (nft?.soldOutEditions?.includes(body.data.editionId))
+      return error(409, "OUT_OF_STOCK", "Esta edição está esgotada");
     if (!nft || nft.available < (existing?.quantity ?? 0) + body.data.quantity)
       return error(409, "OUT_OF_STOCK", "Edição indisponível");
     if (existing) existing.quantity += body.data.quantity;
