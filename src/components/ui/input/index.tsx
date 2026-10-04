@@ -9,10 +9,13 @@ export interface InputProps extends Omit<React.ComponentProps<'input'>, 'size'> 
   helperText?: string
   leftIcon?: React.ReactNode
   rightIcon?: React.ReactNode
+  // Classes extras do rótulo e do campo (o className do input substituiria as do componente).
+  labelClassName?: string
+  inputClassName?: string
 }
 
 const Input = forwardRef<HTMLInputElement, InputProps>(
-  ({ label, error, helperText, leftIcon, rightIcon, id, disabled, required, type = 'text', variant = 'text', size = 'md', ...rest }, ref) => {
+  ({ label, error, helperText, leftIcon, rightIcon, id, disabled, required, type = 'text', variant = 'text', size = 'md', labelClassName, inputClassName, ...rest }, ref) => {
     const generatedId = useId()
     const inputId = id ?? `input-${generatedId}`
     const errorId = error ? `${inputId}-error` : undefined
@@ -21,7 +24,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
 
     return (
       <div className="w-full">
-        {label && <label htmlFor={inputId} className="block text-body-14 font-medium leading-16 tracking-wide text-left mb-2 text-text-secondary">{label}{required && <span className="text-error ml-1" aria-hidden="true">*</span>}</label>}
+        {label && <label htmlFor={inputId} className={cn('block text-body-14 font-medium leading-16 tracking-wide text-left mb-2 text-text-secondary', labelClassName)}>{label}{required && <span className="text-error ml-1" aria-hidden="true">*</span>}</label>}
         <div className="relative">
           {leftIcon && <div className="absolute left-3 top-1/2 -translate-y-1/2 text-text-secondary pointer-events-none" aria-hidden="true">{leftIcon}</div>}
           <input
@@ -44,6 +47,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
               'px-4',
               size === 'sm' ? 'h-10' : 'h-[50px]',
               variant === 'promo' ? 'rounded-40' : 'rounded-6',
+              inputClassName,
             )}
             {...rest}
           />

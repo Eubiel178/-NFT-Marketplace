@@ -212,3 +212,47 @@ Data: 04/10/2026. Referências: `figma/Desktop/Detalhes do NFT.png` (1440×2246)
 | abaixo da descrição (Edição, edições, ID, Coleção, Atributos) | 548, 570, 614, 646, 676 | 548, 572, 615, 647, 677 | | 0…+2 | | |
 
 Com o `shortDescription` (texto do frame mobile) a descrição tem 3 linhas, como no frame. Em 390 a composição é a mesma, com a imagem e as colunas encolhendo.
+
+# Medidas contra o Figma — Login e Cadastro
+
+Data: 04/10/2026. Referências: `figma/Desktop/Login.png` e `Cadastro.png` (1440×1981), `figma/Mobile/Login.png` e `Cadastro.png` (414×896). Caixas por `getBoundingClientRect` em 1440 e 390 (no mobile, o eixo vertical é comparado direto; o horizontal usa a margem de 28px do frame).
+
+## Login — desktop (1440)
+
+| Bloco | Figma | App | Δ |
+| --- | --- | --- | ---: |
+| cartão | 470,160 500×600 (faixa laranja de 10px) | 470,160 500×600 | 0 |
+| fechar (centro) | 949,180 | 949,180 | 0 |
+| abas "Entrar \| Criar conta" (centro) | 219 | 219 | 0 |
+| subtítulo (linhas) | 276 / 292 | 276 / 292 | 0 |
+| campos | 550,324 340×40 e 550,376 | 550,324 340×40 e 550,376 | 0 |
+| "Esqueceu a senha?" (centro, borda direita) | 436, 890 | 436, 890 | 0 |
+| "Entrar" | 550,469 340×44 | 550,469 340×44 | 0 |
+| "Ou continue com" (centro) | 545 | 545 | 0 |
+| sociais | 566 / 618 (40) | 565 / 617 (40) | −1 |
+
+## Cadastro — desktop (1440)
+
+| Bloco | Figma | App | Δ |
+| --- | --- | --- | ---: |
+| cartão | 470,158 500×656 | 470,160 500×655 | +2 / −1 |
+| campos | 322, 374, 426, 478 (40) | 324, 376, 428, 480 (40) | +2 |
+| "Criar perfil" | 542 (45) | 544 (44) | +2 |
+| "Ou continue com" (centro) | 619 | 620 | +1 |
+| sociais | 643 / 699 | 644 / 700 | +1 |
+
+## Login e Cadastro — mobile (390 × frame 414)
+
+| Bloco | Figma (y) | App (y) | Δ |
+| --- | --- | --- | ---: |
+| logo "KURIO" (centro) | 148 | 148,5 | 0 |
+| título (centro) | 265 | 264 | −1 |
+| campos (50 de altura) | 312, 374 (+436, 498 no cadastro) | 311, 373 (+435, 497) | −1 |
+| "Esqueceu a senha?" (centro) | 444 | 443 | −1 |
+| botão (60) | 492 (cadastro 588) | 491 (587) | −1 |
+| "Ou continue com" (centro) | 600 (696) | 599 (695) | −1 |
+| sociais | 620 / 676 (716 / 772) | 619 / 675 (715 / 771) | −1 |
+| "Novo na Kurio?" / "Já tem uma conta?" (centro) | 767 (862) | 766 (862) | ≤1 |
+| largura dos campos | 358 (frame de 414, margem 28) | 334 (tela de 390, margem 28) | largura da tela |
+
+O hero do fundo fica em 160,144 tanto no Login quanto na Início. No frame do Login, o texto do hero está mais abaixo (y 157). A diferença vem do header atual (45px de altura, contra 68 no frame) e da composição própria do frame; o hero não foi alterado.

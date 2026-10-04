@@ -13,8 +13,8 @@ Método de contagem: `wc -l src/css/styles.css` e classes distintas que aparecem
 | Carrinho | concluída (visual do usuário mantido; diferenças do Figma listadas abaixo) | 1.709 → 1.328 | 97 → 68 | ver git log |
 | Pagamento | concluída | 1.328 → 973 | 68 → 45 | ver git log |
 | Confirmação de Pedido | concluída (sem frame mobile; adaptada) | 973 → 784 | 45 → 34 | ver git log |
-| Login | pendente | | | |
-| Cadastro | pendente | | | |
+| Login | concluída (ressalvas: fundo só com o hero) | 784 → 605 | 93 → 61 (seletores de classe no início da linha) | ver git log |
+| Cadastro | concluída (mesmo componente do Login) | ver Login | ver Login | ver git log |
 | Perfil do Colecionador | pendente | | | |
 | Carteiras | pendente | | | |
 
@@ -235,3 +235,16 @@ Título só para leitores de tela no desktop, resumo sem fundo no desktop, trilh
 Visuais (conhecidas):
 - `visual-regression` home, detalhe, carrinho e pagamento nos dois projetos (8): baselines anteriores às mudanças de layout (ex.: carrinho 1440×1870 esperado, 1440×1668 atual).
 - `phase5-visual` no mobile (1): espera 5 cards em "Colecionadores também viram", seção oculta no mobile desde a versão do usuário (`9839c8e`) e ausente do frame mobile.
+
+## Login e Cadastro
+
+- Lógica fora do componente: `useAuthForm` (valores, validação antes do envio, erros da API por campo, troca de sessão sem restos do usuário anterior, retorno ao fluxo de origem e aviso das ações fora do escopo) e funções puras em `features/auth/lib/auth-form` (`validateAuth`, com as mesmas regras do MSW, e `safeRedirect`, que só aceita caminhos internos). A página só compõe.
+- Uma versão no DOM: o mesmo cartão é modal sobre o hero no desktop (abas, fechar, subtítulo) e tela cheia no mobile (logo, título visível, link para a outra tela), por classes `sm:`/`max-sm:`. O fundo só é montado a partir de `sm` (`useMediaQuery`), como o próprio hero faz.
+- Fundo: reutiliza o `Hero` da Início pela API pública do catálogo, sem nenhuma alteração. Saiu do `Layout` para dentro da página, no fluxo normal do `<main>`, na mesma posição da Início (título em 160,144 nas duas). Decorativo: `aria-hidden` e `inert`. O escurecimento (`opacity` + backdrop) saiu, como no frame.
+- Validação: `noValidate` e mensagens próprias em cada campo (`aria-invalid` + `aria-describedby`), inclusive os erros da API (`fields` do 422/409). Erro sem campo (credenciais inválidas) fica no formulário, ligado por `aria-describedby`. Editar um campo limpa o erro dele.
+- Segurança: a senha só existe no estado do formulário; nada vai para `localStorage`/`sessionStorage` (testado). `?redirect=//externo` cai na Início (antes, `startsWith('/')` aceitava `//`).
+- Ações fora do escopo: Google, Facebook e "Esqueceu a senha?" mostram em `role="status"` que não estão disponíveis; não navegam e não criam sessão (testado).
+- Componentes: `Input` e `PasswordInput` ganharam `labelClassName`/`inputClassName` (e `toggleClassName`, `hiddenIcon`, `shownIcon` no de senha), só adições; `MobileSocialBlock` (usado só aqui) passou a receber os espaçamentos de quem usa.
+- CSS: classes `auth-*` removidas (784 → 605 linhas; 93 → 61 linhas com seletor de classe). Os três `auth-error` do perfil viraram `m-0 text-caption-13 text-error` (mesmo estilo).
+- Snapshot de estilos computados de Início, Detalhe, Carrinho, Pagamento, Perfil e Carteiras (1440 e 390), logado, antes × depois: **0 diferenças**.
+- Testes novos em `phase6-auth`: erros de validação e conflito da API associados aos campos; login social e recuperação sem simular sucesso; senha fora do armazenamento, redirect externo ignorado e sessão recuperada após refresh. No `phase5-visual`, o locator `.auth-marketplace-background` virou `getByTestId('auth-background')` (mesma asserção). Specs `phase6-auth`, `foundation`, `phase7-resilience`, `phase5-visual`, `phase14-visual-audit` e `phase12-accessibility` nos dois projetos: todos passam, exceto o `phase5-visual` mobile, que é a falha visual já conhecida ("Colecionadores também viram").

@@ -152,6 +152,17 @@ As 76 classes `.figma-*` (cópia da lista de estilos do Figma em `px`) não eram
 - **Recibo é snapshot.** Nada vem do catálogo atual: um `nft.updated` depois da compra não muda o recibo (coberto pelo `phase13`).
 - **Carrinho depois da compra.** Ao confirmar, o MSW remove só os itens e quantidades comprados; `useOrder` invalida a query do carrinho para o contador refletir isso.
 
+### Login e Cadastro: decisões e desvios (04/10/2026)
+
+- **Fundo só com o hero.** O frame desktop mostra a Início inteira atrás do cartão (hero, filtros e grade). O app reutiliza só o hero, sem alterá-lo; abaixo dele não há catálogo (o fundo é decorativo, `aria-hidden` e `inert`). Sem escurecimento, como no frame.
+- **Header.** O cartão fica em y=160, como no frame. O hero fica na mesma posição da Início (o header atual tem 45px, contra 68 no frame), então o texto do hero aparece 13px acima do frame.
+- **Botão do cadastro: "Criar perfil" nos dois tamanhos.** O frame desktop diz "Criar conta" e o mobile "Criar perfil". Mantido "Criar perfil" (os specs procuram esse nome, e assim o botão não repete o texto da aba "Criar conta").
+- **Título.** No desktop o `<h1>` é só para leitores de tela (o frame não mostra título); no login o nome acessível é "Login".
+- **Ações fora do escopo** (Google, Facebook, "Esqueceu a senha?"): o readme não prevê login social nem recuperação de senha. Os controles ficam como no frame e o clique só anuncia que a ação não está disponível.
+- **Ícones.** O "ocultar senha" é o SVG do Figma (`iconly-curved-hide`); o "mostrar" (senha visível) usa o lucide, porque não há asset. Os logos do Google e do Facebook não estão no export: foram desenhados como SVG em `public/assets/icons`.
+- **Detalhes seguidos do frame:** sem botão de mostrar senha na confirmação do cadastro no desktop (o mobile tem); placeholder "Nome de usuário" centralizado no mobile; "Esqueceu a senha?" no lugar de "Esqueci minha senha"; abas com divisória laranja em vez de sublinhado.
+- **Estados sem frame:** mensagens de erro abaixo dos campos (12px, `text-error`), erro geral e aviso de sessão expirada em 13px; foco dos campos com borda e anel laranja de 1px.
+
 ## Execução e deploy
 
 Vite é a ferramenta complementar escolhida; todas as tecnologias obrigatórias têm dependência/configuração dedicada. REST, Socket.IO, Router, Query, Axios, Tailwind e componentes iniciais já têm caminho de execução. Playwright exercita a infraestrutura. Lighthouse tem script preparado, sem atestar metas finais. Build de demonstração ativa MSW inclusive em produção; build normal permite API configurada, mas não existe backend externo entregue.

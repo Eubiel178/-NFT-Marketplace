@@ -1,13 +1,11 @@
-import { Outlet, useLocation, useMatches } from "@tanstack/react-router";
+import { Outlet, useMatches } from "@tanstack/react-router";
 
 import { Footer, Header, TabBar } from "@/components";
-import { AuthMarketplaceBackground } from "@/features/auth/auth-marketplace-background";
 import { cn } from "@/lib/utils";
 
 export { PendingFeature } from "./pending-feature";
 
 export function Layout() {
-  const location = useLocation();
 
   const hideMobileTabBar = useMatches({
     select: (matches) => matches.some((match) => match.staticData.hideTabBar),
@@ -15,8 +13,6 @@ export function Layout() {
   const hideChrome = useMatches({
     select: (matches) => matches.some((match) => match.staticData.hideChrome),
   });
-  const isAuthRoute =
-    location.pathname === "/login" || location.pathname === "/register";
 
   return (
     <div className="min-h-screen w-full max-sm:overflow-x-clip max-sm:rounded-t-40">
@@ -37,7 +33,6 @@ export function Layout() {
           hideMobileTabBar && "max-lg:pb-8",
         )}
       >
-        {isAuthRoute && <AuthMarketplaceBackground />}
         <Outlet />
       </main>
 

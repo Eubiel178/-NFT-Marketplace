@@ -9,10 +9,16 @@ export interface PasswordInputProps extends Omit<React.ComponentProps<'input'>, 
   helperText?: string
   size?: 'sm' | 'md'
   showToggle?: boolean
+  // Extras do rótulo, do campo e do botão de mostrar senha, e ícones do botão (padrão: lucide).
+  labelClassName?: string
+  inputClassName?: string
+  toggleClassName?: string
+  hiddenIcon?: React.ReactNode
+  shownIcon?: React.ReactNode
 }
 
 export const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
-  ({ label, error, helperText, id, disabled, required, showToggle = true, size = 'md', ...rest }, ref) => {
+  ({ label, error, helperText, id, disabled, required, showToggle = true, size = 'md', labelClassName, inputClassName, toggleClassName, hiddenIcon, shownIcon, ...rest }, ref) => {
     const [showPassword, setShowPassword] = useState(false)
     const generatedId = useId()
     const inputId = id ?? `password-input-${generatedId}`
@@ -23,7 +29,7 @@ export const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
     return (
       <div className="w-full">
         {label && (
-          <label htmlFor={inputId} className="mb-2 block text-left text-body-14 font-medium leading-16 tracking-wide text-text-secondary">
+          <label htmlFor={inputId} className={cn('mb-2 block text-left text-body-14 font-medium leading-16 tracking-wide text-text-secondary', labelClassName)}>
             {label}
             {required && <span className="ml-1 text-error" aria-hidden="true">*</span>}
           </label>
@@ -45,18 +51,19 @@ export const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
               'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-ink',
               'disabled:pointer-events-none disabled:bg-surface-card disabled:opacity-50',
               error && 'border-error focus-visible:ring-error',
+              inputClassName,
             )}
             {...rest}
           />
            {showToggle && <button
             type="button"
             onClick={() => setShowPassword((visible) => !visible)}
-            className="absolute right-3 top-1/2 -translate-y-1/2 rounded p-1 text-text-secondary transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+            className={cn('absolute right-3 top-1/2 -translate-y-1/2 rounded p-1 text-text-secondary transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary', toggleClassName)}
             aria-label={showPassword ? 'Ocultar senha' : 'Mostrar senha'}
             aria-pressed={showPassword}
             disabled={disabled}
           >
-            {showPassword ? <EyeOff className="h-5 w-5" aria-hidden="true" /> : <Eye className="h-5 w-5" aria-hidden="true" />}
+            {showPassword ? (shownIcon ?? <EyeOff className="h-5 w-5" aria-hidden="true" />) : (hiddenIcon ?? <Eye className="h-5 w-5" aria-hidden="true" />)}
            </button>}
         </div>
         {error && <p id={errorId} className="mt-1.5 text-caption-12 font-normal leading-16 text-error" role="alert">{error}</p>}

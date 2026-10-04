@@ -93,3 +93,49 @@ test('favoritos não vazam ao trocar de usuário', async ({ page }) => {
     : page.getByRole('button', { name: 'Favoritar', exact: true })
   await expect(favoriteButton).toBeVisible()
 })
+
+test('erros de validação e da API ficam associados aos campos', async ({ page }) => {
+  await page.goto('/register')
+  await page.getByRole('button', { name: 'Criar perfil' }).click()
+  for (const [name, message] of [['Nome de usuário', 'Use pelo menos 3 caracteres'], ['Email', 'Informe um email válido'], ['Senha', 'Use pelo menos 8 caracteres']] as const) {
+    const input = page.getByRole('textbox', { name, exact: true })
+    await expect(input).toHaveAttribute('aria-invalid', 'true')
+    await expect(page.locator(`#${await input.getAttribute('aria-describedby')}`)).toHaveText(message)
+  }
+  // Conflito devolvido pela API (409 com fields.email) fica no campo de email.
+  await page.getByLabel('Nome de usuário').fill('Outra Ana')
+  await page.getByLabel('Email').fill('ana@example.test')
+  await page.getByRole('textbox', { name: 'Senha', exact: true }).fill('kurio-demo')
+  await page.getByRole('textbox', { name: 'Confirmar senha' }).fill('kurio-demo')
+  await page.getByRole('button', { name: 'Criar perfil' }).click()
+  const email = page.getByLabel('Email')
+  await expect(email).toHaveAttribute('aria-invalid', 'true')
+  await expect(page.locator(`#${await email.getAttribute('aria-describedby')}`)).toHaveText('Este email já está cadastrado')
+  await expect(page).toHaveURL(/\/register/)
+})
+
+test('login social e recuperação de senha não simulam sucesso', async ({ page }) => {
+  await page.goto('/login?redirect=%2Fprofile&expired=false')
+  await page.getByRole('button', { name: 'Continuar com Google' }).click()
+  await expect(page.getByRole('status').filter({ hasText: 'Google' })).toHaveText('Entrar com Google não está disponível. Use seu email e senha.')
+  await page.getByRole('button', { name: 'Esqueceu a senha?' }).click()
+  await expect(page.getByRole('status').filter({ hasText: 'senha' })).toHaveText('A recuperação de senha não está disponível nesta versão.')
+  await expect(page).toHaveURL(/\/login\?redirect=%2Fprofile/)
+  const session = await page.evaluate(async () => (await (await fetch('/api/session')).json()) as { user: unknown })
+  expect(session.user).toBeNull()
+})
+
+test('senha não fica guardada no navegador e destino externo é ignorado', async ({ page }) => {
+  await page.goto('/login?redirect=%2F%2Fexterno.example&expired=false')
+  await page.getByLabel('Email').fill('ana@example.test')
+  await page.getByRole('textbox', { name: 'Senha' }).fill('kurio-demo')
+  await page.getByRole('button', { name: 'Entrar' }).click()
+  await expect(page).toHaveURL(/^http:\/\/127\.0\.0\.1:4173\/(\?.*)?$/)
+  const stored = await page.evaluate(() => JSON.stringify({ ...localStorage }) + JSON.stringify({ ...sessionStorage }))
+  expect(stored).not.toContain('kurio-demo')
+  // Sessão recuperada depois do refresh: a rota privada abre sem pedir login.
+  await page.reload()
+  await page.goto('/profile')
+  await expect(page.getByRole('heading', { name: 'Perfil do colecionador' })).toBeVisible()
+  await expect(page.getByText('Ana Demo', { exact: true })).toBeVisible()
+})
