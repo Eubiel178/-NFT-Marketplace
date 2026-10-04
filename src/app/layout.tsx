@@ -1,14 +1,12 @@
 import { Outlet, useLocation, useMatches } from "@tanstack/react-router";
 
-import { Footer, Header, RealtimeConnectionStatus, TabBar } from "@/components";
+import { Footer, Header, TabBar } from "@/components";
 import { AuthMarketplaceBackground } from "@/features/auth/auth-marketplace-background";
 import { cn } from "@/lib/utils";
-import { useRealtimeConnected } from "@/realtime";
 
 export { PendingFeature } from "./pending-feature";
 
 export function Layout() {
-  const connected = useRealtimeConnected();
   const location = useLocation();
 
   const hideMobileTabBar = useMatches({
@@ -43,7 +41,6 @@ export function Layout() {
       <Footer />
 
       {!hideMobileTabBar && <TabBar />}
-      <RealtimeConnectionStatus connected={connected} />
     </div>
   );
 }
