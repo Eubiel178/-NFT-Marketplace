@@ -256,3 +256,42 @@ Data: 04/10/2026. Referências: `figma/Desktop/Login.png` e `Cadastro.png` (1440
 | largura dos campos | 358 (frame de 414, margem 28) | 334 (tela de 390, margem 28) | largura da tela |
 
 O hero do fundo fica em 160,144 tanto no Login quanto na Início. No frame do Login, o texto do hero está mais abaixo (y 157). A diferença vem do header atual (45px de altura, contra 68 no frame) e da composição própria do frame; o hero não foi alterado.
+
+
+## Perfil do Colecionador — desktop (1440)
+
+Altura do painel e linhas medidas com `getBoundingClientRect` (topo da caixa). O frame é 1440×1080; as posições do Figma vêm da imagem (centro do texto → topo da caixa de 16px).
+
+| Bloco | Figma | App | Δ |
+| --- | --- | --- | ---: |
+| painel | 120,101 310×407 | 120,101 310×407 | 0 |
+| "Meu perfil" (centro) | 127 | 127 | 0 |
+| itens do menu (45) | 145, 190, 235 … 415 | 145, 190, 235 … 415 | 0 |
+| título "Perfil do colecionador" | 101 | 101 | 0 |
+| rótulos das 3 linhas | 155, 258, 361 | 155, 258, 361 | 0 |
+| campos das 3 linhas (40) | 188, 291, 394 | 188, 291, 394 | 0 |
+| coluna da direita | 903 (417) | 903 (417) | 0 |
+| ".eth" + nome ENS | 903,291 78×40 + 991,291 329×40 | 903,291 78×40 + 991,291 329×40 | 0 |
+| "Avatar" (rótulo) | 354 | 354 | 0 |
+| "Alterar" | 977,385 98×40 | 977,385 98×40 | 0 |
+| "Remover" | 1095 | 1095 | 0 |
+| "Alterar senha" | 466 | 466 | 0 |
+| campos de senha (40) | 533, 624, 715 | 533, 624, 715 | 0 |
+| "Salvar" | 458,787 131×40 | 458,787 131×40 | 0 |
+
+## Carteiras — desktop (1440)
+
+| Bloco | Figma | App | Δ |
+| --- | --- | --- | ---: |
+| painel e menu | iguais ao Perfil | iguais ao Perfil | 0 |
+| "Carteira principal" | 101 | 101 | 0 |
+| rótulos das 5 linhas | 179, 267, 356, 445, 534 | 179, 268, 357, 446, 535 | +1 |
+| campos das 5 linhas (40) | 197, 286, 375, 464, 553 | 197, 286, 375, 464, 553 | 0 |
+| "Adicionar" (principal) | 1233,101 | 1234,101 | +1 |
+| "Salvar carteira" | 458,625 131×40 | 458,625 131×40 | 0 |
+| "Carteira secundária" | 698 | 697 | −1 |
+| "Adicionar" (secundária) | 1228,698 | 1234,697 | +6 (sem o "Igual à carteira principal" colado) |
+
+## Perfil e Carteiras — mobile (390, sem frame)
+
+Sem frame para medir. Conferido no navegador (390×844, página inteira): painel de 342px (margem de 24px), menu de 7 itens de 45px e "Sair" de 48px, campos de 342×40 em uma coluna, sem rolagem horizontal. O avatar, "Alterar" e "Remover" ficam na mesma linha.

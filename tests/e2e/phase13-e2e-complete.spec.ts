@@ -140,31 +140,21 @@ test('timeout recarrega e recupera o mesmo pedido', async ({ page }) => {
 
 test('carteira inválida exibe erro e edição persiste pela interface', async ({ page }) => {
   await signIn(page, '/wallets')
-  const primary = page.locator('.wallet-section')
-  const walletSelect = primary.getByRole('combobox', { name: 'Carteira' })
+  const primary = page.getByRole('form', { name: 'Carteira principal' })
 
-  await walletSelect.press('Enter')
-  await page.getByRole('option', { name: 'Principal' }).press('Enter')
-  await primary.getByLabel('Endereço 0x da carteira').fill('0xB')
+  await primary.getByLabel('Endereço da carteira').fill('0xB')
   await primary.getByRole('button', { name: 'Salvar carteira' }).click()
-  await expect(page.getByRole('alert')).toContainText('Confira os dados da carteira')
+  await expect(primary.getByText('Informe um endereço 0x válido')).toBeVisible()
 
-  await primary.getByLabel('Endereço 0x da carteira').fill('0xA91F...E82C')
-  await primary.getByLabel('Apelido').fill('Principal atualizada')
+  await primary.getByLabel('Endereço da carteira').fill('0xA91F...E82C')
+  await primary.getByLabel('Apelido da carteira').fill('Principal atualizada')
   const saveResponse = page.waitForResponse((response) => response.url().endsWith('/api/wallets/wallet-1') && response.request().method() === 'PATCH' && response.status() === 200)
   await primary.getByRole('button', { name: 'Salvar carteira' }).click()
   await saveResponse
-  await expect(primary.getByLabel('Apelido')).toHaveValue('Principal atualizada')
+  await expect(primary.getByLabel('Apelido da carteira')).toHaveValue('Principal atualizada')
 
   await page.reload()
-  const reloadedPrimary = page.locator('.wallet-section')
-  const reloadedWalletSelect = reloadedPrimary.getByRole('combobox', { name: 'Carteira' })
-  await expect(reloadedWalletSelect).toBeVisible()
-  await expect(reloadedWalletSelect).toHaveText('Selecione uma carteira')
-  await reloadedWalletSelect.press('Enter')
-  await page.getByRole('option', { name: 'Principal' }).press('Enter')
-  await expect(reloadedWalletSelect).toHaveText('Principal')
-  await expect(reloadedPrimary.getByLabel('Apelido')).toHaveValue('Principal atualizada')
+  await expect(page.getByRole('form', { name: 'Carteira principal' }).getByLabel('Apelido da carteira')).toHaveValue('Principal atualizada')
 })
 
 test('falha de rede no catálogo oferece recuperação por retry', async ({ page }) => {

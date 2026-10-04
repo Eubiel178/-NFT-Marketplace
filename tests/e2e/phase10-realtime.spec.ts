@@ -10,9 +10,9 @@ async function signIn(page: Page, redirect: string) {
 
 test('carteira secundária copia a principal e rejeita endereço inválido', async ({ page }) => {
   await signIn(page, '/wallets')
-  const secondary = page.locator('.wallet-secondary')
+  const secondary = page.getByRole('region', { name: 'Carteira secundária' })
   await secondary.getByLabel('Igual à carteira principal').check()
-  await expect(secondary.getByLabel('Endereço 0x da carteira')).toHaveValue('0xA91F…E82C')
+  await expect(secondary.getByLabel('Endereço da carteira')).toHaveValue('0xA91F…E82C')
 
   const status = await page.evaluate(async () => {
     const response = await fetch('/api/wallets', {

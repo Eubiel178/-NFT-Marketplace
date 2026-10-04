@@ -15,8 +15,8 @@ Método de contagem: `wc -l src/css/styles.css` e classes distintas que aparecem
 | Confirmação de Pedido | concluída (sem frame mobile; adaptada) | 973 → 784 | 45 → 34 | ver git log |
 | Login | concluída (fundo só com o hero, desvio confirmado) | 784 → 605 | 93 → 61 (seletores de classe no início da linha) | `df50b07` |
 | Cadastro | concluída (mesmo componente do Login) | ver Login | ver Login | `df50b07` |
-| Perfil do Colecionador | pendente | | | |
-| Carteiras | pendente | | | |
+| Perfil do Colecionador | concluída (sem frame mobile; adaptada) | 605 → 369 | 61 → 1 (seletores de classe no início da linha) | ver git log |
+| Carteiras | concluída (sem frame mobile; adaptada; mesmo painel e CSS do Perfil) | ver Perfil | ver Perfil | ver git log |
 
 ## Preparação
 
@@ -254,3 +254,18 @@ Visuais (conhecidas):
 - Fundo só com o hero: mantido e registrado como desvio confirmado em `ARCHITECTURE.md`.
 - Botão do cadastro por viewport ("Criar conta" no desktop, "Criar perfil" no mobile); os specs pegam o nome por `registerButtonName(page)`. `phase6-auth` e `phase7-resilience` nos dois projetos: 32 passaram.
 - `phase5-visual`: a contagem de "Colecionadores também viram" vale só a partir de 640px, porque a seção não existe no frame mobile. Nos dois projetos: 2 passaram.
+
+
+## Perfil do Colecionador e Carteiras
+
+Painel da conta, contrato e MSW são compartilhados pelas duas telas, então o código saiu em um commit só (como Login e Cadastro); os testes e esta documentação, em outro.
+
+- Lógica fora dos componentes. Perfil: `useProfile`, `useProfileForm` (valores, validação antes do envio, erros da API por campo, senha só em memória), `useAvatar` (upload e remoção com carregando e erro). Carteiras: `useWallets`, `useWalletForm`, `useSecondaryEditor` e `useSetPrimaryWallet` (troca da principal otimista com rollback). Regras puras em `features/account/lib`: `ens`, `profile-form` (`validateProfile`, mesmas regras do MSW) e `wallet-form` (`validateWallet`, `splitWallets`, `promotePrimary`). As páginas só compõem.
+- Contrato e MSW: `profileInputSchema`, `passwordChangeSchema` e `walletInputSchema` em `src/contracts` (formulário e MSW usam a mesma regra, como `collectorSchema`). `PATCH /api/wallets/:id/primary`, `POST /api/profile/avatar` (multipart) e `DELETE /api/profile/avatar` são novos; erros `422`/`409` trazem `fields`. Chave do banco mock: `v8`.
+- Uma versão no DOM, responsiva por classes. Skeleton com `Skeleton` (shimmer, `motion-reduce:animate-none`) nas mesmas caixas do conteúdo, dentro do painel.
+- Rota privada: sem sessão, `/profile` e `/wallets` vão para `/login?redirect=…` e voltam depois do login (testado).
+- CSS: classes `account-*`, `wallet-*`, `avatar-*`, `checkout-skeleton` e `checkout-error` removidas. **`src/css/styles.css`: 605 → 369 linhas; 61 → 1 linha com seletor de classe no início** (a restante é da Início).
+- Medidas em `docs/figma-medidas.md`: todos os blocos principais do Perfil a 0px e os da Carteiras a ≤1px (o "Adicionar" da seção secundária fica 6px à direita do frame). Sem frame mobile: conferido visualmente em 390.
+- Specs com `--project=chromium-desktop` e `--project=chromium-mobile` (`phase15-account` novo, `phase5`, `phase5-visual`, `phase0-isolation`, `phase6-auth`, `phase7-resilience`, `phase8-details-profile`, `phase9-purchase`, `phase10-realtime`, `phase11-states`, `phase12-accessibility`, `phase13-e2e-complete`): 132 testes, todos passam (a primeira rodada teve 4 falhas nos testes novos, 2 testes × 2 projetos, corrigidas sem mexer em código de produção: espera da resposta antes do reload e skeleton medido de uma vez; para isso o cenário `slow` passou a atrasar o perfil e as carteiras). Typecheck e lint sem erros.
+- Testes novos (`phase15-account`): rota privada com retorno ao perfil; erros de validação associados por `aria-describedby`; erros da API no campo (nome de usuário e e-mail em uso, senha atual incorreta, código de indicação inexistente); persistência após refresh e senha fora do `localStorage`/`sessionStorage` (e valendo no próximo login); avatar (tipo inválido, tamanho, carregando, sucesso, remoção); skeleton com a altura do conteúdo e sem animação em movimento reduzido; cadastro de carteira secundária; troca da principal (as duas mudam, só uma principal, persiste); rollback quando a API recusa; pagamento refletindo a carteira editada sem recarregar. Testes existentes: seletores por classe (`.avatar-image`, `.wallet-section`, `.wallet-secondary`) trocados por papel/nome e o formulário da carteira atualizado para os novos campos; as asserções são as mesmas (a validação de endereço passou a ser do cliente, e a resposta `422` da API continua coberta em `phase10`).
+- Decisões fora do enunciado: opções do tipo de carteira (Hot/Cold), código de indicação obrigatório na carteira, e-mail editável no perfil, UI de troca da principal. Todas em `ARCHITECTURE.md`.

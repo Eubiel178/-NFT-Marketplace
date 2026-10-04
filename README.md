@@ -309,7 +309,7 @@ await fetch('/api/__mock/scenario', {
 location.reload()
 ```
 
-Disponíveis: `default`, `empty`, `slow` (2 s), `variable-latency` (páginas ímpares 900 ms/pares 100 ms), `network-error`, `http-500` (503), `unauthorized` (401 nas consultas de NFTs), `favorites-error` (503 em favoritos), `cart-error`, `cart-load-error`, `quote-error`, `profile-error`, `wallets-error`, `order-error`, `payment-declined`, `wallet-rejected`, `payment-pending`, `payment-timeout` e `stale-quote`. A configuração persiste localmente. Para recuperação/reset:
+Disponíveis: `default`, `empty`, `slow` (2 s no catálogo, na cotação, no perfil e nas carteiras), `variable-latency` (páginas ímpares 900 ms/pares 100 ms), `network-error`, `http-500` (503), `unauthorized` (401 nas consultas de NFTs), `favorites-error` (503 em favoritos), `cart-error`, `cart-load-error`, `quote-error`, `profile-error`, `wallets-error`, `order-error`, `payment-declined`, `wallet-rejected`, `payment-pending`, `payment-timeout` e `stale-quote`. A configuração persiste localmente. Para recuperação/reset:
 
 ```js
 await fetch('/api/__mock/reset', { method: 'POST' })

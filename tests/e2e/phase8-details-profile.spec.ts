@@ -67,8 +67,8 @@ test('perfil atualiza dados e avatar com persistência', async ({ page }) => {
     mimeType: 'image/svg+xml',
     buffer: Buffer.from('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 8"><circle cx="4" cy="4" r="4" fill="#D28A4C"/></svg>'),
   })
-  await expect(page.locator('.avatar-image')).toBeVisible()
+  await expect(page.getByRole('img', { name: 'Avatar do perfil' })).toBeVisible()
   await page.reload()
   await expect(page.getByLabel('Nome de exibição')).toHaveValue('Ana Colecionadora')
-  await expect(page.locator('.avatar-image')).toBeVisible()
+  await expect(page.getByRole('img', { name: 'Avatar do perfil' })).toBeVisible()
 })
