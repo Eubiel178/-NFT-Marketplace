@@ -26,7 +26,7 @@ function CartSkeleton() {
   return (
     <section className={page} role="status" aria-label="Carregando carrinho">
       <Skeleton className="h-6 w-60 max-sm:hidden" />
-      <Skeleton className="h-6 w-64 max-sm:mt-8" />
+      <Skeleton className="mt-3.5 h-6 w-64 sm:hidden" />
       <div className="grid gap-12 lg:grid-cols-[minmax(0,1fr)_20.75rem] lg:items-start">
         <div className="grid gap-3">
           {Array.from({ length: 3 }, (_, index) => <Skeleton key={index} className="h-25 sm:h-17.5" />)}
@@ -71,18 +71,19 @@ function CartContent({ userId }: { userId: string | null }) {
 
   return (
     <section className={page} aria-labelledby="cart-title">
-      <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-body-15 text-text-secondary max-sm:hidden">
+      <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-body-15 text-text-secondary max-sm:hidden sm:-mb-6">
         <Link to="/">Início</Link>
         <span>/</span>
         <Link to="/">Mercado</Link>
         <span>/</span>
         <strong>Carrinho</strong>
       </nav>
-      <div className="relative flex items-center justify-center gap-4 pt-8 sm:contents">
+      <div className="relative flex items-center justify-center gap-4 pt-3.5 sm:contents">
         <Link to="/" aria-label="Voltar" className="absolute left-0 grid size-9 place-items-center rounded-full border border-border text-foreground sm:hidden">
           <ArrowLeft aria-hidden="true" />
         </Link>
-        <h1 id="cart-title" className="text-title-20 sm:text-heading-28">Carrinho de NFTs</h1>
+        {/* O frame desktop não tem título visível: a trilha vai direto para a tabela. */}
+        <h1 id="cart-title" className="text-title-20 sm:sr-only">Carrinho de NFTs</h1>
       </div>
       {cart.lines.length === 0 ? (
         <div className="grid justify-items-center gap-4 bg-surface-card px-8 py-16 text-center">

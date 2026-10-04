@@ -53,7 +53,7 @@ export function CartSummary({
   return (
     <aside
       aria-labelledby="cart-summary-title"
-      className="flex flex-col gap-6 bg-surface-card p-6 max-sm:-mx-7 max-sm:w-[calc(100%+3.5rem)] max-sm:rounded-t-40 max-sm:px-7 max-sm:pb-9"
+      className="flex flex-col gap-6 max-sm:-mx-7 max-sm:w-[calc(100%+3.5rem)] max-sm:rounded-t-40 max-sm:bg-surface-card max-sm:px-7 max-sm:pt-6 max-sm:pb-9"
     >
       <h2 id="cart-summary-title" className="text-body-large-18">
         Resumo da carteira

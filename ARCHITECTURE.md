@@ -107,6 +107,27 @@ As 76 classes `.figma-*` (cópia da lista de estilos do Figma em `px`) não eram
 - **Estoque por NFT, somado entre edições.** `available` é do NFT; o carrinho pode ter mais de uma edição do mesmo NFT, e a soma não passa do estoque. Edição em `soldOutEditions` é recusada. Linhas são identificadas por NFT + edição, inclusive na remoção.
 - **Cupom vencido distinto de inválido.** `KURIO5` responde `COUPON_EXPIRED`; códigos desconhecidos, `INVALID_COUPON`. A interface mostra a mensagem da API no campo.
 - **`createQuote` em `shared/api/quote`.** Carrinho e pagamento usam a mesma chamada; antes o pagamento importava de dentro da feature do carrinho.
+- **Ajustes ao frame (item 4 depois do Pagamento).** O título "Carrinho de NFTs" é só para leitores de tela a partir de `sm` (o frame desktop não tem título; no mobile continua visível no cabeçalho). O resumo não tem fundo nem padding no desktop (no mobile continua a folha com fundo, como no frame). A trilha fica 24px mais perto da tabela (`sm:-mb-6`), e o cabeçalho mobile subiu 18px (voltar em 28,32, como no frame).
+- **Diferenças que continuam** (centro da linha de texto, 1440 / 414, conta da Ana):
+
+  | Bloco | Figma | App | Δ |
+  | --- | --- | --- | ---: |
+  | trilha (desktop) | y 109 | y 105 | −4 |
+  | "Resumo da carteira" | y 137 | y 137 | 0 |
+  | título do resumo | linha embaixo | sem linha | — |
+  | campo do cupom | 988,205 332×40 | 988,197 332×40 (rótulo acima) | −8 |
+  | subtotal | y 279 | y 273 | −6 |
+  | total | y 413 | y 422 | +9 |
+  | "Conectar e finalizar" | 988,445 332×40, texto centralizado | 988,458 332×40, seta à direita | +13 |
+  | "Continuar explorando" | y 507 | y 534 | +27 |
+  | "Colecionadores também viram" | y 622 | y 644 | +22 |
+  | linhas da tabela | 1ª em y 169 | 1ª em y 174 | +5 |
+  | seletor de quantidade | pílulas laranja pequenas | caixa com borda | estilo |
+  | cards relacionados | 219×272 | card da Início 230×352 | proporção |
+  | voltar (mobile) | 28,32 | 28,32 | 0 |
+  | título (mobile) | y 49 | y 50 | +1 |
+  | linha 1 (mobile) | 28,88 358×102 | 28,90 382×100 | +2, w +24 |
+  | resumo (mobile) | sem "Resumo da carteira" e sem "Continuar explorando" | com os dois | elementos a mais |
 
 ### Pagamento: decisões e desvios (04/10/2026)
 
