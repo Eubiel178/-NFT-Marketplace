@@ -9,6 +9,7 @@ export { Sheet } from "./sheet";
 export { TabBar } from "./tab-bar";
 export { Stepper } from "./stepper";
 export { Select } from "./select";
+export { Toaster } from "./toaster";
 export { Checkbox } from "./checkbox";
 export { Pagination } from "./pagination";
 export { Filters } from "./filters";

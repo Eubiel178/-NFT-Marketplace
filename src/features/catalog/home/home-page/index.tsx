@@ -111,7 +111,7 @@ export function HomePage() {
       </section>
       <HomePromos />
       <HomeBlog />
-      <Sheet isOpen={filtersOpen} onClose={() => setFiltersOpen(false)} title="Filtros" description="Refine a visualização do catálogo." position="bottom" size="lg" showCloseButton>
+      <Sheet isOpen={filtersOpen} onClose={() => setFiltersOpen(false)} title="Filtros" description="Refine a visualização do catálogo.">
          <HomeFilters key={`${search.priceMin}-${search.priceMax}`} collections={collections} selectedCollection={search.collection} selectedNetwork={search.network} priceMin={search.priceMin ?? '0'} priceMax={search.priceMax ?? '2.29'} onCollectionChange={(collection) => updateSearch({ collection })} onNetworkChange={(network) => updateSearch({ network })} onPriceApply={(priceMin, priceMax) => updateSearch({ priceMin, priceMax })} />
       </Sheet>
       <span className="sr-only">Página {result.data.page} de {pageCount}</span>

@@ -38,7 +38,7 @@ export function NftDetailGallery({ nft, favorite, selectedImage, onToggleFavorit
       <Modal.Root isOpen={isZoomOpen} onClose={() => setIsZoomOpen(false)} size="md" className="nft-detail-zoom-dialog">
         <Modal.Header>
           <Modal.Title>{nft.name}</Modal.Title>
-          <Modal.Close onClose={() => setIsZoomOpen(false)} />
+          <Modal.Close />
         </Modal.Header>
         <Modal.Body>
           <Image src={gallery[selectedImage]} alt={nft.name} width={800} height={800} className="nft-detail-zoom-image" />

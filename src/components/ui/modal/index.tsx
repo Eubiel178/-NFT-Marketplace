@@ -1,17 +1,13 @@
-import { ModalRoot } from './modal-root'
-import { ModalHeader } from './modal-header'
-import { ModalTitle } from './modal-title'
-import { ModalDescription } from './modal-description'
-import { ModalClose } from './modal-close'
 import { ModalBody } from './modal-body'
-import { ModalFooter } from './modal-footer'
+import { ModalClose } from './modal-close'
+import { ModalHeader } from './modal-header'
+import { ModalRoot } from './modal-root'
+import { ModalTitle } from './modal-title'
 
 export const Modal = {
   Root: ModalRoot,
   Header: ModalHeader,
   Title: ModalTitle,
-  Description: ModalDescription,
   Close: ModalClose,
   Body: ModalBody,
-  Footer: ModalFooter,
 }

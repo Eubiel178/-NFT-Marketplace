@@ -1,18 +1,13 @@
 import { X } from 'lucide-react'
+import { Dialog as DialogPrimitive } from 'radix-ui'
 
-interface ModalCloseProps {
-  onClose: () => void
-}
-
-export function ModalClose({ onClose }: ModalCloseProps) {
+export function ModalClose() {
   return (
-    <button
-      type="button"
-      onClick={onClose}
-      className="p-1 rounded-full hover:bg-surface-card transition-colors text-text-secondary hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+    <DialogPrimitive.Close
+      className="rounded-full p-1 text-text-secondary transition-colors hover:bg-surface-card hover:text-foreground focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none"
       aria-label="Fechar"
     >
-      <X className="h-5 w-5" aria-hidden="true" />
-    </button>
+      <X className="size-5" aria-hidden="true" />
+    </DialogPrimitive.Close>
   )
 }
