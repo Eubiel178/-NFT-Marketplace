@@ -12,7 +12,7 @@ Método de contagem: `wc -l src/css/styles.css` e classes distintas que aparecem
 | Detalhes do NFT | concluída | 2.323 → 1.709 | 137 → 97 | ver git log |
 | Carrinho | concluída (visual do usuário mantido; diferenças do Figma listadas abaixo) | 1.709 → 1.328 | 97 → 68 | ver git log |
 | Pagamento | concluída | 1.328 → 973 | 68 → 45 | ver git log |
-| Confirmação de Pedido | pendente | | | |
+| Confirmação de Pedido | concluída (sem frame mobile; adaptada) | 973 → 784 | 45 → 34 | ver git log |
 | Login | pendente | | | |
 | Cadastro | pendente | | | |
 | Perfil do Colecionador | pendente | | | |
@@ -191,3 +191,39 @@ Com `refreshReview` sem chamar `revalidate.mutate()`, o teste falha nos dois pro
 - "cupom expirado tem mensagem própria, diferente de cupom inválido": `KURIO5` → "Este cupom expirou", `INVALIDO` → "Cupom inválido"; nos dois o desconto fica em 0 e "Remover cupom" não aparece. O teste encontrou um bug: "Remover cupom" aparecia pelo texto digitado, não pelo cupom aceito (`hasCoupon` passou a usar o cupom aplicado).
 - "edição esgotada (nft-4) não entra na compra…": botão "1/1 (esgotada)" desabilitado, `POST /api/cart/items` com 1/1 → `409 OUT_OF_STOCK`, e a compra segue com a 1/50.
 - `phase9-purchase`, `phase13-e2e-complete` e `phase0-isolation` nos dois projetos: 34 passaram.
+
+### 3. Carteira padrão no Pagamento
+
+A fixture começa com a "Reserva" conectada (Coinbase Wallet), como no frame mobile ("Carteira conectada" com a Reserva marcada), e o pagamento seleciona a carteira conectada; sem conexão, a principal. A conexão passou a ser lida junto com os outros dados do pagamento, antes de montar o formulário. No `phase7-resilience` (idempotência), o corpo do pedido passou a usar a carteira conectada (`wallet-2`/Polygon) e o conflito a `wallet-1`; as asserções não mudaram. `KURIO-2026` documentado no README, junto das credenciais.
+
+### 4. Carrinho
+
+Título só para leitores de tela no desktop, resumo sem fundo no desktop, trilha 24px mais perto da tabela e cabeçalho mobile 18px acima (voltar em 28,32, como no frame). As medidas restantes estão em `ARCHITECTURE.md` (Carrinho).
+
+## Confirmação de Pedido
+
+- Lógica fora do componente: `useOrder` (pedido, assinatura `order.updated` e releitura do carrinho quando o pedido é confirmado; o MSW já tira do carrinho só os itens e quantidades do snapshot) e funções puras em `features/orders/lib/order-receipt` (data, subtotal do item em wei, rótulo da rede, explorador da transação, rótulo do método da carteira). A página só compõe.
+- Recibo como snapshot: itens, preços, nomes, imagens, ID do token, total e carteira vêm do pedido gravado. O contrato do pedido ganhou `wallet.method` (aplicativo usado na compra; o frame mostra "Carteira: MetaMask"); chave do banco mock `v7`.
+- Estados próprios no mesmo cartão do frame: carregando (skeleton), erro/404, pendente ("Confirmando sua compra", aviso se o tempo real cair), recusado ("Pagamento recusado", itens continuam no carrinho) e confirmado (recibo).
+- `NftReceiptArtwork` virou a linha do recibo (imagem, nome, ID do token, "(x N)", subtotal) e passou a ser exportado pelo barrel, junto de `receiptColumns` (o cabeçalho da tabela usa as mesmas colunas).
+- Rota sem header e footer (`staticData.hideChrome`), como no frame. Fechar (X) volta ao início.
+- CSS: classes `order-*` removidas (973 → 784 linhas, 45 → 34 classes).
+- Testes: em `phase13` os seletores `.order-totals`/`.order-line` viraram `getByTestId('order-total')`, `list` "NFTs comprados" e `receipt-name`/`receipt-quantity`/`receipt-total`; asserções iguais. Specs `phase0-realtime`, `phase5`, `phase7-resilience`, `phase9`, `phase10`, `phase11`, `phase12` e `phase13` nos dois projetos: 82 passaram e 2 falharam. A falha é o `phase5`, que espera "Ver no Etherscan"; com a Reserva (Polygon) como padrão, o recibo mostra "Ver no Polygonscan". Asserção não alterada; decisão pendente com o usuário.
+
+### Medidas (1440, Figma × app)
+
+| Bloco | Figma | App | Δ |
+| --- | --- | --- | ---: |
+| cartão | 431,166 578 de largura | 431,166 578 | 0 |
+| fechar (centro) | 986,191 | 986,190 | −1 |
+| ícone | 187–268 | 187–267 | 0 |
+| título (centro) | 292 | 292 | 0 |
+| linhas laranja | 322 / 388 | 323 / 388 | ≤1 |
+| "Detalhes da transação" (centro) | 417 | 417 | 0 |
+| cabeçalho / linha | 445 / 464 | 445 / 465 | ≤1 |
+| itens (topo) | 477, 561, 643 | 478, 562, 646 | +1…+3 |
+| taxa / total (centro) | 733 / 763 | 734 / 764 | +1 |
+| texto (1ª linha) | 806 | 808 | +2 |
+| botão | 627,881 186×48 | 618,883 205×48 | y +2; w +19 ("Polygonscan") |
+| faixa laranja (fim) | 987 | 989 | +2 |
+| colunas dos metadados (divisores) | 612, 757, 883 | 591, 729, 850 | conteúdo diferente ("Coinbase Wallet", "04 Oct, 2026") |

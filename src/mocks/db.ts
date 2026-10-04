@@ -13,7 +13,7 @@ import {
 } from "@/contracts";
 import { createDefaultCart, createNfts, users } from "./fixtures";
 
-const key = "nft-marketplace:mock-db:v6";
+const key = "nft-marketplace:mock-db:v7";
 export interface MockDb {
   nfts: Nft[];
   users: Array<{

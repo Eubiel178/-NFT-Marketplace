@@ -18,3 +18,5 @@ export { MobileSocialBlock } from "./mobile-social-block";
 export { Label } from "./label";
 export { RadioGroup } from "./radio";
 export { WalletSelector } from "./wallet-selector";
+// receiptColumns: o cabeçalho da tabela do recibo usa as mesmas colunas da linha.
+export { NftReceiptArtwork, receiptColumns } from "./nft-receipt-artwork";

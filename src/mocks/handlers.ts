@@ -922,6 +922,8 @@ export const handlers = [
         address: wallet.address,
         network: body.data.network,
         name: wallet.name,
+        // Snapshot do aplicativo da carteira usado na compra (conexão conferida acima).
+        method: db.walletConnections[user.id].method,
       },
     };
     db.orders.push(order);

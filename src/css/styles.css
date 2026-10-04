@@ -534,7 +534,6 @@ textarea:focus-visible {
   }
 }
 
-.order-page,
 .account-page {
   width: 100%;
   max-width: var(--container-content);
@@ -545,23 +544,6 @@ textarea:focus-visible {
   flex-direction: column;
   gap: 2rem;
 }
-.order-totals {
-  display: grid;
-  gap: 0.75rem;
-  margin: 0;
-}
-.order-totals div {
-  display: flex;
-  justify-content: space-between;
-  gap: 1rem;
-}
-.order-totals dt,
-.order-totals dd {
-  margin: 0;
-}
-.order-totals dd {
-  color: var(--color-text-accent);
-}
 .checkout-error {
   margin: 0;
   color: var(--color-error);
@@ -571,153 +553,6 @@ textarea:focus-visible {
   min-height: 360px;
   border-radius: 12px;
   background: var(--color-surface-card);
-}
-
-.order-page {
-  position: relative;
-  min-height: 900px;
-  display: grid;
-  place-items: start center;
-  padding: 3rem 0;
-}
-.order-scrim {
-  position: fixed;
-  inset: 0;
-  z-index: 20;
-  background: var(--color-ink);
-  opacity: 0.78;
-}
-.order-modal {
-  position: relative;
-  z-index: 21;
-  width: min(578px, calc(100% - 2rem));
-  border-bottom: 0.625rem solid var(--color-primary);
-  background: var(--color-surface-card);
-}
-.order-close {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  z-index: 1;
-  display: grid;
-  width: 2rem;
-  height: 2rem;
-  place-items: center;
-  border: 0;
-  background: transparent;
-  color: var(--color-text-secondary);
-  cursor: pointer;
-}
-.order-close svg {
-  width: 1.125rem;
-}
-.order-header {
-  display: grid;
-  justify-items: center;
-  gap: 1rem;
-  padding: 2rem 2rem 1rem;
-  text-align: center;
-}
-.order-header img,
-.order-header svg {
-  width: 5rem;
-  height: 5rem;
-  color: var(--color-primary);
-}
-.order-header h1 {
-  margin: 0;
-  font-size: var(--text-body-large-16);
-}
-.order-meta {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  padding: 0.25rem 2.25rem;
-}
-.order-meta div {
-  display: grid;
-  gap: 0.25rem;
-  padding: 0 0.75rem;
-  border-right: 1px solid var(--color-border);
-}
-.order-meta div:last-child {
-  border-right: 0;
-}
-.order-meta dt,
-.order-meta dd {
-  margin: 0;
-  font-size: var(--text-caption-12);
-}
-.order-meta dt {
-  font-weight: var(--font-weight-bold);
-}
-.order-meta dd {
-  color: var(--color-text-secondary);
-}
-.order-details {
-  display: grid;
-  gap: 0.75rem;
-  padding: 1.25rem 2.75rem 3rem;
-}
-.order-details h2 {
-  margin: 0;
-  font-size: var(--text-body-15);
-}
-.order-table-head,
-.order-line {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 80px 90px;
-  gap: 0.75rem;
-  align-items: center;
-}
-.order-table-head {
-  padding-bottom: 0.75rem;
-  border-bottom: 1px solid var(--color-border);
-  color: var(--color-text-secondary);
-  font-size: var(--text-caption-12);
-}
-.order-line {
-  min-height: 70px;
-  border-bottom: 1px solid var(--color-border);
-}
-.order-line > div {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
-.order-line img {
-  width: 54px;
-  height: 54px;
-  border-radius: 6px;
-  object-fit: cover;
-}
-.order-line strong {
-  color: var(--color-text-accent);
-}
-.order-footer {
-  display: grid;
-  gap: 1rem;
-  padding: 1.25rem 2.75rem 2rem;
-}
-.order-footer p {
-  margin: 0;
-  color: var(--color-text-secondary);
-  font-size: var(--text-body-14);
-  line-height: var(--leading-22);
-}
-.order-footer a {
-  display: inline-flex;
-  width: fit-content;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 1rem;
-  border-radius: 5px;
-  background: var(--color-primary);
-  color: var(--color-ink);
-  font-weight: var(--font-weight-bold);
-  text-decoration: none;
-}
-.order-footer a svg {
-  width: 1rem;
 }
 
 .account-page {
@@ -894,33 +729,9 @@ textarea:focus-visible {
 }
 
 @media (width < 40rem) {
-  .order-page,
   .account-page {
     width: 100%;
     padding: 0 1.75rem;
-  }
-  .order-page {
-    width: calc(100% + 3rem);
-    margin-left: -1.5rem;
-    min-height: 100vh;
-    padding: 1rem;
-  }
-  .order-modal {
-    width: 100%;
-    border-radius: 16px;
-  }
-  .order-meta {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1rem 0;
-    padding: 0.25rem 1rem;
-  }
-  .order-meta div:nth-child(2) {
-    border-right: 0;
-  }
-  .order-details,
-  .order-footer {
-    padding-right: 1.25rem;
-    padding-left: 1.25rem;
   }
   .account-page {
     display: flex;

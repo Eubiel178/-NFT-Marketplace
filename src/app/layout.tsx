@@ -12,6 +12,9 @@ export function Layout() {
   const hideMobileTabBar = useMatches({
     select: (matches) => matches.some((match) => match.staticData.hideTabBar),
   });
+  const hideChrome = useMatches({
+    select: (matches) => matches.some((match) => match.staticData.hideChrome),
+  });
   const isAuthRoute =
     location.pathname === "/login" || location.pathname === "/register";
 
@@ -24,7 +27,7 @@ export function Layout() {
         Pular para o conteúdo
       </a>
 
-      <Header />
+      {!hideChrome && <Header />}
 
       <main
         id="main"
@@ -38,7 +41,7 @@ export function Layout() {
         <Outlet />
       </main>
 
-      <Footer />
+      {!hideChrome && <Footer />}
 
       {!hideMobileTabBar && <TabBar />}
     </div>

@@ -142,6 +142,16 @@ As 76 classes `.figma-*` (cópia da lista de estilos do Figma em `px`) não eram
 - **Métodos no desktop.** A primeira opção do frame é o selo "METAMASK · WALLETCONNECT · COINBASE"; no app ela é a opção WalletConnect (nome acessível "WalletConnect").
 - **Aviso de mudança** (`nft.updated`) no pagamento usa `role="alert"`: exige ação antes de confirmar.
 
+### Confirmação de Pedido: decisões e desvios (04/10/2026)
+
+- **Sem header e footer.** O frame desktop mostra só o cartão sobre o fundo escuro. A rota usa `staticData.hideChrome` (mesmo mecanismo do `hideTabBar`), e o cartão fica no fluxo da página, sem camada sobre o resto. Assim não há foco do teclado em links escondidos atrás de um scrim.
+- **Sem frame mobile.** O cartão vai de ponta a ponta abaixo de `sm` (como o Pagamento), os quatro metadados ficam em grade 2×2 e as colunas do recibo encolhem (imagem de 48px, nome em 14px, cabeçalho em 12px). Ordem e elementos iguais aos do desktop.
+- **"Carteira" mostra o aplicativo** (MetaMask, Coinbase Wallet, WalletConnect), como no frame ("MetaMask"), a partir do novo `wallet.method` do pedido.
+- **Explorador pela rede.** Ethereum → "Ver no Etherscan" (etherscan.io); Polygon → "Ver no Polygonscan" (polygonscan.com). O frame mostra Etherscan com uma transação na Ethereum. O link abre em nova aba, com "(abre em nova aba)" para leitores de tela, e não tem o ícone que havia antes (o frame não tem).
+- **Rótulos em negrito** só em "ID da transação" e "Carteira", como no frame.
+- **Recibo é snapshot.** Nada vem do catálogo atual: um `nft.updated` depois da compra não muda o recibo (coberto pelo `phase13`).
+- **Carrinho depois da compra.** Ao confirmar, o MSW remove só os itens e quantidades comprados; `useOrder` invalida a query do carrinho para o contador refletir isso.
+
 ## Execução e deploy
 
 Vite é a ferramenta complementar escolhida; todas as tecnologias obrigatórias têm dependência/configuração dedicada. REST, Socket.IO, Router, Query, Axios, Tailwind e componentes iniciais já têm caminho de execução. Playwright exercita a infraestrutura. Lighthouse tem script preparado, sem atestar metas finais. Build de demonstração ativa MSW inclusive em produção; build normal permite API configurada, mas não existe backend externo entregue.

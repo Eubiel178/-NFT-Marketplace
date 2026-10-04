@@ -62,12 +62,12 @@ export const collectorSchema = z.object({
   note: z.string().max(500, 'Use no máximo 500 caracteres'),
 })
 export type Collector = z.infer<typeof collectorSchema>
-export const orderSchema = z.object({ id: z.string(), userId: z.string(), version: z.number().int().positive(), status: orderStatusSchema, createdAt: z.string().datetime(), quote: quoteSchema, transactionRef: z.string().nullable(), wallet: walletSchema.pick({ address: true, network: true, name: true }) })
+export const orderSchema = z.object({ id: z.string(), userId: z.string(), version: z.number().int().positive(), status: orderStatusSchema, createdAt: z.string().datetime(), quote: quoteSchema, transactionRef: z.string().nullable(), wallet: walletSchema.pick({ address: true, network: true, name: true }).extend({ method: paymentMethodSchema }) })
 export type ApiError = z.infer<typeof apiErrorSchema>
 export interface CartItem { nftId: string; editionId: string; quantity: number; price?: Eth; name?: string; image?: string; tokenId?: string }
 export interface Quote { id: string; version: number; expiresAt: string; items: CartItem[]; subtotal: Eth; discount: Eth; networkFee: Eth; total: Eth }
 export type OrderStatus = 'pending' | 'confirmed' | 'declined'
-export interface Order { id: string; userId: string; version: number; status: OrderStatus; createdAt: string; quote: Quote; transactionRef: string | null; wallet: { address: string; network: 'ethereum' | 'polygon'; name: string } }
+export interface Order { id: string; userId: string; version: number; status: OrderStatus; createdAt: string; quote: Quote; transactionRef: string | null; wallet: { address: string; network: 'ethereum' | 'polygon'; name: string; method: PaymentMethod } }
 export interface Wallet { id: string; userId: string; name: string; alias: string; address: string; network: 'ethereum' | 'polygon'; label: string; tag: string; ens: string; primary: boolean }
 export type CartLine = z.infer<typeof cartLineSchema>
 export type Cart = z.infer<typeof cartSchema>

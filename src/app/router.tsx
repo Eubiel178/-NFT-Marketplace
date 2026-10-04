@@ -106,7 +106,8 @@ const wallets = createRoute({
 const order = createRoute({
   getParentRoute: () => privateRoot,
   path: "/orders/$orderId",
-  staticData: { hideTabBar: true },
+  // O frame da confirmação mostra só o recibo, sem header e footer.
+  staticData: { hideTabBar: true, hideChrome: true },
   component: function OrderRoute() {
     const { orderId } = order.useParams();
     return <OrderPage id={orderId} />;
@@ -127,6 +128,8 @@ declare module "@tanstack/react-router" {
   // Rotas com barra de compra ou formulário próprio escondem a tab bar mobile.
   interface StaticDataRouteOption {
     hideTabBar?: boolean;
+    // Telas que o Figma desenha sem header e footer.
+    hideChrome?: boolean;
   }
   interface Register {
     router: typeof router;

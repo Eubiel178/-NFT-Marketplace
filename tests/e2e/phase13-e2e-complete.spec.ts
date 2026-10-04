@@ -86,21 +86,21 @@ test('compra começa no detalhe e exibe recibo com snapshot após atualização 
   await expect(page.getByText('ID da transação')).toBeVisible()
   await expect(page.getByText('Taxa de rede')).toBeVisible()
 
-  const receiptTotal = await page.locator('.order-totals dd').last().innerText()
-  const receiptLine = page.locator('.order-line').first()
-  const receiptName = await receiptLine.locator('div > span').innerText()
-  const receiptQuantity = await receiptLine.locator(':scope > span').innerText()
-  const receiptItemTotal = await receiptLine.locator(':scope > strong').innerText()
+  const receiptTotal = await page.getByTestId('order-total').innerText()
+  const receiptLine = page.getByRole('list', { name: 'NFTs comprados' }).getByRole('listitem').first()
+  const receiptName = await receiptLine.getByTestId('receipt-name').innerText()
+  const receiptQuantity = await receiptLine.getByTestId('receipt-quantity').innerText()
+  const receiptItemTotal = await receiptLine.getByTestId('receipt-total').innerText()
   await page.evaluate(async () => {
     await fetch('/api/__mock/nfts/nft-1/update', { method: 'POST' })
   })
   await page.reload()
 
-  await expect(page.locator('.order-totals dd').last()).toHaveText(receiptTotal)
-  const reloadedReceiptLine = page.locator('.order-line').first()
-  await expect(reloadedReceiptLine.locator('div > span')).toHaveText(receiptName)
-  await expect(reloadedReceiptLine.locator(':scope > span')).toHaveText(receiptQuantity)
-  await expect(reloadedReceiptLine.locator(':scope > strong')).toHaveText(receiptItemTotal)
+  await expect(page.getByTestId('order-total')).toHaveText(receiptTotal)
+  const reloadedReceiptLine = page.getByRole('list', { name: 'NFTs comprados' }).getByRole('listitem').first()
+  await expect(reloadedReceiptLine.getByTestId('receipt-name')).toHaveText(receiptName)
+  await expect(reloadedReceiptLine.getByTestId('receipt-quantity')).toHaveText(receiptQuantity)
+  await expect(reloadedReceiptLine.getByTestId('receipt-total')).toHaveText(receiptItemTotal)
 })
 
 test('clique repetido no checkout cria apenas um pedido', async ({ page }) => {
