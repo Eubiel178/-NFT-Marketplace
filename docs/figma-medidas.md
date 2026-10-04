@@ -103,13 +103,15 @@ Data: 04/10/2026. Referências: `figma/Desktop/Início.png` (1440×3668) e `figm
 
 | Bloco | Figma (x,y w×h) | App (x,y w×h) | Δx | Δy | Δw | Δh |
 | --- | --- | --- | ---: | ---: | ---: | ---: |
-| hero: imagem (versão do usuário) | 870,101 450x450 | 870,93 450x450 | 0 | **−8** | 0 | 0 |
-| hero: "Bem-vindo" (versão do usuário) | 161,146 164x12 | 130,138 155x12 | **−31** | **−8** | −9 | 0 |
+| hero: imagem | 870,101 450x450 | 870,101 450x450 | 0 | 0 | 0 | 0 |
+| hero: linhas de tinta (bem-vindo, título ×2, texto ×3, botão, pontos) | y 146, 189, 259, 318, 342, 366, 416, 500 | y 146, 188, 258, 318, 342, 366, 416, 500 | | ≤1 | | |
+| hero: texto e botão (x) | 160–161 | 160–161 | 0 | | | |
+| hero: pontos | 720,500 40x8 | 720,500 40x8 | 0 | 0 | 0 | 0 |
 | filtros: "Coleções" | 140,668 86x18 | 140,668 86x18 | 0 | 0 | 0 | 0 |
 | filtros: 1ª coleção | 152,709 244x16 | 152,709 244x16 | 0 | 0 | 0 | 0 |
 | filtros: 9ª coleção | 153,1029 243x16 | 152,1029 244x16 | −1 | 0 | 1 | 0 |
 | filtros: "Faixa de preço" | 141,1096 150x18 | 141,1096 150x18 | 0 | 0 | 0 | 0 |
-| filtros: slider | 152,1123 258x21 | 150,1121 261x21 | −2 | −2 | **3** | 0 |
+| filtros: slider | 152,1123 258x21 | 152,1123 258x21 | 0 | 0 | 0 | 0 |
 | filtros: "Preço: 0,02 - 12,30 ETH" | 153,1161 206x15 | 153,1161 206x15 | 0 | 0 | 0 | 0 |
 | filtros: "Aplicar" | 152,1188 92x36 | 152,1190 91x36 | 0 | 2 | −1 | 0 |
 | filtros: "Rede" | 141,1265 42x15 | 140,1265 43x15 | −1 | 0 | 1 | 0 |
@@ -149,9 +151,11 @@ Data: 04/10/2026. Referências: `figma/Desktop/Início.png` (1440×3668) e `figm
 | hero | 24,101 366x190 | 24,99 366x190 | 0 | −2 | 0 | 0 |
 | hero: arte | 232,108 145x145 | 232,108 145x145 | 0 | 0 | 0 | 0 |
 | hero: arte secundária | 242,195 70x70 | 242,195 70x70 | 0 | 0 | 0 | 0 |
-| aba "Todos os NFTs" | 24,309 110x18 | 24,309 114x22 | 0 | 0 | **4** | **4** |
-| aba "Novos lançamentos" | 141,309 139x14 | 159,309 132x14 | **18** | 0 | −7 | 0 |
-| aba "Em alta" | 298,309 57x12 | 290,309 88x12 | **−8** | 0 | (cortada pela borda) | 0 |
+| aba "Todos os NFTs" (texto) | 24,309 | 24,309 | 0 | 0 | | |
+| aba "Todos os NFTs" (sublinhado) | 24,325 110x2 | 24,325 111x2 | 0 | 0 | 1 | 0 |
+| aba "Novos lançamentos" | 141,309 139x14 | 141,309 143x14 | 0 | 0 | 4 (texto) | 0 |
+| aba "Em alta" | 298,309 57x12 | 298,309 58x12 | 0 | 0 | 1 | 0 |
+| coração do card 1 | 161,355 28x28 | 161,355 28x28 | 0 | 0 | 0 | 0 |
 | card 1 (moldura, topo) | y 343 | y 343 | | 0 | | |
 | card 2 (moldura, topo) | y 375 | y 375 | | 0 | | |
 | card 3 (moldura, topo) | y 611 | y 611 | | 0 | | |

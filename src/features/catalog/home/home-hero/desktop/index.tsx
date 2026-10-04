@@ -8,11 +8,11 @@ import { Dots } from "../dots";
 export function Desktop({ artwork }: { artwork: Nft }) {
   return (
     <section
-      className="flex w-full justify-center"
+      className="mt-2 -mb-2 flex w-full justify-center"
       aria-labelledby="home-hero-title"
     >
       <div className="flex w-full max-w-content items-center justify-between gap-5">
-        <div className="flex w-full max-w-[37.5rem] flex-col">
+        <div className="flex w-full max-w-[37.5rem] flex-col pl-10">
           <p className="mb-2 font-mono text-sm font-medium leading-4 tracking-wide text-foreground">
             Bem-vindo à Kurio
           </p>
@@ -41,7 +41,7 @@ export function Desktop({ artwork }: { artwork: Nft }) {
             <a href="#home-products">EXPLORAR</a>
           </Button>
 
-          <Dots className="mt-11 self-end" />
+          <Dots className="mt-11 -mr-10 self-end" />
         </div>
 
         <Link

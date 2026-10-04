@@ -50,7 +50,7 @@ export function Filters({ facets, search, onChange }: FiltersProps) {
 
       <fieldset className="mt-10">
         <legend className={groupTitle}>Faixa de preço</legend>
-        <div className="relative mr-[-0.0625rem] ml-2.5 h-4 before:absolute before:top-1.75 before:left-0 before:h-1 before:w-full before:bg-primary">
+        <div className="relative mt-0.5 ml-3 h-4 before:absolute before:top-1.75 before:left-0 before:h-1 before:w-full before:bg-primary">
           <input
             aria-label="Preço mínimo"
             type="range"
@@ -72,7 +72,7 @@ export function Filters({ facets, search, onChange }: FiltersProps) {
             className={rangeInput}
           />
         </div>
-        <output className="mt-4 block pl-3 font-mono text-[0.9375rem] font-normal leading-normal text-foreground">{`Preço: ${formatEthLabel(priceMin)} - ${formatEthLabel(priceMax)} ETH`}</output>
+        <output className="mt-3.5 block pl-3 font-mono text-[0.9375rem] font-normal leading-normal text-foreground">{`Preço: ${formatEthLabel(priceMin)} - ${formatEthLabel(priceMax)} ETH`}</output>
         <Button
           variant="primarySolid"
           size="sm"

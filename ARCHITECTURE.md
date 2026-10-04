@@ -76,12 +76,12 @@ As 76 classes `.figma-*` (cópia da lista de estilos do Figma em `px`) não eram
 - Uma versão no DOM: catálogo, abas, cards e paginação são um único grid responsivo (duas colunas desencontradas no mobile, três a partir de `sm`). Só o hero e a sidebar de filtros escolhem a versão com `useMediaQuery`: o hero porque textos e composição mudam entre os frames, a sidebar porque vira drawer abaixo de `lg`. A versão que não vale não é renderizada.
 - No mobile o grid mostra os 9 NFTs da página na ordem da API. O frame mostra o 7º NFT na 4ª posição; o app mostra o 4º.
 - A busca do mobile aparece também no tablet, onde a sidebar vira drawer, e ali é o único botão "Abrir filtros".
-- O coração de favorito do 1º card do frame mobile não foi incluído: o card é um link para o detalhe, e favoritar continua no detalhe.
+- O coração do 1º card do frame mobile é o botão de favorito do card (só abaixo de `sm`), com atualização otimista e rollback (`useFavorite`). O frame mostra o coração só no 1º card; no app ele aparece em todos, porque é um controle e não decoração. No desktop o favorito fica no detalhe.
 - O item escolhido nos filtros fica com a cor de destaque. No frame, "Arte digital" já aparece destacado sem filtro; no app, nenhum item é destacado sem filtro na URL.
 - Os botões do slider de preço ficam na posição do valor. No frame o botão da direita está no meio da faixa mesmo com o texto "12,30".
 - "Aplicar" fica sempre habilitado, como no frame; aplicar a mesma faixa não muda a URL.
 - Paginação: o app mostra a última página ("… 32") porque o catálogo tem 32 páginas; o frame mostra só "1 2 3 4 >".
-- Abas no mobile: 18px entre todas. No frame as duas primeiras se encostam e a terceira está a 18px.
+- Abas no mobile seguem o frame: as duas primeiras sem espaço entre si e 14px antes de "Em alta"; o sublinhado da aba ativa é 6px mais curto que o texto, como no frame.
 - Promoções e Diário da Cunhagem não aparecem abaixo de `sm`, porque o frame mobile mostra só a primeira dobra. Os títulos das promoções têm a quebra de linha do frame escrita no texto.
 - Título da página: o título visível do hero é o `h1`; "Marketplace de NFTs" (só para leitores de tela) virou `h2`, para a página ter um único `h1`.
 - Novo token `--leading-70` (4,375rem): entrelinha do título do hero, medida no frame (70px entre as duas linhas).

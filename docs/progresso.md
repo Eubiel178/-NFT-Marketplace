@@ -8,7 +8,7 @@ Método de contagem: `wc -l src/css/styles.css` e classes distintas que aparecem
 | Etapa | Situação | Linhas antes → depois | Classes antes → depois | Commit |
 | --- | --- | --- | --- | --- |
 | Preparação (Badge + tipografia) | concluída | 3.574 → 3.031 | 308 → 203 | ver git log |
-| Início | feita com ressalvas (ver abaixo) | 3.031 → 2.323 | 203 → 137 | ver git log |
+| Início | concluída (ressalvas restantes: preço das linhas 1 e 3, paginação) | 3.031 → 2.323 | 203 → 137 | ver git log |
 | Detalhes do NFT | pendente | | | |
 | Carrinho | pendente | | | |
 | Pagamento | pendente | | | |
@@ -38,8 +38,17 @@ Método de contagem: `wc -l src/css/styles.css` e classes distintas que aparecem
 
 ### Ressalvas
 
-- Hero desktop (versão do usuário, em revisão por ele): 8px acima e ~30px à esquerda do Figma.
+- ~~Hero desktop 8px acima e ~30px à esquerda~~ — resolvido em `fix: home caveats` (todas as linhas de tinta a ≤1px).
 - Preço dos cards nas linhas 1 e 3: −3px e +3px. O Figma não é consistente (nome→preço é 28px na linha 1 e 22px nas linhas 2 e 3); 2 tentativas.
-- Abas no mobile: "Novos lançamentos" +18px e "Em alta" −8px. No Figma as duas primeiras abas se encostam (gap −1px) e a terceira tem 18px; o app usa 18px entre todas.
+- ~~Abas no mobile +18px/−8px~~ — resolvido em `fix: home caveats`: espaço 0 entre as duas primeiras e 14px antes de "Em alta", como no frame; sublinhado na posição e largura do frame. "Novos lançamentos" fica 4px mais largo (largura do texto renderizado, mesma posição).
 - Paginação: o app mostra "1 2 3 4 … 32 >" (32 páginas reais); o Figma mostra "1 2 3 4 >". Os botões medem 35×35 como no Figma; o bloco fica 13px mais largo à esquerda.
+- ~~Slider 3px mais largo~~ — resolvido em `fix: home caveats` (258×21, 0px).
 - Mobile: o conteúdo fica 14px acima do frame, porque o frame tem a área da barra de status do aparelho acima da busca. As medidas abaixo descontam esse deslocamento.
+
+### fix: home caveats
+
+- Hero desktop: +8px no topo (com −8px embaixo, para o catálogo não descer), 40px de recuo do texto como no frame e pontos em x=720. Linhas de tinta: Figma 146, 189, 259, 318, 342, 366, 416, 500; app 146, 188, 258, 318, 342, 366, 416, 500. Imagem 870,101 450×450 nas duas.
+- Abas mobile e slider ajustados (medidas em `docs/figma-medidas.md`).
+- Paginação: o frame mostra 9 cards por página (grade 3×3); a API já usa `pageSize: 9`, sem mudança.
+- Coração: existe no frame mobile (1º card, círculo de 28px a 12px do topo e 10px da direita da moldura). Virou o botão de favorito do card no mobile, com `aria-pressed` e rótulo, usando o novo hook `useFavorite` (favorites/index.ts): atualização otimista com rollback; visitante vai para o login. Medida: 161,355 28×28 nas duas imagens.
+- Specs `foundation`, `home-visual`, `phase7-marketplace`, `phase2-layout`, `phase12-accessibility` e `phase6-auth` (favoritos) em chromium-desktop e chromium-mobile: 48 passaram, 2 pulados pela regra do próprio teste.
