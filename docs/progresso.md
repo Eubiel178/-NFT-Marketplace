@@ -227,3 +227,11 @@ Título só para leitores de tela no desktop, resumo sem fundo no desktop, trilh
 | botão | 627,881 186×48 | 618,883 205×48 | y +2; w +19 ("Polygonscan") |
 | faixa laranja (fim) | 987 | 989 | +2 |
 | colunas dos metadados (divisores) | 612, 757, 883 | 591, 729, 850 | conteúdo diferente ("Coinbase Wallet", "04 Oct, 2026") |
+
+### Suíte E2E completa depois da Confirmação (chromium-desktop e chromium-mobile)
+
+141 passaram, 9 falharam, 2 pulados (regra do próprio teste: busca só no mobile, paginação só no desktop). Nenhuma falha funcional.
+
+Visuais (conhecidas):
+- `visual-regression` home, detalhe, carrinho e pagamento nos dois projetos (8): baselines anteriores às mudanças de layout (ex.: carrinho 1440×1870 esperado, 1440×1668 atual).
+- `phase5-visual` no mobile (1): espera 5 cards em "Colecionadores também viram", seção oculta no mobile desde a versão do usuário (`9839c8e`) e ausente do frame mobile.
