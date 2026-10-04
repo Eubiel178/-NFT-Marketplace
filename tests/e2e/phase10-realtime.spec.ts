@@ -1,4 +1,4 @@
-import { expect, test, type Page } from './test'
+import { expect, placeOrder, test, type Page } from './test'
 
 async function signIn(page: Page, redirect: string) {
   await page.goto(`/login?redirect=${encodeURIComponent(redirect)}&expired=false`)
@@ -27,8 +27,7 @@ test('carteira secundária copia a principal e rejeita endereço inválido', asy
 
 test('evento de pedido duplicado ou antigo não revalida o pedido', async ({ page }) => {
   await signIn(page, '/checkout')
-  await page.locator('.checkout-consent input').check()
-  await page.getByRole('button', { name: 'Confirmar compra' }).click()
+  await placeOrder(page)
   await expect(page).toHaveURL(/\/orders\/order-/)
   await expect(page.getByRole('heading', { name: 'Seus NFTs agora estão na sua carteira' })).toBeVisible()
 
@@ -52,8 +51,7 @@ test('pedido pendente é recuperado por REST após a conexão Socket.IO cair', a
   await page.evaluate(async () => {
     await fetch('/api/__mock/scenario', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ scenario: 'payment-pending' }) })
   })
-  await page.locator('.checkout-consent input').check()
-  await page.getByRole('button', { name: 'Confirmar compra' }).click()
+  await placeOrder(page)
   await expect(page).toHaveURL(/\/orders\/order-/)
   await expect(page.getByRole('heading', { name: 'Confirmando sua compra' })).toBeVisible()
   await page.evaluate(async () => { await fetch('/api/__mock/socket/disconnect', { method: 'POST' }) })

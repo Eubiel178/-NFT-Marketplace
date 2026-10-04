@@ -8,6 +8,7 @@ export const scenarios = [
   "unauthorized",
   "favorites-error",
   "payment-declined",
+  "wallet-rejected",
   "payment-pending",
   "payment-held",
   "payment-timeout",

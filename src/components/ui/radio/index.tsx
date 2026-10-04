@@ -19,6 +19,9 @@ export interface RadioGroupProps {
   error?: string
   disabled?: boolean
   required?: boolean
+  // Estilo do grupo e de cada opção (ex.: linhas com borda); o estado marcado pode usar has-checked:.
+  className?: string
+  optionClassName?: string
 }
 
 export interface RadioProps {
@@ -33,15 +36,16 @@ export interface RadioProps {
   disabled?: boolean
   required?: boolean
   id?: string
+  className?: string
 }
 
 const Radio = forwardRef<HTMLInputElement, RadioProps>(
-  ({ label, description, icon, error, name, value, onValueChange, checked, disabled, required, id }, ref) => {
+  ({ label, description, icon, error, name, value, onValueChange, checked, disabled, required, id, className }, ref) => {
     const radioId = id || `radio-${name}-${value}`
     const descriptionId = description ? `${radioId}-description` : undefined
 
     return (
-      <div className="flex items-start gap-3">
+      <div className={cn('flex items-start gap-3', className)}>
         <div className="relative flex h-5 w-5 items-center">
           <input
             ref={ref}
@@ -95,6 +99,8 @@ export function RadioGroup({
   error,
   disabled = false,
   required = false,
+  className,
+  optionClassName,
 }: RadioGroupProps) {
   return (
     <div className="w-full">
@@ -103,7 +109,7 @@ export function RadioGroup({
         aria-describedby={error ? `${name}-error` : undefined}
         aria-invalid={error ? 'true' : 'false'}
         disabled={disabled}
-        className="space-y-3"
+        className={cn('space-y-3', className)}
       >
         {label && <legend id={`${name}-label`} className="mb-2 block text-left text-body-14 font-medium leading-16 tracking-wide text-text-secondary">{label}{required && <span className="ml-1 text-error" aria-hidden="true">*</span>}</legend>}
         {options.map((option) => (
@@ -120,6 +126,7 @@ export function RadioGroup({
             disabled={disabled || option.disabled}
             error={Boolean(error)}
             required={required}
+            className={optionClassName}
           />
         ))}
       </fieldset>

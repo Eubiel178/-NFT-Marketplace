@@ -1,4 +1,4 @@
-import { expect, test, type Page } from './test'
+import { expect, placeOrder, test, type Page } from './test'
 
 async function navigateInApp(page: Page, to: string) {
   await page.evaluate((path) => {
@@ -41,8 +41,7 @@ test('uma única conexão Socket.IO atende catálogo, carrinho, checkout e pedid
   await expect(page.locator('[data-realtime-connected="true"]')).toBeVisible()
   await expectSingleSocket(page)
 
-  await page.getByRole('checkbox', { name: /Confirmo que os dados/ }).check()
-  await page.getByRole('button', { name: 'Confirmar compra' }).click()
+  await placeOrder(page)
   await expect(page).toHaveURL(/\/orders\/order-/)
   await expect(page.getByRole('heading', { name: 'Seus NFTs agora estão na sua carteira' })).toBeVisible()
   await expectSingleSocket(page)
@@ -52,8 +51,7 @@ test('troca de usuário descarta a assinatura de pedido da sessão anterior', as
   await page.goto('/login?redirect=%2Fcheckout&expired=false')
   await submitLogin(page, 'ana@example.test', 'kurio-demo')
   await expect(page).toHaveURL(/\/checkout$/)
-  await page.getByRole('checkbox', { name: /Confirmo que os dados/ }).check()
-  await page.getByRole('button', { name: 'Confirmar compra' }).click()
+  await placeOrder(page)
   await expect(page).toHaveURL(/\/orders\/order-/)
   await expect(page.getByRole('heading', { name: 'Seus NFTs agora estão na sua carteira' })).toBeVisible()
   const orderId = page.url().split('/').at(-1)
@@ -85,8 +83,7 @@ test('pedido pendente é confirmado só pelo evento order.updated, sem polling',
   await page.evaluate(async () => {
     await fetch('/api/__mock/scenario', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ scenario: 'payment-held' }) })
   })
-  await page.getByRole('checkbox', { name: /Confirmo que os dados/ }).check()
-  await page.getByRole('button', { name: 'Confirmar compra' }).click()
+  await placeOrder(page)
   await expect(page).toHaveURL(/\/orders\/order-/)
   await expect(page.getByRole('heading', { name: 'Confirmando sua compra' })).toBeVisible()
   const orderId = page.url().split('/').at(-1)

@@ -108,6 +108,18 @@ As 76 classes `.figma-*` (cópia da lista de estilos do Figma em `px`) não eram
 - **Cupom vencido distinto de inválido.** `KURIO5` responde `COUPON_EXPIRED`; códigos desconhecidos, `INVALID_COUPON`. A interface mostra a mensagem da API no campo.
 - **`createQuote` em `shared/api/quote`.** Carrinho e pagamento usam a mesma chamada; antes o pagamento importava de dentro da feature do carrinho.
 
+### Pagamento: decisões e desvios (04/10/2026)
+
+- **Duas versões, uma no DOM.** Desktop (formulário do colecionador + resumo) e mobile (carteiras cadastradas + métodos + total) têm estruturas diferentes nos frames; a página escolhe por `useMediaQuery` e as duas usam os mesmos hooks.
+- **Título.** O frame desktop não mostra título visível; o `<h1>` "Pagamento com carteira" existe só para leitores de tela no desktop e é visível no mobile, como no frame.
+- **Formulário pré-preenchido.** O frame desktop mostra os campos vazios; o app preenche nome, usuário, perfil, ENS e e-mail a partir do perfil e da sessão, e endereço e rede a partir da carteira escolhida. O endereço só é editável com "Usar outra carteira?" marcado.
+- **Código de indicação obrigatório no desktop**, como indica o asterisco do frame; a API aceita só `KURIO-2026`. No mobile o frame não tem formulário: os dados do colecionador vêm do perfil e, se faltar algo, a tela pede para completar o perfil.
+- **Conexão de carteira simulada** (requisito do readme, sem frame próprio): uma linha de status ("Coinbase Wallet conectada · Desconectar", "Conectando…", recusa com "Tentar de novo") fica logo abaixo do botão no desktop e abaixo do total no mobile, para não deslocar o resto do frame.
+- **Revisão em diálogo.** O frame não tem etapa de revisão; o readme exige. "Confirmar compra" abre o diálogo "Revise sua compra" com a cotação revalidada; o envio é "Enviar pedido". Não há mais checkbox de consentimento.
+- **Carteira padrão.** O frame mobile mostra "Reserva" selecionada e em primeiro lugar; o app mantém a ordem da API e seleciona a carteira principal.
+- **Métodos no desktop.** A primeira opção do frame é o selo "METAMASK · WALLETCONNECT · COINBASE"; no app ela é a opção WalletConnect (nome acessível "WalletConnect").
+- **Aviso de mudança** (`nft.updated`) no pagamento usa `role="alert"`: exige ação antes de confirmar.
+
 ## Execução e deploy
 
 Vite é a ferramenta complementar escolhida; todas as tecnologias obrigatórias têm dependência/configuração dedicada. REST, Socket.IO, Router, Query, Axios, Tailwind e componentes iniciais já têm caminho de execução. Playwright exercita a infraestrutura. Lighthouse tem script preparado, sem atestar metas finais. Build de demonstração ativa MSW inclusive em produção; build normal permite API configurada, mas não existe backend externo entregue.

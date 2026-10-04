@@ -2,16 +2,18 @@ import { z } from "zod";
 import {
   nftSchema,
   orderSchema,
+  walletConnectionSchema,
   type CartItem,
   type Nft,
   type Order,
   type Profile,
   type Quote,
   type Wallet,
+  type WalletConnection,
 } from "@/contracts";
 import { createDefaultCart, createNfts, users } from "./fixtures";
 
-const key = "nft-marketplace:mock-db:v4";
+const key = "nft-marketplace:mock-db:v5";
 export interface MockDb {
   nfts: Nft[];
   users: Array<{
@@ -30,6 +32,7 @@ export interface MockDb {
   orders: Order[];
   quotes: Record<string, { quote: Quote; coupon?: string }>;
   idempotency: Record<string, { payload: string; orderId: string }>;
+  walletConnections: Record<string, WalletConnection>;
 }
 const schema = z.object({
   nfts: z.array(nftSchema),
@@ -90,6 +93,7 @@ const schema = z.object({
     z.string(),
     z.object({ payload: z.string(), orderId: z.string() }),
   ),
+  walletConnections: z.record(z.string(), walletConnectionSchema),
 });
 const initialState = (): MockDb => ({
   nfts: createNfts(),
@@ -140,6 +144,7 @@ const initialState = (): MockDb => ({
   orders: [],
   quotes: {},
   idempotency: {},
+  walletConnections: {},
 });
 function read() {
   try {

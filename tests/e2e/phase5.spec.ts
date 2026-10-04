@@ -1,4 +1,4 @@
-import { expect, test } from './test'
+import { expect, placeOrder, test } from './test'
 
 async function signIn(page: import('@playwright/test').Page, redirect: string) {
   await page.goto(`/login?redirect=${encodeURIComponent(redirect)}`)
@@ -15,10 +15,7 @@ test('compra autenticada do carrinho à confirmação', async ({ page }) => {
   await page.getByRole('button', { name: /Conectar e finalizar/ }).click()
   await expect(page).toHaveURL(/\/checkout$/)
   await expect(page.getByRole('heading', { name: 'Pagamento com carteira' })).toBeVisible()
-  const walletAddress = page.getByLabel('Endereço da carteira')
-  if (await walletAddress.isVisible()) await walletAddress.fill('0xA91F...E82C')
-  await page.locator('.checkout-consent input').check()
-  await page.getByRole('button', { name: 'Confirmar compra' }).click()
+  await placeOrder(page)
   await expect(page).toHaveURL(/\/orders\/order-/)
   await expect(page.getByRole('heading', { name: 'Seus NFTs agora estão na sua carteira' })).toBeVisible()
   await expect(page.getByRole('link', { name: /Ver no Etherscan/ })).toHaveAttribute('target', '_blank')

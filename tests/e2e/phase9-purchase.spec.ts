@@ -1,4 +1,4 @@
-import { expect, test, type Page } from './test'
+import { expect, placeOrder, test, type Page } from './test'
 
 async function signIn(page: Page, redirect: string) {
   await page.goto(`/login?redirect=${encodeURIComponent(redirect)}&expired=false`)
@@ -38,24 +38,30 @@ test('evento de NFT atualiza o item do carrinho via Socket.IO', async ({ page })
 
 test('mudança de preço exige nova confirmação no checkout', async ({ page }) => {
   await signIn(page, '/checkout')
-  await expect(page.locator('.checkout-page')).toHaveAttribute('data-realtime-connected', 'true')
-  const walletAddress = page.getByLabel('Endereço da carteira')
-  if (await walletAddress.isVisible()) await walletAddress.fill('0xA91F...E82C')
+  await expect(page.getByTestId('checkout')).toHaveAttribute('data-realtime-connected', 'true')
+  await page.getByText(/conectada$/).first().waitFor()
+  const referral = page.getByLabel('Código de indicação')
+  if (await referral.isVisible()) await referral.fill('KURIO-2026')
+  // Revisão aberta com a cotação vista; a mudança de preço chega pelo nft.updated.
+  await page.getByRole('button', { name: 'Confirmar compra' }).click()
+  const review = page.getByRole('dialog', { name: 'Revise sua compra' })
+  await expect(review.getByText('Total', { exact: true })).toBeVisible()
   await page.evaluate(async () => { await fetch('/api/__mock/nfts/nft-1/update', { method: 'POST' }) })
-  await expect(page.getByRole('alert')).toContainText('Revise a cotação')
-  const confirm = page.getByRole('button', { name: 'Confirmar compra' })
-  await expect(confirm).toBeDisabled()
-  await page.locator('.checkout-consent input').check()
-  await expect(confirm).toBeEnabled()
+  await expect(page.getByRole('alert').filter({ hasText: 'Revise a cotação' })).toBeVisible()
+  // A mudança aparece na revisão e o pedido só sai com uma nova confirmação.
+  await expect(review.getByRole('alert')).toContainText('A cotação mudou')
+  await expect(page).toHaveURL(/\/checkout$/)
+  await review.getByRole('button', { name: 'Enviar pedido' }).click()
+  await expect(page).toHaveURL(/\/orders\/order-/)
 })
 
 test('conflito de cotação preserva o checkout e permite revisão', async ({ page }) => {
   await signIn(page, '/checkout')
-  const walletAddress = page.getByLabel('Endereço da carteira')
-  if (await walletAddress.isVisible()) await walletAddress.fill('0xA91F...E82C')
   await setScenario(page, 'stale-quote')
-  await page.locator('.checkout-consent input').check()
-  await page.getByRole('button', { name: 'Confirmar compra' }).click()
-  await expect(page.locator('.checkout-error').first()).toContainText('cotação mudou')
-  await expect(page.getByRole('button', { name: 'Confirmar compra' })).toBeDisabled()
+  await placeOrder(page)
+  const review = page.getByRole('dialog', { name: 'Revise sua compra' })
+  await expect(review.getByRole('alert').last()).toContainText('cotação mudou')
+  // O checkout é preservado: nenhum pedido foi criado e a revisão segue aberta para nova confirmação.
+  await expect(page).toHaveURL(/\/checkout$/)
+  await expect(review.getByRole('button', { name: 'Enviar pedido' })).toBeVisible()
 })

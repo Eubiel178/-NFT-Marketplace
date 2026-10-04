@@ -1,4 +1,4 @@
-import { expect, test, type Page } from './test'
+import { expect, placeOrder, test, type Page } from './test'
 
 async function signIn(page: Page, redirect: string) {
   await page.goto(`/login?redirect=${encodeURIComponent(redirect)}&expired=false`)
@@ -59,7 +59,7 @@ test('resumo do carrinho comunica a cotação enquanto carrega', async ({ page }
   await expect(page.getByRole('alert')).toContainText('Não foi possível atualizar o resumo')
   await setScenario(page, 'slow')
   await page.getByRole('button', { name: 'Tentar novamente' }).click()
-  await expect(page.locator('.checkout-status')).toContainText('Calculando resumo...')
+  await expect(page.getByRole('status').filter({ hasText: 'Calculando resumo...' })).toContainText('Calculando resumo...')
   await expect(page.getByTestId('cart-totals')).toHaveAttribute('aria-busy', 'true')
 })
 
@@ -99,8 +99,7 @@ test('erro ao carregar perfil e carteiras oferece retry', async ({ page }) => {
 
 test('falha transitória do pedido exibe retry sem tratar como 404', async ({ page }) => {
   await signIn(page, '/checkout')
-  await page.locator('.checkout-consent input').check()
-  await page.getByRole('button', { name: 'Confirmar compra' }).click()
+  await placeOrder(page)
   await expect(page).toHaveURL(/\/orders\/order-/)
   await setScenario(page, 'order-error')
   await page.reload()

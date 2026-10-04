@@ -11,7 +11,7 @@ Método de contagem: `wc -l src/css/styles.css` e classes distintas que aparecem
 | Início | concluída (ressalvas restantes: preço das linhas 1 e 3, paginação) | 3.031 → 2.323 | 203 → 137 | ver git log |
 | Detalhes do NFT | concluída | 2.323 → 1.709 | 137 → 97 | ver git log |
 | Carrinho | concluída (visual do usuário mantido; diferenças do Figma listadas abaixo) | 1.709 → 1.328 | 97 → 68 | ver git log |
-| Pagamento | pendente | | | |
+| Pagamento | concluída | 1.328 → 973 | 68 → 45 | ver git log |
 | Confirmação de Pedido | pendente | | | |
 | Login | pendente | | | |
 | Cadastro | pendente | | | |
@@ -132,3 +132,40 @@ Mobile (414, logado):
 | subtotal | 25,642 | 28,650 | y +8 |
 | total | 24,754 | 27,763 | y +9 |
 | "Conectar e finalizar" | 24,800 366×60 | 28,805 358×60 | x +4, y +5, w −8 |
+
+## Pagamento
+
+- Lógica em `features/checkout/hooks`: `useCheckoutData` (sessão, carrinho, carteiras, perfil e cotação; sessão expirada leva ao login), `useCheckoutForm` (valores, validação e erros da API por campo), `useWalletConnection` (conexão simulada: conectar, recusar, desconectar), `usePlaceOrder` (revisão, revalidação, envio único com `Idempotency-Key`, recuperação após timeout), `usePendingOrder` (pedido criado com a chave guardada → vai para o pedido após refresh) e `useCheckoutLive` (`nft.updated`). Regras puras em `features/checkout/lib`: formulário e validação, comparação de cotações e descrição das mudanças, total da linha em wei. A página só compõe.
+- Desktop e mobile têm estruturas diferentes nos frames (formulário completo × carteiras cadastradas e métodos), então a página escolhe a versão por `useMediaQuery`; as duas usam os mesmos hooks.
+- Componentes: `WalletSelector` (cartões das carteiras e métodos no mobile), `RadioGroup` (métodos no desktop; ganhou `className`/`optionClassName`, só adição) e `Label` (rótulos dos campos). Os três passaram a ser exportados pelo barrel `@/components`. O `Input` do projeto não aceita o estilo do frame (o `className` substitui as classes dele), então os campos do pagamento usam um `TextField` local com `Label`, erro associado por `aria-describedby` e `aria-invalid`.
+- Validação: a mesma regra no formulário e no MSW (`collectorSchema` em `src/contracts`), mais os obrigatórios do layout desktop (rede, tipo de carteira e código de indicação, com asterisco no frame). A API ainda recusa código de indicação inexistente (só `KURIO-2026` existe) e devolve `422` com `fields`; o erro aparece no campo.
+- Carteira: o MSW ganhou `GET /api/wallets/connection`, `POST /api/wallets/:id/connect` (o cenário `wallet-rejected` recusa) e `POST /api/wallets/:id/disconnect`. Ao abrir, a carteira escolhida é conectada com o método destacado no frame (Coinbase Wallet); trocar de método ou de carteira reconecta; "Desconectar" desliga. O pedido exige carteira conectada (`409 WALLET_NOT_CONNECTED`).
+- Revisão antes do envio: "Confirmar compra" valida o formulário, revalida a cotação e abre o diálogo "Revise sua compra". Qualquer diferença (preço, disponibilidade, desconto, taxa, total) aparece listada e o envio exige novo clique em "Enviar pedido"; um `nft.updated` com a revisão aberta revalida de novo; `QUOTE_STALE` da API também revalida.
+- Conferido no navegador: conexão automática; erro de campo do layout; erro da API no campo; recusa da carteira com "Confirmar compra" desabilitado; desconexão; revisão com "Emerald Ape #042: preço de 1.19 para 0.125 ETH | total de 26.846 para 24.716 ETH"; **cinco cliques em "Enviar pedido" → 1 pedido no banco**; **timeout → mesmo pedido recuperado pela chave**; **refresh com pedido criado → vai para o pedido**.
+- Dois bugs encontrados e corrigidos na conferência: (1) com o método recusado, o rádio voltava para o método anterior; (2) a checagem de pedido pendente reagia à chave recém-criada e remontava o formulário, apagando o que tinha sido digitado.
+- CSS: classes `checkout-*` e `cart-empty` removidas (`checkout-skeleton` e `checkout-error` continuam porque pedido, perfil e carteiras ainda usam).
+- Snapshot de estilos computados das outras telas (Início, Detalhe, Login, Cadastro, Perfil, Carteiras, Recibo; 1440 e 390) contra o estado anterior ao Carrinho: 0 diferenças, exceto o detalhe mobile, que muda pela `shortDescription` (`fix: detail caveats`, já commitado).
+- Testes (não rodados, conforme o `AGENTS.md`): novo helper `placeOrder` em `tests/e2e/test.ts` (espera a conexão, preenche o código de indicação no desktop, confirma e envia na revisão). O passo do checkbox de consentimento foi trocado pela revisão em todos os specs. Em `phase9` ("mudança de preço exige nova confirmação" e "conflito de cotação"), a asserção "botão desabilitado" virou "a mudança aparece na revisão e o pedido só sai com novo clique / nenhum pedido foi criado"; no `phase7-resilience`, o corpo do pedido passou a levar `collector`.
+
+### Medidas (Figma × app)
+
+Desktop (1440), linhas de tinta:
+
+| Bloco | Figma (y) | App (y) | Δ |
+| --- | --- | --- | ---: |
+| trilha | 103–118 | 103–118 | 0 |
+| "Perfil do colecionador" | 150 | 150 | 0 |
+| rótulos das 5 linhas | 184, 265, 346, 427, 508 | 185, 266, 347, 428, 509 | +1 |
+| campos das 5 linhas | 206, 287, 368, 449, 530 | 206, 287, 368, 449, 530 | 0 |
+| "Usar outra carteira?" | 594 | 594 | 0 |
+| observação (rótulo / campo) | 639 / 665–816 | 637 / 663–814 | −2 |
+| "Seus NFTs" / cabeçalho / linha | 151 / 179 / 204 | 151 / 179 / 205 | ≤1 |
+| itens | 217, 299, 381 (70 de altura) | 218, 300, 382 (70) | +1 |
+| promoção / subtotal / desconto / taxa | 465 / 495 / 527 / 559 | 465 / 495 / 527 / 559 | 0 |
+| "Taxa estimada" / linha / Total | 591 / 614 / 629 | 591 / 614 / 631 | ≤2 |
+| "Carteira e rede" | 657 | 657 | 0 |
+| métodos | 691, 752, 813 (45 de altura) | 691, 752, 813 (45) | 0 |
+| "Confirmar compra" | 882–926 | 882–926 | 0 |
+| campo ".eth" | 513,530 79×40 | 513,530 78×40 | −1 |
+
+Mobile (414×896), linhas de tinta: voltar 32→31, título 42 (x 88→89), "Carteira conectada"/"Trocar carteira" 94=94, cartões 124–216 e 237–329 iguais, "Carteira e rede" 348=348, métodos 378/459/540 iguais, Total 623=623, botão 804–863 igual. O valor do total difere do frame (26.846 × 8.936 ETH) porque o carrinho da fixture é outro.

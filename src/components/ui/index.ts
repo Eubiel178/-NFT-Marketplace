@@ -15,3 +15,6 @@ export { Pagination } from "./pagination";
 export { SocialButton } from "./social-button";
 export { CarouselDots } from "./carousel-dots";
 export { MobileSocialBlock } from "./mobile-social-block";
+export { Label } from "./label";
+export { RadioGroup } from "./radio";
+export { WalletSelector } from "./wallet-selector";

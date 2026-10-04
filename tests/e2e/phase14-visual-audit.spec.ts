@@ -1,4 +1,4 @@
-import { expect, test, type Page } from './test'
+import { expect, placeOrder, test, type Page } from './test'
 
 const screenshotRoot = 'C:/Users/dev12/AppData/Local/Temp/opencode'
 
@@ -64,8 +64,7 @@ test('captura as telas de referência da Fase 14', async ({ page }) => {
   await expectNoHorizontalOverflow(page)
   await screenshot(page, 'checkout')
 
-  await page.locator('.checkout-consent input').check()
-  await page.getByRole('button', { name: 'Confirmar compra' }).click()
+  await placeOrder(page)
   await expect(page).toHaveURL(/\/orders\/order-/)
   await expect(page.getByRole('heading', { name: 'Seus NFTs agora estão na sua carteira' })).toBeVisible()
   await expectNoHorizontalOverflow(page)

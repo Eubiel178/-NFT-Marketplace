@@ -3,7 +3,9 @@ import { z } from "zod";
 import {
   catalogSearchSchema,
   cartItemSchema,
+  collectorSchema,
   orderStatusSchema,
+  paymentMethodSchema,
   type CartItem,
   type Order,
   type Profile,
@@ -78,12 +80,21 @@ const walletBodySchema = z.object({
   tag: z.string(),
   ens: z.string(),
 });
+// Códigos de indicação aceitos pela API (só ela sabe quais existem).
+const referralCodes = ["KURIO-2026"];
 const orderBodySchema = z.object({
   quoteId: z.string(),
   quoteVersion: z.number().int().positive(),
   walletId: z.string(),
   network: z.enum(["ethereum", "polygon"]),
+  collector: collectorSchema,
 });
+// Erros de validação por campo, no formato do contrato de erro (fields).
+function fieldErrors(issues: z.ZodIssue[]) {
+  return Object.fromEntries(
+    issues.map((issue) => [String(issue.path.at(-1)), issue.message]),
+  );
+}
 const scheduledOrders = new Set<string>();
 // Contagens e faixa de preço do catálogo inteiro, independentes da busca atual.
 function catalogFacets() {
@@ -165,12 +176,7 @@ function createSalt() {
   const bytes = crypto.getRandomValues(new Uint8Array(16));
   return [...bytes].map((byte) => byte.toString(16).padStart(2, "0")).join("");
 }
-function orderPayload(input: {
-  quoteId: string;
-  quoteVersion: number;
-  walletId: string;
-  network: "ethereum" | "polygon";
-}) {
+function orderPayload(input: z.infer<typeof orderBodySchema>) {
   return JSON.stringify(input);
 }
 function confirmOrder(orderId: string) {
@@ -742,6 +748,33 @@ export const handlers = [
     saveDb();
     return HttpResponse.json(wallet, { status: 201 });
   }),
+  // Simulação de conexão com a extensão da carteira: aceita, recusa (cenário) e desconecta.
+  http.post("/api/wallets/:walletId/connect", async ({ request, params }) => {
+    const user = currentUser();
+    if (!user) return userError();
+    const body = z.object({ method: paymentMethodSchema }).safeParse(await request.json());
+    if (!body.success) return error(422, "VALIDATION_ERROR", "Escolha como conectar a carteira");
+    const wallet = (db.wallets[user.id] ?? []).find((item) => item.id === params.walletId);
+    if (!wallet) return error(404, "NOT_FOUND", "Carteira não encontrada");
+    await delay(300);
+    if (getScenario() === "wallet-rejected")
+      return error(409, "WALLET_REJECTED", "A conexão foi recusada na carteira. Tente de novo ou escolha outra opção.");
+    db.walletConnections[user.id] = { walletId: wallet.id, method: body.data.method };
+    saveDb();
+    return HttpResponse.json(db.walletConnections[user.id]);
+  }),
+  http.post("/api/wallets/:walletId/disconnect", ({ params }) => {
+    const user = currentUser();
+    if (!user) return userError();
+    if (db.walletConnections[user.id]?.walletId === params.walletId) delete db.walletConnections[user.id];
+    saveDb();
+    return new HttpResponse(null, { status: 204 });
+  }),
+  http.get("/api/wallets/connection", () => {
+    const user = currentUser();
+    if (!user) return userError();
+    return HttpResponse.json({ connection: db.walletConnections[user.id] ?? null });
+  }),
   http.patch("/api/wallets/:walletId", async ({ request, params }) => {
     const user = currentUser();
     if (!user) return userError();
@@ -778,12 +811,20 @@ export const handlers = [
     if (!user) return userError();
     const body = orderBodySchema.safeParse(await request.json());
     const idempotencyKey = request.headers.get("Idempotency-Key");
-    if (!body.success || !idempotencyKey)
+    if (!body.success)
       return error(
         422,
         "VALIDATION_ERROR",
-        "Selecione uma carteira e tente novamente",
+        "Revise os campos destacados",
+        fieldErrors(body.error.issues),
       );
+    if (!idempotencyKey)
+      return error(422, "VALIDATION_ERROR", "Pedido sem chave de idempotência");
+    const referral = body.data.collector.referralCode.trim().toUpperCase();
+    if (referral && !referralCodes.includes(referral))
+      return error(422, "VALIDATION_ERROR", "Revise os campos destacados", {
+        referralCode: "Código de indicação não encontrado",
+      });
     const payload = orderPayload(body.data);
     const previousAttempt = db.idempotency[idempotencyKey];
     if (previousAttempt && previousAttempt.payload !== payload)
@@ -848,6 +889,12 @@ export const handlers = [
     );
     if (!wallet)
       return error(409, "WALLET_REQUIRED", "Selecione uma carteira cadastrada");
+    if (db.walletConnections[user.id]?.walletId !== wallet.id)
+      return error(
+        409,
+        "WALLET_NOT_CONNECTED",
+        "Conecte a carteira antes de confirmar a compra",
+      );
     if (body.data.quoteVersion !== 1)
       return error(
         409,

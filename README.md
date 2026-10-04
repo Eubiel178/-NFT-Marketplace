@@ -309,7 +309,7 @@ await fetch('/api/__mock/scenario', {
 location.reload()
 ```
 
-Disponíveis: `default`, `empty`, `slow` (2 s), `variable-latency` (páginas ímpares 900 ms/pares 100 ms), `network-error`, `http-500` (503), `unauthorized` (401 nas consultas de NFTs), `favorites-error` (503 em favoritos), `cart-error`, `cart-load-error`, `quote-error`, `profile-error`, `wallets-error`, `order-error`, `payment-declined`, `payment-pending`, `payment-timeout` e `stale-quote`. A configuração persiste localmente. Para recuperação/reset:
+Disponíveis: `default`, `empty`, `slow` (2 s), `variable-latency` (páginas ímpares 900 ms/pares 100 ms), `network-error`, `http-500` (503), `unauthorized` (401 nas consultas de NFTs), `favorites-error` (503 em favoritos), `cart-error`, `cart-load-error`, `quote-error`, `profile-error`, `wallets-error`, `order-error`, `payment-declined`, `wallet-rejected`, `payment-pending`, `payment-timeout` e `stale-quote`. A configuração persiste localmente. Para recuperação/reset:
 
 ```js
 await fetch('/api/__mock/reset', { method: 'POST' })
@@ -323,6 +323,12 @@ await fetch('/api/__mock/nfts/nft-1/update', { method: 'POST' })
 ```
 
 O preço persistido muda para `0.125` ETH, o mock emite pelo protocolo Socket.IO e o cliente reconcilia por REST. Os cenários de pagamento, favoritos, idempotência e sessão são exclusivos do modo de demonstração e podem ser selecionados pelo mesmo endpoint.
+
+#### Pagamento
+
+- Código de indicação aceito: `KURIO-2026` (outro código → `422` com o erro no campo).
+- A carteira escolhida é conectada ao abrir o pagamento. Cenário `wallet-rejected`: a carteira recusa a conexão (`409 WALLET_REJECTED`). "Desconectar" desliga; o pedido exige carteira conectada.
+- "Confirmar compra" abre a revisão com a cotação revalidada; mudanças de preço, disponibilidade, cupom ou taxa aparecem listadas e exigem novo clique em "Enviar pedido".
 
 #### Cupons
 

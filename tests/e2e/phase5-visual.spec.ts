@@ -1,4 +1,4 @@
-import { expect, test } from './test'
+import { expect, placeOrder, test } from './test'
 
 async function screenshot(page: import('@playwright/test').Page, name: string) {
   await page.screenshot({ animations: 'disabled', fullPage: true, path: `reports/screenshots/phase5-${name}-${page.viewportSize()?.width}.png` })
@@ -31,15 +31,10 @@ test('telas restantes nos viewports oficiais @visual', async ({ page }) => {
   await waitForImages(page)
   await screenshot(page, 'cart')
   await page.getByRole('button', { name: /Conectar e finalizar/ }).click()
-  const walletAddress = page.getByLabel('Endereço da carteira')
-  if (await walletAddress.isVisible()) await walletAddress.fill('0xA91F...E82C')
-  await page.locator('.checkout-consent input').check()
+  await page.getByText(/conectada$/).first().waitFor()
   await expect(page.getByRole('button', { name: 'Confirmar compra' })).toBeEnabled()
   await screenshot(page, 'checkout')
-  const consent = page.locator('.checkout-consent input')
-  if (!(await consent.isChecked())) await consent.check()
-  await expect(page.getByRole('button', { name: 'Confirmar compra' })).toBeEnabled()
-  await page.getByRole('button', { name: 'Confirmar compra' }).click()
+  await placeOrder(page)
   await expect(page).toHaveURL(/\/orders\/order-/)
   await waitForImages(page)
   await screenshot(page, 'order-confirmation')

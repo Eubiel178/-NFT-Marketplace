@@ -1,4 +1,4 @@
-import { expect, test, type Page } from './test'
+import { expect, placeOrder, test, type Page } from './test'
 
 async function signIn(page: Page, redirect: string) {
   await page.goto(`/login?redirect=${encodeURIComponent(redirect)}&expired=false`)
@@ -80,8 +80,7 @@ test('compra começa no detalhe e exibe recibo com snapshot após atualização 
   await page.getByRole('button', { name: 'Entrar' }).click()
   await expect(page).toHaveURL(/\/checkout$/)
 
-  await page.getByRole('checkbox', { name: /Confirmo que os dados/ }).check()
-  await page.getByRole('button', { name: 'Confirmar compra' }).click()
+  await placeOrder(page)
   await expect(page).toHaveURL(/\/orders\/order-/)
   await expect(page.getByRole('heading', { name: 'Seus NFTs agora estão na sua carteira' })).toBeVisible()
   await expect(page.getByText('ID da transação')).toBeVisible()
@@ -106,14 +105,17 @@ test('compra começa no detalhe e exibe recibo com snapshot após atualização 
 
 test('clique repetido no checkout cria apenas um pedido', async ({ page }) => {
   await signIn(page, '/checkout')
-  await page.getByRole('checkbox', { name: /Confirmo que os dados/ }).check()
+  await page.getByText(/conectada$/).first().waitFor()
+  const referral = page.getByLabel('Código de indicação')
+  if (await referral.isVisible()) await referral.fill('KURIO-2026')
+  await page.getByRole('button', { name: 'Confirmar compra' }).click()
 
   let orderRequests = 0
   page.on('request', (request) => {
     if (request.method() === 'POST' && request.url().endsWith('/api/orders')) orderRequests += 1
   })
 
-  const confirm = page.getByRole('button', { name: 'Confirmar compra' })
+  const confirm = page.getByRole('dialog', { name: 'Revise sua compra' }).getByRole('button', { name: 'Enviar pedido' })
   await Promise.all([
     page.waitForURL(/\/orders\/order-/),
     confirm.dblclick(),
@@ -126,8 +128,7 @@ test('clique repetido no checkout cria apenas um pedido', async ({ page }) => {
 test('timeout recarrega e recupera o mesmo pedido', async ({ page }) => {
   await signIn(page, '/checkout')
   await setScenario(page, 'payment-timeout')
-  await page.getByRole('checkbox', { name: /Confirmo que os dados/ }).check()
-  await page.getByRole('button', { name: 'Confirmar compra' }).click()
+  await placeOrder(page)
 
   await expect(page).toHaveURL(/\/orders\/order-/)
   const orderUrl = page.url()
@@ -177,8 +178,7 @@ test('falha de rede no catálogo oferece recuperação por retry', async ({ page
 
 test('evento novo seguido de evento antigo não regride o recibo', async ({ page }) => {
   await signIn(page, '/checkout')
-  await page.getByRole('checkbox', { name: /Confirmo que os dados/ }).check()
-  await page.getByRole('button', { name: 'Confirmar compra' }).click()
+  await placeOrder(page)
   await expect(page).toHaveURL(/\/orders\/order-/)
   await expect(page.getByRole('heading', { name: 'Seus NFTs agora estão na sua carteira' })).toBeVisible()
 

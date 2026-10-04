@@ -1,4 +1,4 @@
-import { expect, test } from './test'
+import { expect, placeOrder, test } from './test'
 
 async function signIn(page: import('@playwright/test').Page, redirect: string) {
   await page.goto(`/login?redirect=${encodeURIComponent(redirect)}&expired=false`)
@@ -47,10 +47,7 @@ test('merge preserva o item adicionado pelo visitante ao autenticar', async ({ p
 test('pagamento recusado preserva o carrinho', async ({ page }) => {
   await signIn(page, '/checkout')
   await setScenario(page, 'payment-declined')
-  const walletAddress = page.getByLabel('Endereço da carteira')
-  if (await walletAddress.isVisible()) await walletAddress.fill('0xA91F...E82C')
-  await page.locator('.checkout-consent input').check()
-  await page.getByRole('button', { name: 'Confirmar compra' }).click()
+  await placeOrder(page)
   await expect(page.getByRole('heading', { name: 'Pagamento recusado' })).toBeVisible()
   await page.getByRole('link', { name: 'Voltar ao carrinho' }).click()
   await expect(page.getByRole('link', { name: /Emerald Ape #042/ })).toBeVisible()
@@ -59,25 +56,24 @@ test('pagamento recusado preserva o carrinho', async ({ page }) => {
 test('timeout recupera o mesmo pedido e a confirmação chega pelo fluxo Socket.IO', async ({ page }) => {
   await signIn(page, '/checkout')
   await setScenario(page, 'payment-timeout')
-  const walletAddress = page.getByLabel('Endereço da carteira')
-  if (await walletAddress.isVisible()) await walletAddress.fill('0xA91F...E82C')
-  await page.locator('.checkout-consent input').check()
-  await page.getByRole('button', { name: 'Confirmar compra' }).click()
+  await placeOrder(page)
   await expect(page).toHaveURL(/\/orders\/order-/)
   await expect(page.getByRole('heading', { name: 'Seus NFTs agora estão na sua carteira' })).toBeVisible({ timeout: 5000 })
 })
 
 test('chave de idempotência recupera o pedido e rejeita payload diferente', async ({ page }) => {
   await signIn(page, '/checkout')
+  await page.getByText(/conectada$/).first().waitFor()
   const result = await page.evaluate(async () => {
     const quoteResponse = await fetch('/api/quote', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ items: [{ nftId: 'nft-1', editionId: '1/1', quantity: 1 }] }) })
     const quote = await quoteResponse.json() as { id: string; version: number }
     const headers = { 'Content-Type': 'application/json', 'Idempotency-Key': 'phase7-idempotency' }
-    const body = JSON.stringify({ quoteId: quote.id, quoteVersion: quote.version, walletId: 'wallet-1', network: 'ethereum' })
+    const collector = { displayName: 'Ana Demo', username: 'ana-kurio', profileName: 'Ana Demo', email: 'ana@example.test', walletAddress: '0xA91F...E82C', ens: '', referralCode: '', note: '' }
+    const body = JSON.stringify({ quoteId: quote.id, quoteVersion: quote.version, walletId: 'wallet-1', network: 'ethereum', collector })
     const first = await fetch('/api/orders', { method: 'POST', headers, body })
     const firstBody = await first.json() as { id: string }
     const second = await fetch('/api/orders', { method: 'POST', headers, body })
-    const conflict = await fetch('/api/orders', { method: 'POST', headers, body: JSON.stringify({ quoteId: quote.id, quoteVersion: quote.version, walletId: 'wallet-2', network: 'polygon' }) })
+    const conflict = await fetch('/api/orders', { method: 'POST', headers, body: JSON.stringify({ quoteId: quote.id, quoteVersion: quote.version, walletId: 'wallet-2', network: 'polygon', collector }) })
     return { firstStatus: first.status, secondStatus: second.status, sameId: firstBody.id === (await second.json() as { id: string }).id, conflictStatus: conflict.status }
   })
   expect(result).toEqual({ firstStatus: 201, secondStatus: 200, sameId: true, conflictStatus: 409 })
