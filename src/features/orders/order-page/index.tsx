@@ -29,18 +29,20 @@ export function OrderPage({ id }: { id: string }) {
   const navigate = useNavigate();
   const [realtimeConnected, setRealtimeConnected] = useState<boolean | null>(null);
   const session = useQuery(sessionOptions);
+  const userId = session.data?.user?.id ?? "";
   const order = useQuery({
-    queryKey: keys.order(id),
+    queryKey: keys.order(userId, id),
     queryFn: ({ signal }) => getOrder(id, signal),
     refetchInterval: (query) =>
       query.state.data?.status === "pending" ? 500 : false,
+    enabled: Boolean(userId),
   });
   useEffect(
     () =>
-      session.data?.user
-        ? connectOrder(session.data.user.id, id, setRealtimeConnected)
+      userId
+        ? connectOrder(userId, id, setRealtimeConnected)
         : undefined,
-    [id, session.data?.user],
+    [id, userId],
   );
   if (order.isPending)
     return (

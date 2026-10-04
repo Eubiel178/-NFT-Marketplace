@@ -5,6 +5,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Button, Checkbox, Input, Select } from '@/components'
 import type { Wallet } from '@/contracts'
 import { parseHttpError } from '@/lib/http'
+import { useSessionUserId } from '@/features/session/api'
 import { keys } from '@/lib/query'
 
 import { AccountShell } from '../account-shell'
@@ -40,7 +41,8 @@ function WalletFields({ form, update, wallets, editingId, onSelect }: { form: Wa
 
 export function WalletsPage() {
   const client = useQueryClient()
-  const wallets = useQuery({ queryKey: keys.wallets, queryFn: ({ signal }) => getWallets(signal) })
+  const userId = useSessionUserId()
+  const wallets = useQuery({ queryKey: keys.wallets(userId), queryFn: ({ signal }) => getWallets(signal), enabled: Boolean(userId) })
   const [primaryForm, setPrimaryForm] = useState(emptyWallet)
   const [secondaryForm, setSecondaryForm] = useState(emptyWallet)
   const [editingPrimaryId, setEditingPrimaryId] = useState<string | undefined>()
@@ -49,7 +51,7 @@ export function WalletsPage() {
   const [showSecondaryForm, setShowSecondaryForm] = useState(false)
   const mutation = useMutation({
     mutationFn: (input: SaveWalletInput) => saveWallet(input),
-    onSuccess: () => { void client.invalidateQueries({ queryKey: keys.wallets }) },
+    onSuccess: () => { void client.invalidateQueries({ queryKey: keys.wallets(userId) }) },
   })
   const walletItems = wallets.data?.items ?? []
   const primary = walletItems.find((wallet) => wallet.primary)

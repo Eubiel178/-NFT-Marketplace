@@ -4,6 +4,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 import { Button, Image, Input, PasswordInput } from '@/components'
 import { parseHttpError } from '@/lib/http'
+import { useSessionUserId } from '@/features/session/api'
 import { keys } from '@/lib/query'
 
 import { AccountShell } from '../account-shell'
@@ -11,7 +12,8 @@ import { getProfile, updateAvatar, updatePassword, updateProfile } from '../api'
 
 export function ProfilePage() {
   const queryClient = useQueryClient()
-  const profile = useQuery({ queryKey: keys.profile, queryFn: ({ signal }) => getProfile(signal) })
+  const userId = useSessionUserId()
+  const profile = useQuery({ queryKey: keys.profile(userId), queryFn: ({ signal }) => getProfile(signal), enabled: Boolean(userId) })
   const avatarInput = useRef<HTMLInputElement>(null)
   const [formError, setFormError] = useState('')
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
@@ -26,7 +28,7 @@ export function ProfilePage() {
       if (currentPassword) await updatePassword({ currentPassword, newPassword, confirmPassword })
       return next
     },
-   onSuccess: (next) => { setFormError(''); setFieldErrors({}); queryClient.setQueryData(keys.profile, next) },
+   onSuccess: (next) => { setFormError(''); setFieldErrors({}); queryClient.setQueryData(keys.profile(userId), next) },
    onError: (error) => {
       const apiError = parseHttpError(error)
       setFieldErrors(apiError.fields ?? {})
@@ -35,7 +37,7 @@ export function ProfilePage() {
   })
   const avatarMutation = useMutation({
     mutationFn: updateAvatar,
-    onSuccess: (next) => queryClient.setQueryData(keys.profile, next),
+    onSuccess: (next) => queryClient.setQueryData(keys.profile(userId), next),
     onError: () => setFormError('Não foi possível atualizar o avatar.'),
   })
   const handleAvatarChange = (event: ChangeEvent<HTMLInputElement>) => {

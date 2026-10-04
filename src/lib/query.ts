@@ -1,17 +1,23 @@
 import { QueryClient } from '@tanstack/react-query'
 import axios from 'axios'
-import type { CatalogSearch } from '@/contracts'
+import type { CartItem, CatalogSearch } from '@/contracts'
 
+// Dados privados levam o usuário na key: o cache de uma sessão nunca atende outra.
 export const keys = {
+  nfts: ['nfts'] as const,
   catalog: (search: CatalogSearch) => ['nfts', 'list', search] as const,
   nft: (id: string) => ['nfts', 'detail', id] as const,
   session: ['session'] as const,
-  cart: ['cart'] as const,
-  favorites: ['favorites'] as const,
-  profile: ['profile'] as const,
-  wallets: ['wallets'] as const,
-  order: (id: string) => ['orders', id] as const,
-  user: (userId: string) => ['private', userId] as const,
+  carts: ['cart'] as const,
+  cart: (userId: string | null) => ['cart', userId ?? 'visitor'] as const,
+  cartQuotes: ['cart-quote'] as const,
+  cartQuote: (userId: string, items: CartItem[], coupon: string) => ['cart-quote', userId, items, coupon] as const,
+  checkoutQuotes: ['checkout-quote'] as const,
+  checkoutQuote: (userId: string, items: CartItem[], coupon: string) => ['checkout-quote', userId, items, coupon] as const,
+  favorites: (userId: string) => ['favorites', userId] as const,
+  profile: (userId: string) => ['profile', userId] as const,
+  wallets: (userId: string) => ['wallets', userId] as const,
+  order: (userId: string, id: string) => ['orders', userId, id] as const,
 }
 export const queryClient = new QueryClient({ defaultOptions: {
   queries: {

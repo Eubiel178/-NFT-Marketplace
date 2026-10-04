@@ -30,8 +30,9 @@ export function CheckoutPage() {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
   const session = useQuery(sessionOptions)
-  const cart = useQuery(cartOptions)
-  const wallets = useQuery({ queryKey: keys.wallets, queryFn: ({ signal }) => getWallets(signal) })
+  const userId = session.data?.user?.id ?? ''
+  const cart = useQuery({ ...cartOptions(userId), enabled: Boolean(userId) })
+  const wallets = useQuery({ queryKey: keys.wallets(userId), queryFn: ({ signal }) => getWallets(signal), enabled: Boolean(userId) })
   const [walletId, setWalletId] = useState('')
   const [network, setNetwork] = useState<Network>('ethereum')
   const [name, setName] = useState(session.data?.user?.name ?? '')
@@ -55,7 +56,7 @@ export function CheckoutPage() {
   })
   const lines = cart.data?.items ?? []
   const items = lines.map(({ nftId, editionId, quantity }) => ({ nftId, editionId, quantity }))
-  const quoteQueryKey = ['checkout-quote', items, coupon] as const
+  const quoteQueryKey = keys.checkoutQuote(userId, items, coupon)
   const quote = useQuery({ queryKey: quoteQueryKey, queryFn: () => createQuote(items, coupon || undefined), enabled: items.length > 0 })
   const selectedWalletId = walletId || wallets.data?.items[1]?.id || wallets.data?.items[0]?.id || ''
   const selectedWallet = wallets.data?.items.find((wallet) => wallet.id === selectedWalletId)

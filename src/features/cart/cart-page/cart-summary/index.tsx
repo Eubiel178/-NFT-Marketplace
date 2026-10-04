@@ -11,7 +11,6 @@ interface CartSummaryProps {
   applyCouponPending: boolean
   realtimeConnected: boolean | null
   authenticated: boolean
-  sessionPending: boolean
   liveNotice: string
   quantityMutationError: boolean
   removeMutationError: boolean
@@ -33,7 +32,6 @@ export function CartSummary({
   applyCouponPending,
   realtimeConnected,
   authenticated,
-  sessionPending,
   liveNotice,
   quantityMutationError,
   removeMutationError,
@@ -52,7 +50,7 @@ export function CartSummary({
       <h2 id="cart-summary-title">Resumo da carteira</h2>
       <div className="cart-coupon"><Input label="Código promocional" value={coupon} onChange={(event) => onCouponChange(event.target.value)} placeholder="Digite o código promocional..." /><Button variant="apply" size="sm" onClick={onApplyCoupon} loading={applyCouponPending} disabled={!coupon.trim()}>Aplicar</Button></div>
       {realtimeConnected === false && <p className="cart-error" role="alert">As atualizações em tempo real estão indisponíveis. O carrinho continua sincronizado ao tentar novamente.</p>}
-      {!sessionPending && !authenticated && <p className="cart-notice" role="status">Entre para consultar a cotação e finalizar sua compra.</p>}
+      {!authenticated && <p className="cart-notice" role="status">Entre para consultar a cotação e finalizar sua compra.</p>}
       {liveNotice && <p className="cart-notice" role="status">{liveNotice}</p>}
       {quantityMutationError && <p className="cart-error" role="alert">Não foi possível atualizar a quantidade. Tente novamente.</p>}
       {removeMutationError && <p className="cart-error" role="alert">Não foi possível remover o item. Tente novamente.</p>}

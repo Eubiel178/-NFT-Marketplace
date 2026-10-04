@@ -1,12 +1,13 @@
 import { useState } from 'react'
 
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useNavigate } from '@tanstack/react-router'
 import { Heart, Minus, Plus, ShoppingCart } from 'lucide-react'
 
 import { Button } from '@/components'
 import type { Nft } from '@/contracts'
 import { addCartItem } from '@/features/cart/api'
+import { sessionOptions } from '@/features/session/api'
 import { keys } from '@/lib/query'
 
 export interface NftDetailSummaryProps {
@@ -23,6 +24,7 @@ export interface NftDetailSummaryProps {
 export function NftDetailSummary({ nft, favorite, favoritePending, favoriteError, favoriteLoadError, selectedEdition, onToggleFavorite, onEditionChange }: NftDetailSummaryProps) {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
+  const session = useQuery(sessionOptions)
   const [quantity, setQuantity] = useState(1)
   const editions = nft.editions ?? ['1/1', '1/10', '1/50', 'ABERTA']
   const description = nft.description ?? 'Um colecionável digital verificado na Ethereum, com procedência imutável e acesso para colecionadores.'
@@ -31,7 +33,7 @@ export function NftDetailSummary({ nft, favorite, favoritePending, favoriteError
   const shareTitle = encodeURIComponent(nft.name)
   const cartMutation = useMutation({
     mutationFn: () => addCartItem({ nftId: nft.id, editionId: selectedEdition, quantity }),
-    onSuccess: (next) => queryClient.setQueryData(keys.cart, next),
+    onSuccess: (next) => queryClient.setQueryData(keys.cart(session.data?.user?.id ?? null), next),
   })
   const addToCart = (destination: '/cart' | '/checkout') => {
     cartMutation.mutate(undefined, { onSuccess: () => { void navigate({ to: destination }) } })

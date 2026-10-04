@@ -8,7 +8,7 @@ const privateDisconnectors = new Set<() => void>()
 export function connectCatalog(onConnection: (connected: boolean) => void) {
   const socket = io(env.socketUrl, { transports: ['websocket'], autoConnect: false })
   const versions = new Map<string, number>()
-  function reconcile() { void queryClient.invalidateQueries({ queryKey: ['nfts'] }) }
+  function reconcile() { void queryClient.invalidateQueries({ queryKey: keys.nfts }) }
   function onNft(event: NftUpdated) {
     const parsed = nftSchema.safeParse(event?.nft)
     if (!parsed.success || parsed.data.id !== event.resourceId || parsed.data.version !== event.version) return
@@ -18,8 +18,8 @@ export function connectCatalog(onConnection: (connected: boolean) => void) {
     versions.set(event.resourceId, event.version)
     // Re-fetch authoritative REST resources instead of copying event payloads to UI.
     reconcile()
-    void queryClient.invalidateQueries({ queryKey: keys.cart })
-    void queryClient.invalidateQueries({ queryKey: ['cart-quote'] })
+    void queryClient.invalidateQueries({ queryKey: keys.carts })
+    void queryClient.invalidateQueries({ queryKey: keys.cartQuotes })
   }
   function onConnect() { onConnection(true); reconcile() }
   function onDisconnect() { onConnection(false) }
@@ -35,9 +35,9 @@ export function connectNftUpdates(onUpdate: (event: NftUpdated) => void, onConne
   const versions = new Map<string, number>()
   let hasConnected = false
   function reconcile() {
-    void queryClient.invalidateQueries({ queryKey: keys.cart })
-    void queryClient.invalidateQueries({ queryKey: ['cart-quote'] })
-    void queryClient.invalidateQueries({ queryKey: ['checkout-quote'] })
+    void queryClient.invalidateQueries({ queryKey: keys.carts })
+    void queryClient.invalidateQueries({ queryKey: keys.cartQuotes })
+    void queryClient.invalidateQueries({ queryKey: keys.checkoutQuotes })
   }
   function onNft(event: NftUpdated) {
     const parsed = nftSchema.safeParse(event?.nft)
@@ -66,7 +66,7 @@ export function connectNftUpdates(onUpdate: (event: NftUpdated) => void, onConne
 export function connectOrder(userId: string, orderId: string, onConnection?: (connected: boolean) => void) {
   const socket = io(env.socketUrl, { transports: ['websocket'], autoConnect: false })
   const versions = new Map<string, number>()
-  function reconcile() { void queryClient.invalidateQueries({ queryKey: keys.order(orderId) }) }
+  function reconcile() { void queryClient.invalidateQueries({ queryKey: keys.order(userId, orderId) }) }
   function onConnect() {
     socket.emit('order.subscribe', { userId, orderId })
     onConnection?.(true)
@@ -76,7 +76,7 @@ export function connectOrder(userId: string, orderId: string, onConnection?: (co
   function onOrder(event: OrderUpdated) {
     const parsed = orderUpdatedSchema.safeParse(event)
     if (!parsed.success || parsed.data.userId !== userId || parsed.data.resourceId !== orderId) return
-    const cached = queryClient.getQueryData<{ version?: number }>(keys.order(orderId))
+    const cached = queryClient.getQueryData<{ version?: number }>(keys.order(userId, orderId))
     const latest = Math.max(versions.get(orderId) ?? 0, cached?.version ?? 0)
     if (parsed.data.version <= latest) return
     versions.set(orderId, parsed.data.version)

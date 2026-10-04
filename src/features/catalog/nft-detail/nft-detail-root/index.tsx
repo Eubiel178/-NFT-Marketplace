@@ -41,17 +41,19 @@ export function NftDetailRoot({ nft, related, relatedLoading = false, relatedErr
     setSelection((current) => ({ nftId: nft.id, image: current.nftId === nft.id ? current.image : 0, edition }))
   }
   const session = useQuery(sessionOptions)
-  const favorites = useQuery({ queryKey: keys.favorites, queryFn: ({ signal }) => getFavorites(signal), enabled: Boolean(session.data?.user) })
+  const userId = session.data?.user?.id ?? ''
+  const favoritesKey = keys.favorites(userId)
+  const favorites = useQuery({ queryKey: favoritesKey, queryFn: ({ signal }) => getFavorites(signal), enabled: Boolean(userId) })
   const favoriteMutation = useMutation({
     mutationFn: (next: boolean) => next ? addFavorite(nft.id) : removeFavorite(nft.id),
     onMutate: async (next) => {
-      await queryClient.cancelQueries({ queryKey: keys.favorites })
-      const previous = queryClient.getQueryData<{ items: string[] }>(keys.favorites)
-      queryClient.setQueryData(keys.favorites, { items: next ? [...(previous?.items ?? []).filter((id) => id !== nft.id), nft.id] : (previous?.items ?? []).filter((id) => id !== nft.id) })
+      await queryClient.cancelQueries({ queryKey: favoritesKey })
+      const previous = queryClient.getQueryData<{ items: string[] }>(favoritesKey)
+      queryClient.setQueryData(favoritesKey, { items: next ? [...(previous?.items ?? []).filter((id) => id !== nft.id), nft.id] : (previous?.items ?? []).filter((id) => id !== nft.id) })
       return { previous }
     },
-    onError: (_error, _next, context) => { if (context?.previous) queryClient.setQueryData(keys.favorites, context.previous) },
-    onSettled: () => { void queryClient.invalidateQueries({ queryKey: keys.favorites }) },
+    onError: (_error, _next, context) => { if (context?.previous) queryClient.setQueryData(favoritesKey, context.previous) },
+    onSettled: () => { void queryClient.invalidateQueries({ queryKey: favoritesKey }) },
   })
   const toggleFavorite = () => {
     if (!session.data?.user) {

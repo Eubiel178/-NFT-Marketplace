@@ -1,4 +1,4 @@
-import { queryOptions } from '@tanstack/react-query'
+import { queryOptions, useQuery } from '@tanstack/react-query'
 
 import { sessionSchema } from '@/contracts'
 import { http, parseHttpError } from '@/lib/http'
@@ -11,4 +11,9 @@ export const sessionOptions = queryOptions({
 
 export function isSessionExpired(error: unknown) {
   return parseHttpError(error).status === 401
+}
+
+// Rotas privadas só renderizam com sessão resolvida; '' nunca habilita consultas privadas.
+export function useSessionUserId() {
+  return useQuery(sessionOptions).data?.user?.id ?? ''
 }

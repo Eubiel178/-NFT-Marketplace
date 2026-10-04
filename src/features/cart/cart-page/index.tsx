@@ -17,14 +17,26 @@ import { CartSummary } from './cart-summary'
 
 const couponStorageKey = 'nft-marketplace:checkout-coupon'
 
+function CartSkeleton() {
+  return <section className="cart-page"><div className="cart-skeleton" role="status" aria-label="Carregando carrinho" /></section>
+}
+
 export function CartPage() {
+  const session = useQuery(sessionOptions)
+  if (session.isPending) return <CartSkeleton />
+  const userId = session.data?.user?.id ?? null
+  return <CartContent key={userId ?? 'visitor'} userId={userId} />
+}
+
+function CartContent({ userId }: { userId: string | null }) {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
-  const cart = useQuery(cartOptions)
-  const session = useQuery(sessionOptions)
+  const cartKey = keys.cart(userId)
+  const cart = useQuery(cartOptions(userId))
   const related = useQuery(catalogOptions({ q: '', category: 'all', collection: 'all', network: 'all', sort: 'recent', page: 1 }))
-  const [coupon, setCoupon] = useState(() => localStorage.getItem(couponStorageKey) ?? '')
-  const [appliedCoupon, setAppliedCoupon] = useState(() => localStorage.getItem(couponStorageKey) ?? '')
+  const savedCoupon = localStorage.getItem(couponStorageKey) ?? ''
+  const [coupon, setCoupon] = useState(savedCoupon)
+  const [appliedCoupon, setAppliedCoupon] = useState(savedCoupon)
   const [liveNotice, setLiveNotice] = useState('')
   const [realtimeConnected, setRealtimeConnected] = useState<boolean | null>(null)
   const [quote, setQuote] = useState<Quote | null>(null)
@@ -33,31 +45,31 @@ export function CartPage() {
   const mutation = useMutation({
     mutationFn: (input: CartItem) => updateCartItem(input),
     onMutate: async (input) => {
-      await queryClient.cancelQueries({ queryKey: keys.cart })
-      const previous = queryClient.getQueryData<Cart>(keys.cart)
-      if (previous) queryClient.setQueryData<Cart>(keys.cart, { items: previous.items.map((line) => line.nftId === input.nftId ? { ...line, quantity: input.quantity } : line) })
+      await queryClient.cancelQueries({ queryKey: cartKey })
+      const previous = queryClient.getQueryData<Cart>(cartKey)
+      if (previous) queryClient.setQueryData<Cart>(cartKey, { items: previous.items.map((line) => line.nftId === input.nftId ? { ...line, quantity: input.quantity } : line) })
       return { previous }
     },
-    onError: (_error, _input, context) => { if (context?.previous) queryClient.setQueryData(keys.cart, context.previous) },
-     onSettled: () => { setQuote(null); void queryClient.invalidateQueries({ queryKey: keys.cart }) },
+    onError: (_error, _input, context) => { if (context?.previous) queryClient.setQueryData(cartKey, context.previous) },
+     onSettled: () => { setQuote(null); void queryClient.invalidateQueries({ queryKey: cartKey }) },
    })
   const removeMutation = useMutation({
     mutationFn: removeCartItem,
     scope: { id: 'cart-remove' },
     onMutate: async (nftId) => {
-      await queryClient.cancelQueries({ queryKey: keys.cart })
-      const previous = queryClient.getQueryData<Cart>(keys.cart)
-      if (previous) queryClient.setQueryData<Cart>(keys.cart, { items: previous.items.filter((line) => line.nftId !== nftId) })
+      await queryClient.cancelQueries({ queryKey: cartKey })
+      const previous = queryClient.getQueryData<Cart>(cartKey)
+      if (previous) queryClient.setQueryData<Cart>(cartKey, { items: previous.items.filter((line) => line.nftId !== nftId) })
       return { previous, removed: previous?.items.find((line) => line.nftId === nftId) }
     },
     onError: (_error, _nftId, context) => {
       if (!context?.removed) return
-      const current = queryClient.getQueryData<Cart>(keys.cart)
-      queryClient.setQueryData<Cart>(keys.cart, { items: [...(current?.items ?? []), context.removed] })
+      const current = queryClient.getQueryData<Cart>(cartKey)
+      queryClient.setQueryData<Cart>(cartKey, { items: [...(current?.items ?? []), context.removed] })
     },
     onSuccess: (_next, nftId) => {
-      const current = queryClient.getQueryData<Cart>(keys.cart)
-      if (current) queryClient.setQueryData<Cart>(keys.cart, { items: current.items.filter((line) => line.nftId !== nftId) })
+      const current = queryClient.getQueryData<Cart>(cartKey)
+      if (current) queryClient.setQueryData<Cart>(cartKey, { items: current.items.filter((line) => line.nftId !== nftId) })
       setQuote(null)
     },
   })
@@ -66,9 +78,9 @@ export function CartPage() {
     onSuccess: (next) => { const value = coupon.trim(); setAppliedCoupon(value); localStorage.setItem(couponStorageKey, value); setQuote(next) },
   })
   const itemIdsKey = items.map((item) => item.nftId).join('|')
-  const baseQuote = useQuery({ queryKey: ['cart-quote', items, appliedCoupon], queryFn: () => createQuote(items, appliedCoupon || undefined), enabled: items.length > 0 && Boolean(session.data?.user) })
+  const baseQuote = useQuery({ queryKey: keys.cartQuote(userId ?? '', items, appliedCoupon), queryFn: () => createQuote(items, appliedCoupon || undefined), enabled: items.length > 0 && Boolean(userId) })
   const displayedQuote = quote ?? baseQuote.data
-  const authenticated = Boolean(session.data?.user)
+  const authenticated = Boolean(userId)
   const quoteLoading = authenticated && baseQuote.isFetching && !displayedQuote
   const goToCheckout = () => {
     if (!authenticated) {
@@ -83,7 +95,7 @@ export function CartPage() {
       setLiveNotice(`O preço ou a disponibilidade de ${event.nft.name} mudou. O resumo foi atualizado.`)
    }, setRealtimeConnected), [itemIdsKey])
 
-  if (cart.isPending) return <section className="cart-page"><div className="cart-skeleton" role="status" aria-label="Carregando carrinho" /></section>
+  if (cart.isPending) return <CartSkeleton />
   if (cart.isError) return <section className="cart-page" role="alert"><h1>Não foi possível carregar o carrinho</h1><Button onClick={() => void cart.refetch()}>Tentar novamente</Button></section>
 
   return (
@@ -105,7 +117,6 @@ export function CartPage() {
              applyCouponPending={applyCoupon.isPending}
              realtimeConnected={realtimeConnected}
              authenticated={authenticated}
-             sessionPending={session.isPending}
              liveNotice={liveNotice}
              quantityMutationError={mutation.isError}
              removeMutationError={removeMutation.isError}
@@ -116,7 +127,7 @@ export function CartPage() {
              onRemoveCoupon={() => { setCoupon(''); setAppliedCoupon(''); setQuote(null); localStorage.removeItem(couponStorageKey) }}
              quoteLoading={quoteLoading}
              displayedQuote={displayedQuote}
-             checkoutDisabled={session.isPending || (authenticated && (!displayedQuote || baseQuote.isFetching || baseQuote.isError)) || mutation.isPending || removeMutation.isPending}
+             checkoutDisabled={(authenticated && (!displayedQuote || baseQuote.isFetching || baseQuote.isError)) || mutation.isPending || removeMutation.isPending}
              onCheckout={goToCheckout}
            />
         </div>

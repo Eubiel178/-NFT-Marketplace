@@ -2,13 +2,18 @@ import { useQuery } from "@tanstack/react-query";
 import { Link, useLocation } from "@tanstack/react-router";
 
 import { cartOptions } from "@/features/cart/api";
+import { sessionOptions } from "@/features/session/api";
 
 import { Image } from "../../../ui/image";
 import { Header as HeaderParts } from "../../header";
 
 export function Header() {
   const location = useLocation();
-  const cart = useQuery(cartOptions);
+  const session = useQuery(sessionOptions);
+  const cart = useQuery({
+    ...cartOptions(session.data?.user?.id ?? null),
+    enabled: !session.isPending,
+  });
   const cartCount =
     cart.data?.items.reduce((total, item) => total + item.quantity, 0) ?? 0;
   const navigation = [
