@@ -169,3 +169,19 @@ Desktop (1440), linhas de tinta:
 | campo ".eth" | 513,530 79×40 | 513,530 78×40 | −1 |
 
 Mobile (414×896), linhas de tinta: voltar 32→31, título 42 (x 88→89), "Carteira conectada"/"Trocar carteira" 94=94, cartões 124–216 e 237–329 iguais, "Carteira e rede" 348=348, métodos 378/459/540 iguais, Total 623=623, botão 804–863 igual. O valor do total difere do frame (26.846 × 8.936 ETH) porque o carrinho da fixture é outro.
+
+## Verificação depois do Pagamento
+
+### 1. Suíte E2E completa (chromium-desktop e chromium-mobile)
+
+131 passaram, 13 falharam, 2 pulados.
+
+- Visuais (conhecidas): `visual-regression` home, detalhe, carrinho e pagamento nos dois projetos (8; baselines anteriores às mudanças de layout) e `phase5-visual` no mobile, que espera 5 cards em "Colecionadores também viram". A seção já ficava oculta no mobile no CSS da versão do usuário (`9839c8e`) e não existe no frame mobile; o teste não foi alterado.
+- Funcionais (4 = 2 testes × 2 projetos), corrigidas sem mudar asserções:
+  - `phase7-resilience` "chave de idempotência": ao abrir o pagamento, a linha de status mostrava "Carteira desconectada" antes da conexão automática (e o título mobile fixo "Carteira conectada"); os dois casam com `/conectada$/`, e o pedido saía antes de a carteira conectar (`409 WALLET_NOT_CONNECTED`). Agora o status fica "Conectando…" até a conexão automática terminar, e o título mobile segue o estado ("Conectando carteira", "Conectar carteira", "Carteira conectada").
+  - `phase9-purchase` "mudança de preço exige nova confirmação": o aviso do `nft.updated` ficava atrás do diálogo de revisão (inerte para a árvore de acessibilidade). O aviso passou a aparecer também dentro do diálogo, no mesmo alerta das mudanças da cotação.
+- Depois das correções: `phase7-resilience`, `phase9-purchase` e `phase13-e2e-complete` nos dois projetos → 38 passaram.
+
+### 2. "Mudança exige nova confirmação" depende da revalidação
+
+Com `refreshReview` sem chamar `revalidate.mutate()`, o teste falha nos dois projetos na linha 52 (`Expected substring: "A cotação mudou"`; a revisão mostra só o aviso do evento). Código restaurado em seguida.
