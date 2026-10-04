@@ -77,3 +77,29 @@ test('troca de usuário descarta a assinatura de pedido da sessão anterior', as
   await page.waitForTimeout(500)
   expect(orderReads).toBe(0)
 })
+
+test('pedido pendente é confirmado só pelo evento order.updated, sem polling', async ({ page }) => {
+  await page.goto('/login?redirect=%2Fcheckout&expired=false')
+  await submitLogin(page, 'ana@example.test', 'kurio-demo')
+  await expect(page).toHaveURL(/\/checkout$/)
+  await page.evaluate(async () => {
+    await fetch('/api/__mock/scenario', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ scenario: 'payment-held' }) })
+  })
+  await page.getByRole('checkbox', { name: /Confirmo que os dados/ }).check()
+  await page.getByRole('button', { name: 'Confirmar compra' }).click()
+  await expect(page).toHaveURL(/\/orders\/order-/)
+  await expect(page.getByRole('heading', { name: 'Confirmando sua compra' })).toBeVisible()
+  const orderId = page.url().split('/').at(-1)
+
+  let orderReads = 0
+  page.on('request', (request) => { if (request.url().endsWith(`/api/orders/${orderId}`)) orderReads += 1 })
+  await page.waitForTimeout(1_500)
+  expect(orderReads).toBe(0)
+  await expect(page.getByRole('heading', { name: 'Confirmando sua compra' })).toBeVisible()
+
+  await page.evaluate(async (id) => {
+    await fetch(`/api/__mock/orders/${id}/confirm`, { method: 'POST' })
+  }, orderId)
+  await expect(page.getByRole('heading', { name: 'Seus NFTs agora estão na sua carteira' })).toBeVisible()
+  expect(orderReads).toBe(1)
+})

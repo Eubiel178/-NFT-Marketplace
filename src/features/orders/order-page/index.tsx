@@ -30,18 +30,16 @@ export function OrderPage({ id }: { id: string }) {
   const realtimeConnected = useRealtimeConnected();
   const session = useQuery(sessionOptions);
   const userId = session.data?.user?.id ?? "";
+  // Mudanças de status chegam por order.updated; o REST só reconcilia ao
+  // carregar e a cada (re)conexão do socket.
   const order = useQuery({
     queryKey: keys.order(userId, id),
     queryFn: ({ signal }) => getOrder(id, signal),
-    refetchInterval: (query) =>
-      query.state.data?.status === "pending" ? 500 : false,
     enabled: Boolean(userId),
   });
   useEffect(
     () =>
-      userId
-        ? subscribeOrder(userId, id)
-        : undefined,
+      userId ? subscribeOrder(userId, id) : undefined,
     [id, userId],
   );
   if (order.isPending)

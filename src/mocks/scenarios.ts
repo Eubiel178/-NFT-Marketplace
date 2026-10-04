@@ -9,6 +9,7 @@ export const scenarios = [
   "favorites-error",
   "payment-declined",
   "payment-pending",
+  "payment-held",
   "payment-timeout",
   "stale-quote",
   "cart-error",

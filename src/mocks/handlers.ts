@@ -148,25 +148,31 @@ function orderPayload(input: {
 }) {
   return JSON.stringify(input);
 }
+function confirmOrder(orderId: string) {
+  const current = db.orders.find((candidate) => candidate.id === orderId);
+  if (!current || current.status !== "pending") return current;
+  current.status = "confirmed";
+  current.transactionRef = "0xA91F…E82C";
+  current.version += 1;
+  removePurchasedItems(current.userId, current.quote.items);
+  saveDb();
+  broadcastOrder({
+    eventId: `${current.id}:${current.version}`,
+    resourceId: current.id,
+    version: current.version,
+    userId: current.userId,
+    status: current.status,
+  });
+  return current;
+}
 function scheduleOrderConfirmation(order: Order) {
+  // payment-held mantém o pedido pendente até POST /__mock/orders/:id/confirm.
+  if (getScenario() === "payment-held") return;
   if (order.status !== "pending" || scheduledOrders.has(order.id)) return;
   scheduledOrders.add(order.id);
   setTimeout(() => {
     scheduledOrders.delete(order.id);
-    const current = db.orders.find((candidate) => candidate.id === order.id);
-    if (!current || current.status !== "pending") return;
-    current.status = "confirmed";
-    current.transactionRef = "0xA91F…E82C";
-    current.version += 1;
-    removePurchasedItems(current.userId, current.quote.items);
-    saveDb();
-    broadcastOrder({
-      eventId: `${current.id}:${current.version}`,
-      resourceId: current.id,
-      version: current.version,
-      userId: current.userId,
-      status: current.status,
-    });
+    confirmOrder(order.id);
   }, 400);
 }
 function cartLines(userId: string) {
@@ -450,6 +456,11 @@ export const handlers = [
       nft,
     });
     return HttpResponse.json(nft);
+  }),
+  http.post("/api/__mock/orders/:id/confirm", ({ params }) => {
+    const order = confirmOrder(String(params.id));
+    if (!order) return error(404, "NOT_FOUND", "Pedido não encontrado");
+    return HttpResponse.json(order);
   }),
   http.post("/api/__mock/orders/:id/event", async ({ request, params }) => {
     const order = db.orders.find((candidate) => candidate.id === params.id);
@@ -806,6 +817,7 @@ export const handlers = [
       getScenario() === "payment-declined"
         ? "declined"
         : getScenario() === "payment-pending" ||
+            getScenario() === "payment-held" ||
             getScenario() === "payment-timeout"
           ? "pending"
           : "confirmed";
