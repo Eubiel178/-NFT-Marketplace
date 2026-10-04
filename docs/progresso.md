@@ -9,7 +9,7 @@ Método de contagem: `wc -l src/css/styles.css` e classes distintas que aparecem
 | --- | --- | --- | --- | --- |
 | Preparação (Badge + tipografia) | concluída | 3.574 → 3.031 | 308 → 203 | ver git log |
 | Início | concluída (ressalvas restantes: preço das linhas 1 e 3, paginação) | 3.031 → 2.323 | 203 → 137 | ver git log |
-| Detalhes do NFT | concluída (ressalvas: textos divergentes entre os frames) | 2.323 → 1.709 | 137 → 97 | ver git log |
+| Detalhes do NFT | concluída | 2.323 → 1.709 | 137 → 97 | ver git log |
 | Carrinho | pendente | | | |
 | Pagamento | pendente | | | |
 | Confirmação de Pedido | pendente | | | |
@@ -68,8 +68,16 @@ Método de contagem: `wc -l src/css/styles.css` e classes distintas que aparecem
 
 ### Ressalvas
 
-- Mobile: o texto "Sobre este NFT" é diferente nos dois frames (o desktop tem "com arte desbloqueável e acesso para colecionadores", o mobile não). O app usa um texto só; no mobile ele quebra em 4 linhas em vez de 3, e tudo abaixo da descrição desce 24px. Os espaçamentos entre os blocos seguem o frame.
+- ~~Descrição mobile 24px abaixo~~ — resolvido em `fix: detail caveats`: `shortDescription` (texto do frame mobile) nas fixtures; o desktop usa `description` (texto do frame desktop). Blocos abaixo da descrição: −0…+2px.
 - "Coleção: Kurio Apes" no frame; no app, "Arte digital", porque as fixtures seguem as coleções do painel da Início (decisão anterior do usuário).
 - Miniatura selecionada: o frame destaca a 2ª; o app começa na 1ª (a imagem principal é a da miniatura escolhida).
 - Edições no frame mobile: "1/10, 1/10, 1/50, ABERTA" (repetição no frame); o app mostra as edições do NFT ("1/1, 1/10, 1/50, ABERTA"), como no desktop.
 - Seção "Detalhes do NFT" no frame: o texto de "Contrato" e o de "Direitos autorais" estão trocados entre si; o app mantém cada texto no rótulo certo.
+
+### fix: detail caveats
+
+- `useMediaQuery`: o app monta com `createRoot` (sem SSR/hidratação) e `useSyncExternalStore` chama `window.matchMedia` no primeiro render, então a primeira pintura já é a versão certa. Conferido no navegador com um `MutationObserver` desde o primeiro nó do DOM: a versão errada (trilha do desktop em 390; botão "voltar" do mobile em 1440) apareceu 0 vezes.
+- CLS: a medição mostrou 0,16 em 1440, vindo do footer, que aparecia no meio da tela durante o skeleton e era empurrado quando o conteúdo chegava. O skeleton passou a reservar também os blocos de "Detalhes do NFT" e "Mais desta coleção": o footer fica em y=1612 no skeleton e com o conteúdo, e o CLS é 0 em 1440 e em 390.
+- Descrição: `shortDescription` (mobile) e `description` (desktop) nas fixtures, cada uma com o texto do seu frame. Mobile: Edição 548 (=), edições 572 (+2), ID 615 (+1), Coleção 647 (+1), Atributos 677 (+1). Desktop sem mudança (3 linhas, como no frame). Chave do banco mock: `v4`.
+- README: seção "Edições esgotadas nas fixtures" (`nft-4` 1/1), com o motivo de nenhum spec usar essa edição e como conferir à mão. A resposta 409 e o botão desabilitado foram conferidos no navegador.
+- Testes E2E não rodados nesta etapa, conforme o `AGENTS.md` atualizado (o usuário pede no final). Typecheck e lint passaram.

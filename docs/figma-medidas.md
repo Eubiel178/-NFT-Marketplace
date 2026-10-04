@@ -209,6 +209,6 @@ Data: 04/10/2026. Referências: `figma/Desktop/Detalhes do NFT.png` (1440×2246)
 | preço | 295,760 94x16 | 295,758 94x15 | 0 | −2 | 0 | −1 |
 | Comprar NFT | 24,802 196x60 | 24,800 196x60 | 0 | −2 | 0 | 0 |
 | carrinho | 232,802 60x60 | 232,800 60x60 | 0 | −2 | 0 | 0 |
-| abaixo da descrição (Edição, edições, ID, Coleção, Atributos) | 548, 570, 614, 646, 676 | 572, 596, 639, 671, 701 | | **+24** (1 linha a mais de descrição) | | |
+| abaixo da descrição (Edição, edições, ID, Coleção, Atributos) | 548, 570, 614, 646, 676 | 548, 572, 615, 647, 677 | | 0…+2 | | |
 
-Descontada a linha a mais da descrição, os blocos abaixo dela ficam em −2…+1px. Em 390 a composição é a mesma, com a imagem e as colunas encolhendo.
+Com o `shortDescription` (texto do frame mobile) a descrição tem 3 linhas, como no frame. Em 390 a composição é a mesma, com a imagem e as colunas encolhendo.

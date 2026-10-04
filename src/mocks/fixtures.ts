@@ -49,7 +49,9 @@ const homeNfts: Nft[] = [
     version: 1,
     tokenId: "#0042",
     description:
-      "Um colecionável digital 1/50 finalizado à mão da coleção Kurio Editions, verificado na Ethereum, com arte desbloqueável e acesso para colecionadores.",
+      "Um colecionável digital finalizado à mão da coleção Kurio Editions, verificado na Ethereum, com arte desbloqueável e acesso para colecionadores.",
+    shortDescription:
+      "Um colecionável digital 1/50 finalizado à mão da coleção Kurio Editions, verificado na Ethereum.",
     editions: ["1/1", "1/10", "1/50", "ABERTA"],
     attributes: ["Óculos", "Esmeralda", "Raro"],
     reviews: 19,
@@ -218,6 +220,7 @@ function withDetails(nft: Nft, index: number): Nft {
     description:
       nft.description ??
       `Um colecionável digital da coleção ${nft.collection}, verificado na ${network}, com acesso para colecionadores.`,
+    shortDescription: nft.shortDescription ?? nft.description ?? `Colecionável digital da coleção ${nft.collection}, verificado na ${network}.`,
     editions: nft.editions ?? ["1/1", "1/10", "1/50", "ABERTA"],
     attributes: nft.attributes ?? [nft.collection, network],
     reviews: nft.reviews ?? 3 + ((index * 7) % 40),

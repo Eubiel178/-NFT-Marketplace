@@ -324,6 +324,21 @@ await fetch('/api/__mock/nfts/nft-1/update', { method: 'POST' })
 
 O preço persistido muda para `0.125` ETH, o mock emite pelo protocolo Socket.IO e o cliente reconcilia por REST. Os cenários de pagamento, favoritos, idempotência e sessão são exclusivos do modo de demonstração e podem ser selecionados pelo mesmo endpoint.
 
+#### Edições esgotadas nas fixtures
+
+O campo `soldOutEditions` do NFT lista as edições sem estoque (`src/mocks/fixtures.ts`). Hoje há uma:
+
+| NFT | Edição esgotada | Onde aparece |
+| --- | --- | --- |
+| `nft-4` — Cosmic Bloom #118 | `1/1` | `/nfts/nft-4`: o botão "1/1" fica desabilitado e riscado, com o nome acessível "1/1 (esgotada)"; `POST /api/cart/items` com essa edição responde `409 OUT_OF_STOCK` ("Esta edição está esgotada"). |
+
+Uso nos testes: nenhum spec E2E cobre essa edição ainda. Os specs usam só `nft-1` e `nft-2`, e a edição esgotada fica fora desses dois de propósito. O `phase7-resilience` adiciona `nft-2` edição `1/1` ao carrinho do visitante e espera `201`, então marcar uma edição desses NFTs como esgotada quebraria os testes de carrinho, detalhe e compra. Para conferir à mão, abra `/nfts/nft-4` ou rode no console:
+
+```js
+await fetch('/api/cart/items', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ nftId: 'nft-4', editionId: '1/1', quantity: 1 }) })
+// → 409 { code: 'OUT_OF_STOCK', message: 'Esta edição está esgotada' }
+```
+
 ### Entrega e limitações atuais
 
 Configuração SPA da Vercel preparada em `vercel.json`; deploy e URL de repositório ainda pendentes. Os fluxos de conta, carrinho, favoritos e pedidos descritos nesta etapa usam MSW e possuem cobertura E2E. Permanecem no checklist os refinamentos de perfil/avatar/senha, alguns cenários completos de catálogo/cupom/tempo real, baselines visuais finais, auditoria Lighthouse final e o deploy público. Resultado das verificações desta etapa em [docs/VALIDATION.md](docs/VALIDATION.md).

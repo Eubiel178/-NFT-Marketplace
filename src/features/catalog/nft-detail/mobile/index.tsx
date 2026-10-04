@@ -44,7 +44,7 @@ export function Mobile({ nft, related }: MobileProps) {
             </p>
           )}
         </div>
-        {nft.description && <p className="mt-3 text-body-14-regular text-text-secondary">{nft.description}</p>}
+        {nft.shortDescription && <p className="mt-3 text-body-14-regular text-text-secondary">{nft.shortDescription}</p>}
         <div className="mt-3">
           <Editions nft={nft} selected={purchase.edition} onSelect={purchase.selectEdition} />
         </div>

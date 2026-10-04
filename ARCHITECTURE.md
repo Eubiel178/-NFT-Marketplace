@@ -95,7 +95,8 @@ As 76 classes `.figma-*` (cópia da lista de estilos do Figma em `px`) não eram
 - **Favorito.** `useFavorite` (feature `favorites`) faz a atualização otimista e volta ao estado anterior se a API falhar; o visitante é levado ao login e volta ao detalhe.
 - **Aviso ao vivo.** Um `role="status"` anuncia mudanças de preço e estoque que chegam pelo `nft.updated` (o socket invalida a query e o REST traz a nova versão).
 - **Seções abaixo da dobra no mobile.** O frame mobile termina na folha do resumo. "Detalhes do NFT" e "Mais desta coleção" continuam no mobile, abaixo da folha, com espaço para a barra fixa.
-- **Desvios de conteúdo entre os frames** (o app usa um dado só): descrição curta diferente no desktop e no mobile (no mobile quebra em 4 linhas, 24px a mais que o frame); "Kurio Apes" no frame e "Arte digital" nas fixtures; edições "1/10" repetidas no frame mobile; textos de "Contrato" e "Direitos autorais" trocados no frame desktop; o frame destaca a 2ª miniatura e o app começa na 1ª.
+- **Descrição curta:** os frames têm textos diferentes; as fixtures guardam os dois (`description` no desktop, `shortDescription` no mobile).
+- **Desvios de conteúdo entre os frames** (o app usa um dado só): "Kurio Apes" no frame e "Arte digital" nas fixtures; edições "1/10" repetidas no frame mobile; textos de "Contrato" e "Direitos autorais" trocados no frame desktop; o frame destaca a 2ª miniatura e o app começa na 1ª.
 - **Ícones.** Estrela, lupa, LinkedIn, mensagem, Twitter, carrinho e o botão "voltar" são os SVGs do Figma. − e + do seletor e o coração do favorito usam o lucide, porque não estão no export.
 - **`CarouselDots`:** pontos de 12px a cada 20px, como no frame (o componente só é usado aqui), mantendo a área de toque de 24px.
 

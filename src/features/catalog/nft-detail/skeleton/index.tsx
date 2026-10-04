@@ -29,6 +29,8 @@ export function Skeleton({ mobile }: { mobile: boolean }) {
           <Block className="h-24 w-full" />
         </div>
       </div>
+      <Block className="mt-23 h-86.5" />
+      <Block className="mt-23.25 mb-0.5 h-101" />
     </div>
   )
 }

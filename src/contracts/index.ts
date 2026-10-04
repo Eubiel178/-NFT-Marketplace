@@ -9,7 +9,7 @@ export const nftSchema = z.object({
   id: z.string(), name: z.string(), category: z.enum(['art', 'music', 'photography']),
   collection: z.string(), network: nftNetworkSchema, image: z.string(),
   price: ethSchema, originalPrice: ethSchema.optional(), rare: z.boolean().optional(), available: z.number().int().nonnegative(), version: z.number().int().positive(),
-  tokenId: z.string().optional(), description: z.string().optional(), editions: z.array(z.string()).optional(),
+  tokenId: z.string().optional(), description: z.string().optional(), shortDescription: z.string().optional(), editions: z.array(z.string()).optional(),
   attributes: z.array(z.string()).optional(), reviews: z.number().int().nonnegative().optional(), gallery: z.array(z.string()).optional(),
   soldOutEditions: z.array(z.string()).optional(), rating: z.string().regex(/^\d\.\d$/).optional(),
   details: z.object({ paragraphs: z.array(z.string()), network: z.string(), contract: z.string(), royalties: z.string() }).optional(),
