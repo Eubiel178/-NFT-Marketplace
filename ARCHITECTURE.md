@@ -100,6 +100,14 @@ As 76 classes `.figma-*` (cópia da lista de estilos do Figma em `px`) não eram
 - **Ícones.** Estrela, lupa, LinkedIn, mensagem, Twitter, carrinho e o botão "voltar" são os SVGs do Figma. − e + do seletor e o coração do favorito usam o lucide, porque não estão no export.
 - **`CarouselDots`:** pontos de 12px a cada 20px, como no frame (o componente só é usado aqui), mantendo a área de toque de 24px.
 
+### Carrinho: decisões (04/10/2026)
+
+- **Visual da versão do usuário mantido.** As diferenças em relação ao Figma estão medidas em `docs/progresso.md` (seção Carrinho) e não foram revertidas, por decisão do usuário.
+- **Visitante cotado.** `POST /api/quote` não exige mais sessão; o pedido continua exigindo. O resumo aparece para todos, e finalizar leva o visitante ao login.
+- **Estoque por NFT, somado entre edições.** `available` é do NFT; o carrinho pode ter mais de uma edição do mesmo NFT, e a soma não passa do estoque. Edição em `soldOutEditions` é recusada. Linhas são identificadas por NFT + edição, inclusive na remoção.
+- **Cupom vencido distinto de inválido.** `KURIO5` responde `COUPON_EXPIRED`; códigos desconhecidos, `INVALID_COUPON`. A interface mostra a mensagem da API no campo.
+- **`createQuote` em `shared/api/quote`.** Carrinho e pagamento usam a mesma chamada; antes o pagamento importava de dentro da feature do carrinho.
+
 ## Execução e deploy
 
 Vite é a ferramenta complementar escolhida; todas as tecnologias obrigatórias têm dependência/configuração dedicada. REST, Socket.IO, Router, Query, Axios, Tailwind e componentes iniciais já têm caminho de execução. Playwright exercita a infraestrutura. Lighthouse tem script preparado, sem atestar metas finais. Build de demonstração ativa MSW inclusive em produção; build normal permite API configurada, mas não existe backend externo entregue.

@@ -31,9 +31,9 @@ async function addCurrentNftToCart(page: Page) {
 test('carrinho altera, remove e persiste cupom pela interface', async ({ page }) => {
   await signIn(page, '/cart')
 
-  await expect(page.locator('.cart-line').first()).toBeVisible()
-  const initialLineCount = await page.locator('.cart-line').count()
-  const firstLine = page.locator('.cart-line').first()
+  await expect(page.getByRole('list', { name: 'Itens do carrinho' }).getByRole('listitem').first()).toBeVisible()
+  const initialLineCount = await page.getByRole('list', { name: 'Itens do carrinho' }).getByRole('listitem').count()
+  const firstLine = page.getByRole('list', { name: 'Itens do carrinho' }).getByRole('listitem').first()
   const firstName = await firstLine.locator('strong').first().innerText()
   const increase = firstLine.getByRole('button', { name: 'Aumentar' })
 
@@ -46,13 +46,13 @@ test('carrinho altera, remove e persiste cupom pela interface', async ({ page })
   const remove = firstLine.getByRole('button', { name: new RegExp(`Remover ${firstName}`) })
   await remove.focus()
   await remove.press('Enter')
-  await expect(page.locator('.cart-line')).toHaveCount(initialLineCount - 1)
+  await expect(page.getByRole('list', { name: 'Itens do carrinho' }).getByRole('listitem')).toHaveCount(initialLineCount - 1)
 
   const coupon = page.getByLabel('Código promocional')
   await coupon.fill('KURIO10')
   await page.getByRole('button', { name: 'Aplicar' }).click()
   await expect(page.getByText('Remover cupom')).toBeVisible()
-  await expect(page.locator('.cart-totals')).not.toContainText('-0 ETH')
+  await expect(page.getByTestId('cart-totals')).not.toContainText('-0 ETH')
 
   await page.reload()
   await expect(coupon).toHaveValue('KURIO10')

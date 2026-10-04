@@ -23,7 +23,7 @@ test('detalhe mantém skeleton dimensionado durante carregamento lento', async (
 
 test('erro de mutation do carrinho faz rollback e oferece feedback', async ({ page }) => {
   await signIn(page, '/cart')
-  const quantity = page.locator('.cart-line').first().getByRole('button', { name: 'Aumentar' })
+  const quantity = page.getByRole('list', { name: 'Itens do carrinho' }).getByRole('listitem').first().getByRole('button', { name: 'Aumentar' })
   await setScenario(page, 'cart-error')
   await quantity.evaluate((element) => (element as HTMLButtonElement).click())
   await expect(page.getByRole('alert')).toContainText('Não foi possível atualizar a quantidade')
@@ -41,7 +41,7 @@ test('erro ao carregar carrinho oferece retry', async ({ page }) => {
 
 test('remoção de todos os itens exibe o carrinho vazio', async ({ page }) => {
   await signIn(page, '/cart')
-  const lines = page.locator('.cart-line')
+  const lines = page.getByRole('list', { name: 'Itens do carrinho' }).getByRole('listitem')
   await expect(lines.first()).toBeVisible()
   for (let attempt = 0; attempt < 10; attempt += 1) {
     const count = await lines.count()
@@ -60,7 +60,7 @@ test('resumo do carrinho comunica a cotação enquanto carrega', async ({ page }
   await setScenario(page, 'slow')
   await page.getByRole('button', { name: 'Tentar novamente' }).click()
   await expect(page.locator('.checkout-status')).toContainText('Calculando resumo...')
-  await expect(page.locator('.cart-totals')).toHaveAttribute('aria-busy', 'true')
+  await expect(page.getByTestId('cart-totals')).toHaveAttribute('aria-busy', 'true')
 })
 
 test('erro da cotação permite nova tentativa', async ({ page }) => {

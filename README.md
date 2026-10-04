@@ -324,6 +324,16 @@ await fetch('/api/__mock/nfts/nft-1/update', { method: 'POST' })
 
 O preço persistido muda para `0.125` ETH, o mock emite pelo protocolo Socket.IO e o cliente reconcilia por REST. Os cenários de pagamento, favoritos, idempotência e sessão são exclusivos do modo de demonstração e podem ser selecionados pelo mesmo endpoint.
 
+#### Cupons
+
+| Código | Resposta de `POST /api/quote` |
+| --- | --- |
+| `KURIO10` | 10% de desconto no subtotal |
+| `KURIO5` | `409 COUPON_EXPIRED` — "Este cupom expirou" |
+| qualquer outro | `409 INVALID_COUPON` — "Cupom inválido" |
+
+A cotação também responde para visitante (o carrinho do visitante mostra subtotal, desconto, taxa e total); criar o pedido continua exigindo sessão.
+
 #### Edições esgotadas nas fixtures
 
 O campo `soldOutEditions` do NFT lista as edições sem estoque (`src/mocks/fixtures.ts`). Hoje há uma:

@@ -23,17 +23,17 @@ test('cupom válido, inválido e remoção atualizam a cotação', async ({ page
   await coupon.fill('KURIO10')
   await page.getByRole('button', { name: 'Aplicar' }).click()
   await expect(page.getByText('Remover cupom')).toBeVisible()
-  await expect(page.locator('.cart-totals')).toContainText('-2.683 ETH')
+  await expect(page.getByTestId('cart-totals')).toContainText('-2.683 ETH')
   await page.getByText('Remover cupom').click()
-  await expect(page.locator('.cart-totals')).toContainText('-0 ETH')
+  await expect(page.getByTestId('cart-totals')).toContainText('-0 ETH')
 })
 
 test('evento de NFT atualiza o item do carrinho via Socket.IO', async ({ page }) => {
   await signIn(page, '/cart')
-  await expect(page.locator('.cart-line-price').first()).toHaveText('1.19 ETH')
+  await expect(page.getByTestId('cart-line-price').first()).toHaveText('1.19 ETH')
   await page.evaluate(async () => { await fetch('/api/__mock/nfts/nft-1/update', { method: 'POST' }) })
-  await expect(page.locator('.cart-line-price').first()).toHaveText('0.125 ETH')
-  await expect(page.locator('.cart-notice')).toContainText('O preço ou a disponibilidade')
+  await expect(page.getByTestId('cart-line-price').first()).toHaveText('0.125 ETH')
+  await expect(page.getByRole('status').filter({ hasText: 'O preço ou a disponibilidade' })).toContainText('O preço ou a disponibilidade')
 })
 
 test('mudança de preço exige nova confirmação no checkout', async ({ page }) => {

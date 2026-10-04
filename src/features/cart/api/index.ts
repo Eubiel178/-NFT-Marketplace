@@ -1,4 +1,4 @@
-import { cartSchema, quoteSchema, type CartItem } from '@/contracts'
+import { cartSchema, type CartItem } from '@/contracts'
 import { http } from '@/lib/http'
 
 export async function addCartItem(input: CartItem) {
@@ -9,10 +9,6 @@ export async function updateCartItem(input: CartItem) {
   return cartSchema.parse((await http.patch(`/cart/items/${encodeURIComponent(input.nftId)}`, input)).data)
 }
 
-export async function removeCartItem(nftId: string) {
-  return cartSchema.parse((await http.delete(`/cart/items/${encodeURIComponent(nftId)}`)).data)
-}
-
-export async function createQuote(items: CartItem[], coupon?: string) {
-  return quoteSchema.parse((await http.post('/quote', { items, coupon })).data)
+export async function removeCartItem(item: { nftId: string; editionId: string }) {
+  return cartSchema.parse((await http.delete(`/cart/items/${encodeURIComponent(item.nftId)}`, { params: { editionId: item.editionId } })).data)
 }

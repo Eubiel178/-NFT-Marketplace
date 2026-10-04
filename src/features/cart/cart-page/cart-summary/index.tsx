@@ -9,20 +9,26 @@ interface CartSummaryProps {
   onCouponChange: (coupon: string) => void;
   onApplyCoupon: () => void;
   applyCouponPending: boolean;
+  couponError: string;
+  hasCoupon: boolean;
+  onRemoveCoupon: () => void;
   realtimeConnected: boolean | null;
-  authenticated: boolean;
   liveNotice: string;
   quantityMutationError: boolean;
   removeMutationError: boolean;
-  applyCouponError: boolean;
   quoteError: boolean;
   onRetryQuote: () => void;
-  hasCoupon: boolean;
-  onRemoveCoupon: () => void;
   quoteLoading: boolean;
-  displayedQuote: Quote | undefined;
+  quote: Quote | undefined;
   checkoutDisabled: boolean;
   onCheckout: () => void;
+}
+
+
+// Valor do resumo ou, enquanto a cotação carrega, um bloco com a mesma altura.
+function Amount({ loading, children, tall = false }: { loading: boolean; children: React.ReactNode; tall?: boolean }) {
+  if (loading) return <Skeleton className={tall ? "h-13 w-20" : "h-6 w-20"} />;
+  return <>{children}</>;
 }
 
 export function CartSummary({
@@ -30,30 +36,36 @@ export function CartSummary({
   onCouponChange,
   onApplyCoupon,
   applyCouponPending,
+  couponError,
+  hasCoupon,
+  onRemoveCoupon,
   realtimeConnected,
-  authenticated,
   liveNotice,
   quantityMutationError,
   removeMutationError,
-  applyCouponError,
   quoteError,
   onRetryQuote,
-  hasCoupon,
-  onRemoveCoupon,
   quoteLoading,
-  displayedQuote,
+  quote,
   checkoutDisabled,
   onCheckout,
 }: CartSummaryProps) {
   return (
-    <aside className="cart-summary" aria-labelledby="cart-summary-title">
-      <h2 id="cart-summary-title">Resumo da carteira</h2>
-      <div className="cart-coupon">
+    <aside
+      aria-labelledby="cart-summary-title"
+      className="flex flex-col gap-6 bg-surface-card p-6 max-sm:-mx-7 max-sm:w-[calc(100%+3.5rem)] max-sm:rounded-t-40 max-sm:px-7 max-sm:pb-9"
+    >
+      <h2 id="cart-summary-title" className="text-body-large-18">
+        Resumo da carteira
+      </h2>
+      <div className="grid grid-cols-[1fr_6.0625rem] items-end sm:grid-cols-[1fr_6.375rem] [&_input]:h-10 [&_input]:rounded-l-3 [&_input]:rounded-r-none">
         <Input
           label="Código promocional"
           value={coupon}
           onChange={(event) => onCouponChange(event.target.value)}
           placeholder="Digite o código promocional..."
+          size="sm"
+          error={couponError || undefined}
         />
         <Button
           variant="apply"
@@ -61,48 +73,35 @@ export function CartSummary({
           onClick={onApplyCoupon}
           loading={applyCouponPending}
           disabled={!coupon.trim()}
+          className="h-10 rounded-l-none rounded-r-3"
         >
           Aplicar
         </Button>
       </div>
 
       {realtimeConnected === false && (
-        <p className="cart-error" role="alert">
+        <p className="m-0 text-caption-13 text-error" role="alert">
           As atualizações em tempo real estão indisponíveis. O carrinho continua
           sincronizado ao tentar novamente.
         </p>
       )}
 
-      {!authenticated && (
-        <p className="cart-notice" role="status">
-          Entre para consultar a cotação e finalizar sua compra.
-        </p>
-      )}
-
-      {liveNotice && (
-        <p className="cart-notice" role="status">
-          {liveNotice}
-        </p>
-      )}
+      <p className="m-0 text-caption-13 text-primary empty:hidden" role="status" aria-live="polite">
+        {liveNotice}
+      </p>
 
       {quantityMutationError && (
-        <p className="cart-error" role="alert">
+        <p className="m-0 text-caption-13 text-error" role="alert">
           Não foi possível atualizar a quantidade. Tente novamente.
         </p>
       )}
-
       {removeMutationError && (
-        <p className="cart-error" role="alert">
+        <p className="m-0 text-caption-13 text-error" role="alert">
           Não foi possível remover o item. Tente novamente.
         </p>
       )}
-      {applyCouponError && (
-        <p className="cart-error" role="alert">
-          Cupom inválido ou expirado.
-        </p>
-      )}
       {quoteError && (
-        <p className="cart-error" role="alert">
+        <p className="m-0 text-caption-13 text-error" role="alert">
           Não foi possível atualizar o resumo.{" "}
           <Button variant="link" size="sm" onClick={onRetryQuote}>
             Tentar novamente
@@ -114,65 +113,47 @@ export function CartSummary({
           Remover cupom
         </Button>
       )}
-      {quoteLoading && (
-        <p className="checkout-status" role="status">
-          Calculando resumo...
-        </p>
-      )}
-      <dl className="cart-totals" aria-busy={quoteLoading}>
-        <div>
+      <p className="sr-only" role="status">
+        {quoteLoading ? "Calculando resumo..." : ""}
+      </p>
+      <dl data-testid="cart-totals" aria-label="Totais" aria-busy={quoteLoading} className="m-0 grid gap-3 [&_dd]:m-0 [&_dt]:m-0">
+        <div className="flex justify-between gap-4">
           <dt>Subtotal</dt>
-          <dd>
-            {quoteLoading ? (
-              <Skeleton className="h-4 w-20" />
-            ) : (
-              `${displayedQuote?.subtotal ?? "—"} ETH`
-            )}
+          <dd className="flex flex-col items-end gap-1 text-text-accent">
+            <Amount loading={quoteLoading}>{quote?.subtotal ?? "—"} ETH</Amount>
           </dd>
         </div>
-        <div>
+        <div className="flex justify-between gap-4">
           <dt>Desconto do lançamento</dt>
-          <dd>
-            {quoteLoading ? (
-              <Skeleton className="h-4 w-20" />
-            ) : (
-              `-${displayedQuote?.discount ?? "0"} ETH`
-            )}
+          <dd className="flex flex-col items-end gap-1 text-text-accent">
+            <Amount loading={quoteLoading}>-{quote?.discount ?? "0"} ETH</Amount>
           </dd>
         </div>
-        <div>
+        <div className="flex justify-between gap-4">
           <dt>Taxa de rede</dt>
-          <dd>
-            {quoteLoading ? (
-              <Skeleton className="h-4 w-20" />
-            ) : (
-              <>
-                <span>{displayedQuote?.networkFee ?? "0.016"} ETH</span>
-                <small>Taxa estimada</small>
-              </>
-            )}
+          <dd className="flex flex-col items-end gap-1 text-text-accent">
+            <Amount loading={quoteLoading} tall>
+              <span>{quote?.networkFee ?? "—"} ETH</span>
+              <small className="text-caption-12 font-normal text-text-accent">Taxa estimada</small>
+            </Amount>
           </dd>
         </div>
-        <div className="cart-total">
+        <div className="flex justify-between gap-4 border-t border-border pt-3 font-bold text-foreground">
           <dt>Total</dt>
-          <dd>
-            {quoteLoading ? (
-              <Skeleton className="h-4 w-20" />
-            ) : (
-              `${displayedQuote?.total ?? "—"} ETH`
-            )}
+          <dd className="flex flex-col items-end gap-1 text-foreground">
+            <Amount loading={quoteLoading}>{quote?.total ?? "—"} ETH</Amount>
           </dd>
         </div>
       </dl>
       <Button
-        className="cart-checkout"
         size="sm"
         disabled={checkoutDisabled}
         onClick={onCheckout}
+        className="w-full justify-between max-sm:min-h-15 max-sm:rounded-40"
       >
         Conectar e finalizar <ArrowRight aria-hidden="true" />
       </Button>
-      <Link className="cart-continue" to="/">
+      <Link className="self-center text-body-15 text-text-secondary" to="/">
         Continuar explorando
       </Link>
     </aside>

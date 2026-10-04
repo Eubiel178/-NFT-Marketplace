@@ -128,6 +128,12 @@ function permissionError() {
 function cartItems(userId: string): CartItem[] {
   return db.carts[userId] ?? [];
 }
+// Unidades do NFT já no carrinho, somando todas as edições (menos a linha que está mudando).
+function reservedUnits(items: CartItem[], nftId: string, exceptEditionId?: string) {
+  return items
+    .filter((item) => item.nftId === nftId && item.editionId !== exceptEditionId)
+    .reduce((total, item) => total + item.quantity, 0);
+}
 function cartOwnerId() {
   return currentUser()?.id ?? "visitor";
 }
@@ -230,6 +236,8 @@ function removePurchasedItems(userId: string, purchasedItems: CartItem[]) {
     .filter((line) => line.quantity > 0);
   db.carts[userId] = remaining;
 }
+// Cupons que existiram e já venceram: resposta diferente de um código inexistente.
+const expiredCoupons = ["KURIO5"];
 function calculateQuote(items: CartItem[], coupon?: string) {
   const subtotalWei = items.reduce((total, item) => {
     const nft = db.nfts.find((candidate) => candidate.id === item.nftId);
@@ -539,7 +547,7 @@ export const handlers = [
     );
     if (nft?.soldOutEditions?.includes(body.data.editionId))
       return error(409, "OUT_OF_STOCK", "Esta edição está esgotada");
-    if (!nft || nft.available < (existing?.quantity ?? 0) + body.data.quantity)
+    if (!nft || nft.available < reservedUnits(items, nft.id) + body.data.quantity)
       return error(409, "OUT_OF_STOCK", "Edição indisponível");
     if (existing) existing.quantity += body.data.quantity;
     else items.push(body.data);
@@ -558,18 +566,27 @@ export const handlers = [
     if (!body.success)
       return error(422, "VALIDATION_ERROR", "Quantidade inválida");
     const ownerId = cartOwnerId();
-    const item = cartItems(ownerId).find(
-      (candidate) => candidate.nftId === params.nftId,
+    const items = cartItems(ownerId);
+    const item = items.find(
+      (candidate) =>
+        candidate.nftId === params.nftId &&
+        candidate.editionId === body.data.editionId,
     );
     if (!item) return error(404, "NOT_FOUND", "Item não encontrado");
     const nft = db.nfts.find((candidate) => candidate.id === params.nftId);
-    if (!nft || nft.available < body.data.quantity)
+    if (nft?.soldOutEditions?.includes(item.editionId))
+      return error(409, "OUT_OF_STOCK", "Esta edição está esgotada");
+    if (
+      !nft ||
+      nft.available <
+        reservedUnits(items, nft.id, item.editionId) + body.data.quantity
+    )
       return error(409, "OUT_OF_STOCK", "Edição indisponível");
     item.quantity = body.data.quantity;
     saveDb();
     return HttpResponse.json({ items: cartLines(ownerId) });
   }),
-  http.delete("/api/cart/items/:nftId", ({ params }) => {
+  http.delete("/api/cart/items/:nftId", ({ request, params }) => {
     if (getScenario() === "cart-error")
       return error(
         503,
@@ -577,15 +594,16 @@ export const handlers = [
         "Não foi possível atualizar o carrinho",
       );
     const ownerId = cartOwnerId();
+    const editionId = new URL(request.url).searchParams.get("editionId");
     db.carts[ownerId] = cartItems(ownerId).filter(
-      (item) => item.nftId !== params.nftId,
+      (item) =>
+        item.nftId !== params.nftId ||
+        (editionId !== null && item.editionId !== editionId),
     );
     saveDb();
     return HttpResponse.json({ items: cartLines(ownerId) });
   }),
   http.post("/api/quote", async ({ request }) => {
-    const user = currentUser();
-    if (!user) return userError();
     if (getScenario() === "slow") await delay(2_000);
     if (getScenario() === "quote-error")
       return error(
@@ -595,8 +613,10 @@ export const handlers = [
       );
     const body = quoteBodySchema.safeParse(await request.json());
     if (!body.success) return error(422, "VALIDATION_ERROR", "Itens inválidos");
+    if (body.data.coupon && expiredCoupons.includes(body.data.coupon))
+      return error(409, "COUPON_EXPIRED", "Este cupom expirou");
     if (body.data.coupon && body.data.coupon !== "KURIO10")
-      return error(409, "INVALID_COUPON", "Cupom inválido ou expirado");
+      return error(409, "INVALID_COUPON", "Cupom inválido");
     const id = `quote-${crypto.randomUUID()}`;
     const quote = {
       id,

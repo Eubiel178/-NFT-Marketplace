@@ -1,34 +1,38 @@
-import { useEffect, useState } from "react";
-
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { ArrowLeft } from "lucide-react";
 
-import { Button } from "@/components";
-import type { Cart, CartItem, Quote } from "@/contracts";
-import { catalogOptions } from "@/features/catalog/api";
-import { keys } from "@/lib/query";
-import {
-  readUserItem,
-  removeUserItem,
-  writeUserItem,
-} from "@/lib/user-storage";
-import { subscribeNftUpdates, useRealtimeConnected } from "@/realtime";
-import { cartOptions } from "@/shared/api/cart";
+import { Button, Skeleton } from "@/components";
+import { catalogOptions, withCatalogDefaults } from "@/features/catalog";
+import { cn } from "@/lib/utils";
+import { useRealtimeConnected } from "@/realtime";
 import { sessionOptions } from "@/shared/api/session";
-import { createQuote, removeCartItem, updateCartItem } from "../api";
-import { CartLine } from "./cart-line";
+
+import { useCartLines } from "../hooks/use-cart-lines";
+import { useCartLiveNotice } from "../hooks/use-cart-live-notice";
+import { useCartQuote } from "../hooks/use-cart-quote";
+import { lineKey, maxQuantity } from "../lib/cart-line";
+import { CartLine, cartColumns } from "./cart-line";
 import { CartRelated } from "./cart-related";
 import { CartSummary } from "./cart-summary";
 
+const relatedSearch = withCatalogDefaults({});
+
+const page =
+  "mx-auto flex w-full max-w-content flex-col gap-8 max-sm:-ml-6 max-sm:w-[calc(100%+3rem)] max-sm:gap-4 max-sm:px-7";
+
+// Mesmas caixas da página carregada: trilha, título, três linhas e o resumo.
 function CartSkeleton() {
   return (
-    <section className="cart-page">
-      <div
-        className="cart-skeleton"
-        role="status"
-        aria-label="Carregando carrinho"
-      />
+    <section className={page} role="status" aria-label="Carregando carrinho">
+      <Skeleton className="h-6 w-60 max-sm:hidden" />
+      <Skeleton className="h-6 w-64 max-sm:mt-8" />
+      <div className="grid gap-12 lg:grid-cols-[minmax(0,1fr)_20.75rem] lg:items-start">
+        <div className="grid gap-3">
+          {Array.from({ length: 3 }, (_, index) => <Skeleton key={index} className="h-25 sm:h-17.5" />)}
+        </div>
+        <Skeleton className="h-117.25" />
+      </div>
     </section>
   );
 }
@@ -42,157 +46,46 @@ export function CartPage() {
 
 function CartContent({ userId }: { userId: string | null }) {
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
-  const cartKey = keys.cart(userId);
-  const cart = useQuery(cartOptions(userId));
-  const related = useQuery(
-    catalogOptions({
-      q: "",
-      category: "all",
-      collection: "all",
-      network: "all",
-      sort: "recent",
-      page: 1,
-    }),
-  );
-  const savedCoupon = userId
-    ? (readUserItem("checkout-coupon", userId) ?? "")
-    : "";
-  const [coupon, setCoupon] = useState(savedCoupon);
-  const [appliedCoupon, setAppliedCoupon] = useState(savedCoupon);
-  const [liveNotice, setLiveNotice] = useState("");
+  const cart = useCartLines(userId);
+  const quote = useCartQuote(userId, cart.items);
+  const liveNotice = useCartLiveNotice(cart.lines);
   const realtimeConnected = useRealtimeConnected();
-  const [quote, setQuote] = useState<Quote | null>(null);
-  const lines = cart.data?.items ?? [];
-  const items = lines.map(({ nftId, editionId, quantity }) => ({
-    nftId,
-    editionId,
-    quantity,
-  }));
-  const mutation = useMutation({
-    mutationFn: (input: CartItem) => updateCartItem(input),
-    onMutate: async (input) => {
-      await queryClient.cancelQueries({ queryKey: cartKey });
-      const previous = queryClient.getQueryData<Cart>(cartKey);
-      if (previous)
-        queryClient.setQueryData<Cart>(cartKey, {
-          items: previous.items.map((line) =>
-            line.nftId === input.nftId
-              ? { ...line, quantity: input.quantity }
-              : line,
-          ),
-        });
-      return { previous };
-    },
-    onError: (_error, _input, context) => {
-      if (context?.previous)
-        queryClient.setQueryData(cartKey, context.previous);
-    },
-    onSettled: () => {
-      setQuote(null);
-      void queryClient.invalidateQueries({ queryKey: cartKey });
-    },
-  });
-  const removeMutation = useMutation({
-    mutationFn: removeCartItem,
-    scope: { id: "cart-remove" },
-    onMutate: async (nftId) => {
-      await queryClient.cancelQueries({ queryKey: cartKey });
-      const previous = queryClient.getQueryData<Cart>(cartKey);
-      if (previous)
-        queryClient.setQueryData<Cart>(cartKey, {
-          items: previous.items.filter((line) => line.nftId !== nftId),
-        });
-      return {
-        previous,
-        removed: previous?.items.find((line) => line.nftId === nftId),
-      };
-    },
-    onError: (_error, _nftId, context) => {
-      if (!context?.removed) return;
-      const current = queryClient.getQueryData<Cart>(cartKey);
-      queryClient.setQueryData<Cart>(cartKey, {
-        items: [...(current?.items ?? []), context.removed],
-      });
-    },
-    onSuccess: (_next, nftId) => {
-      const current = queryClient.getQueryData<Cart>(cartKey);
-      if (current)
-        queryClient.setQueryData<Cart>(cartKey, {
-          items: current.items.filter((line) => line.nftId !== nftId),
-        });
-      setQuote(null);
-    },
-  });
-  const applyCoupon = useMutation({
-    mutationFn: () => createQuote(items, coupon.trim()),
-    onSuccess: (next) => {
-      const value = coupon.trim();
-      setAppliedCoupon(value);
-      if (userId) writeUserItem("checkout-coupon", userId, value);
-      setQuote(next);
-    },
-  });
-  const itemIdsKey = items.map((item) => item.nftId).join("|");
-  const baseQuote = useQuery({
-    queryKey: keys.cartQuote(userId ?? "", items, appliedCoupon),
-    queryFn: () => createQuote(items, appliedCoupon || undefined),
-    enabled: items.length > 0 && Boolean(userId),
-  });
-  const displayedQuote = quote ?? baseQuote.data;
-  const authenticated = Boolean(userId);
-  const quoteLoading = authenticated && baseQuote.isFetching && !displayedQuote;
-  const goToCheckout = () => {
-    if (!authenticated) {
-      void navigate({
-        to: "/login",
-        search: { redirect: "/checkout", expired: false },
-      });
-      return;
-    }
-    void navigate({ to: "/checkout" });
-  };
-  useEffect(
-    () =>
-      subscribeNftUpdates((event) => {
-        if (!itemIdsKey.split("|").includes(event.resourceId)) return;
-        setQuote(null);
-        setLiveNotice(
-          `O preço ou a disponibilidade de ${event.nft.name} mudou. O resumo foi atualizado.`,
-        );
-      }),
-    [itemIdsKey],
-  );
+  const related = useQuery(catalogOptions(relatedSearch));
 
-  if (cart.isPending) return <CartSkeleton />;
-  if (cart.isError)
+  // Visitante também vê o resumo; finalizar leva ao login e volta ao pagamento.
+  const goToCheckout = () => {
+    if (userId) void navigate({ to: "/checkout" });
+    else void navigate({ to: "/login", search: { redirect: "/checkout", expired: false } });
+  };
+
+  if (cart.cart.isPending) return <CartSkeleton />;
+  if (cart.cart.isError)
     return (
-      <section className="cart-page" role="alert">
+      <section className={page} role="alert">
         <h1>Não foi possível carregar o carrinho</h1>
-        <Button onClick={() => void cart.refetch()}>Tentar novamente</Button>
+        <Button onClick={() => void cart.cart.refetch()}>Tentar novamente</Button>
       </section>
     );
 
+  const quoteLoading = quote.quote.isFetching && !quote.quote.data;
+
   return (
-    <section className="cart-page" aria-label="Carrinho de NFTs">
-      <nav className="cart-breadcrumb" aria-label="Breadcrumb">
+    <section className={page} aria-labelledby="cart-title">
+      <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-body-15 text-text-secondary max-sm:hidden">
         <Link to="/">Início</Link>
         <span>/</span>
         <Link to="/">Mercado</Link>
         <span>/</span>
         <strong>Carrinho</strong>
       </nav>
-      <div className="cart-header-mobile">
-        <Link to="/" aria-label="Voltar">
+      <div className="relative flex items-center justify-center gap-4 pt-8 sm:contents">
+        <Link to="/" aria-label="Voltar" className="absolute left-0 grid size-9 place-items-center rounded-full border border-border text-foreground sm:hidden">
           <ArrowLeft aria-hidden="true" />
         </Link>
-        <h1 id="cart-title-mobile">Carrinho de NFTs</h1>
+        <h1 id="cart-title" className="text-title-20 sm:text-heading-28">Carrinho de NFTs</h1>
       </div>
-      <h1 className="cart-title-desktop" id="cart-title">
-        Carrinho de NFTs
-      </h1>
-      {lines.length === 0 ? (
-        <div className="cart-empty">
+      {cart.lines.length === 0 ? (
+        <div className="grid justify-items-center gap-4 bg-surface-card px-8 py-16 text-center">
           <h2>Seu carrinho está vazio</h2>
           <p>Descubra obras digitais para começar sua coleção.</p>
           <Button asChild>
@@ -201,69 +94,44 @@ function CartContent({ userId }: { userId: string | null }) {
         </div>
       ) : (
         <>
-          <div className="cart-layout">
-            <div
-              className="cart-items"
-              role="list"
-              aria-label="Itens do carrinho"
-            >
-              <div className="cart-table-head">
+          <div className="flex flex-col items-stretch gap-4 sm:grid sm:gap-8 lg:grid-cols-[minmax(0,1fr)_20.75rem] lg:items-start lg:gap-12">
+            <div role="list" aria-label="Itens do carrinho" className="min-w-0 max-sm:w-[calc(100%+1.5rem)]">
+              <div aria-hidden="true" className={cn(cartColumns, "border-b border-border pr-6 pb-3 text-body-large-16 text-text-secondary max-sm:hidden")}>
                 <span>NFTs</span>
                 <span>Preço</span>
                 <span>Edições</span>
                 <span>Total</span>
                 <span />
               </div>
-              {lines.map((line) => (
+              {cart.lines.map((line) => (
                 <CartLine
-                  key={line.nftId}
+                  key={lineKey(line)}
                   line={line}
-                  quantityMutationPending={mutation.isPending}
-                  removeMutationPending={
-                    removeMutation.isPending &&
-                    removeMutation.variables === line.nftId
-                  }
-                  onQuantityChange={(quantity) =>
-                    mutation.mutate({
-                      nftId: line.nftId,
-                      editionId: line.editionId,
-                      quantity,
-                    })
-                  }
-                  onRemove={() => removeMutation.mutate(line.nftId)}
+                  max={maxQuantity(line, cart.lines)}
+                  quantityPending={cart.updating}
+                  removePending={cart.removingKey === lineKey(line)}
+                  onQuantityChange={(quantity) => cart.changeQuantity(line, quantity)}
+                  onRemove={() => cart.removeLine(line)}
                 />
               ))}
             </div>
             <CartSummary
-              coupon={coupon}
-              onCouponChange={setCoupon}
-              onApplyCoupon={() => applyCoupon.mutate()}
-              applyCouponPending={applyCoupon.isPending}
+              coupon={quote.coupon}
+              onCouponChange={quote.setCoupon}
+              onApplyCoupon={quote.applyCoupon}
+              applyCouponPending={quote.applying}
+              couponError={quote.couponError}
+              hasCoupon={quote.hasCoupon}
+              onRemoveCoupon={quote.removeCoupon}
               realtimeConnected={realtimeConnected}
-              authenticated={authenticated}
               liveNotice={liveNotice}
-              quantityMutationError={mutation.isError}
-              removeMutationError={removeMutation.isError}
-              applyCouponError={applyCoupon.isError}
-              quoteError={baseQuote.isError}
-              onRetryQuote={() => void baseQuote.refetch()}
-              hasCoupon={Boolean(coupon)}
-              onRemoveCoupon={() => {
-                setCoupon("");
-                setAppliedCoupon("");
-                setQuote(null);
-                if (userId) removeUserItem("checkout-coupon", userId);
-              }}
+              quantityMutationError={cart.updateError}
+              removeMutationError={cart.removeError}
+              quoteError={quote.quote.isError}
+              onRetryQuote={() => void quote.quote.refetch()}
               quoteLoading={quoteLoading}
-              displayedQuote={displayedQuote}
-              checkoutDisabled={
-                (authenticated &&
-                  (!displayedQuote ||
-                    baseQuote.isFetching ||
-                    baseQuote.isError)) ||
-                mutation.isPending ||
-                removeMutation.isPending
-              }
+              quote={quote.quote.data}
+              checkoutDisabled={!quote.quote.data || quote.quote.isFetching || quote.quote.isError || cart.updating || cart.removing}
               onCheckout={goToCheckout}
             />
           </div>

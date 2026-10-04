@@ -40,7 +40,7 @@ async function applyAnaCoupon(page: Page) {
   await expect(page.getByText('Remover cupom')).toBeVisible()
   // "Remover cupom" aparece assim que o campo tem texto; o cupom só está
   // aplicado quando a cotação traz desconto.
-  await expect(page.locator('.cart-totals')).not.toContainText('-0 ETH')
+  await expect(page.getByTestId('cart-totals')).not.toContainText('-0 ETH')
 }
 
 function storedCheckoutItems(page: Page) {
