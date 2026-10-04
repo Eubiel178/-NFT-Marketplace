@@ -56,5 +56,5 @@ export function ProfilePage() {
 
 function SelectLike({ label, name, defaultValue, error }: { label: string; name: string; defaultValue?: string; error?: string }) {
   const errorId = `${name}-error`
-  return <label className="account-select-like"><span>{label}</span><select name={name} defaultValue={defaultValue} aria-invalid={error ? 'true' : 'false'} aria-describedby={error ? errorId : undefined}><option value="">Selecione uma opção</option><option value="ana.kurio.eth">ana.kurio.eth</option><option value="nova.kurio.eth">nova.kurio.eth</option></select>{error && <span id={errorId} className="auth-error" role="alert">{error}</span>}</label>
+  return <label className="account-select-like min-w-0"><span>{label}</span><select className="w-full min-w-0" name={name} defaultValue={defaultValue} aria-invalid={error ? 'true' : 'false'} aria-describedby={error ? errorId : undefined}><option value="">Selecione uma opção</option><option value="ana.kurio.eth">ana.kurio.eth</option><option value="nova.kurio.eth">nova.kurio.eth</option></select>{error && <span id={errorId} className="auth-error" role="alert">{error}</span>}</label>
 }
