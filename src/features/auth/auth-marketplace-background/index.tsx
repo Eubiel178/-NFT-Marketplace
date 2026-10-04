@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query'
 import { Skeleton } from '@/components'
 import type { CatalogSearch } from '@/contracts'
 import { catalogOptions } from '@/features/catalog/api'
-import { HomeHero } from '@/features/catalog/home/home-hero'
+import { Hero } from '@/features/catalog/home/home-hero'
 
 const backgroundSearch = {
   q: '',
@@ -22,17 +22,9 @@ export function AuthMarketplaceBackground() {
 
   return (
     <div className="auth-marketplace-background" aria-hidden="true" inert>
-      <div className="home-page home-loading">
-        {backgroundArtwork ? (
-          <HomeHero artwork={backgroundArtwork} />
-        ) : (
-          <section className="home-hero-desktop">
-            <Skeleton className="home-loading-hero" />
-          </section>
-        )}
-        <div className="home-loading-products">
-          <Skeleton className="h-[470px] w-full" />
-        </div>
+      <div className="mx-auto flex min-h-full w-full max-w-content flex-col gap-24">
+        {backgroundArtwork ? <Hero artwork={backgroundArtwork} /> : <Skeleton className="h-112.5" />}
+        <Skeleton className="h-117.5 w-full" />
       </div>
     </div>
   )
