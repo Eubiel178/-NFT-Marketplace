@@ -47,7 +47,7 @@ export function Select({
   return (
     <div className="relative w-full">
       {label && (
-        <label htmlFor={selectId} className="mb-2 block text-left text-body-14-medium text-text-secondary">
+        <label htmlFor={selectId} className="mb-2 block text-left text-body-14 font-medium leading-16 tracking-wide text-text-secondary">
           {label}
           {required && <span className="ml-1 text-error" aria-hidden="true">*</span>}
         </label>
@@ -59,7 +59,7 @@ export function Select({
           aria-describedby={describedBy}
           aria-invalid={Boolean(error)}
           className={cn(
-            'flex h-12.5 w-full items-center justify-between rounded-6 border border-border bg-surface-card px-4 text-left text-body-14-regular text-foreground transition-colors duration-200',
+            'flex h-12.5 w-full items-center justify-between rounded-6 border border-border bg-surface-card px-4 text-left text-body-14 font-normal leading-24 text-foreground transition-colors duration-200',
             'focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-ink focus-visible:outline-none',
             'disabled:pointer-events-none disabled:opacity-50',
             error && 'border-error focus-visible:ring-error',
@@ -85,7 +85,7 @@ export function Select({
                   value={option.value}
                   disabled={option.disabled}
                   className={cn(
-                    'flex cursor-pointer items-center justify-between px-4 py-3 text-body-14-regular outline-none select-none',
+                    'flex cursor-pointer items-center justify-between px-4 py-3 text-body-14 font-normal leading-24 outline-none select-none',
                     'data-highlighted:bg-surface-raised data-[state=checked]:bg-primary/10 data-[state=checked]:text-primary',
                     'data-disabled:cursor-not-allowed data-disabled:opacity-50',
                   )}
@@ -100,8 +100,8 @@ export function Select({
           </SelectPrimitive.Content>
         </SelectPrimitive.Portal>
       </SelectPrimitive.Root>
-      {error && <p id={errorId} className="mt-1.5 text-caption-12-regular text-error" role="alert">{error}</p>}
-      {!error && helperText && <p id={helperId} className="mt-1.5 text-caption-12-regular text-text-secondary">{helperText}</p>}
+      {error && <p id={errorId} className="mt-1.5 text-caption-12 font-normal leading-16 text-error" role="alert">{error}</p>}
+      {!error && helperText && <p id={helperId} className="mt-1.5 text-caption-12 font-normal leading-16 text-text-secondary">{helperText}</p>}
     </div>
   )
 }

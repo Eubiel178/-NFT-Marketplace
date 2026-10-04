@@ -149,6 +149,15 @@
     rgba(210, 138, 76, 1) 100%
   );
 
+  /* Skeleton: brilho do carregamento (keyframes shimmer abaixo). */
+  --gradient-shimmer: linear-gradient(
+    100deg,
+    transparent 20%,
+    #ffffff16 50%,
+    transparent 80%
+  );
+  --animate-shimmer: shimmer 1.5s linear infinite;
+
   /* Breakpoints: padrão do Tailwind (sm 40rem, md 48rem, lg 64rem). */
 
   /* ==========================================================================

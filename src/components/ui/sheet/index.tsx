@@ -40,9 +40,9 @@ export function Sheet({ isOpen, onClose, title, description, children, className
             <div className="flex flex-1 items-center gap-4">
               <div className="mx-auto h-1.5 w-10 rounded-full bg-border-soft" aria-hidden="true" />
               <div className="flex-1">
-                <SheetPrimitive.Title id={titleId} className="text-title-20-bold">{title}</SheetPrimitive.Title>
+                <SheetPrimitive.Title id={titleId} className="text-title-20 font-bold leading-16">{title}</SheetPrimitive.Title>
                 {description && (
-                  <SheetPrimitive.Description id={descriptionId} className="mt-1 text-body-14-regular text-text-secondary">
+                  <SheetPrimitive.Description id={descriptionId} className="mt-1 text-body-14 font-normal leading-24 text-text-secondary">
                     {description}
                   </SheetPrimitive.Description>
                 )}
@@ -55,7 +55,7 @@ export function Sheet({ isOpen, onClose, title, description, children, className
               <X className="size-5" aria-hidden="true" />
             </SheetPrimitive.Close>
           </header>
-          <section className="p-6 pb-safe-bottom">{children}</section>
+          <section className="p-6 pb-[calc(1.5rem+env(safe-area-inset-bottom,0px))]">{children}</section>
         </SheetPrimitive.Content>
       </SheetPrimitive.Portal>
     </SheetPrimitive.Root>

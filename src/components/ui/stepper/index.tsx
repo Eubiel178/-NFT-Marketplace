@@ -67,7 +67,7 @@ export function Stepper({
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />
         </svg>
       </Button>
-      <output className="w-15 select-none text-center text-body-large-16-bold" aria-live="polite">
+      <output className="w-15 select-none text-center text-body-large-16 font-bold leading-16" aria-live="polite">
         {value}
       </output>
       <Button

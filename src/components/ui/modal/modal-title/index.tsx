@@ -10,5 +10,5 @@ interface ModalTitleProps {
 }
 
 export function ModalTitle({ children, className }: ModalTitleProps) {
-  return <DialogPrimitive.Title className={cn('text-title-20-bold', className)}>{children}</DialogPrimitive.Title>
+  return <DialogPrimitive.Title className={cn('text-title-20 font-bold leading-16', className)}>{children}</DialogPrimitive.Title>
 }

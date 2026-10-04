@@ -16,7 +16,7 @@ export interface AvatarProps {
 
 export function Avatar({ src, alt, fallback, size = 'md', shape = 'circle', editable = false, disabled = false, onUpload, onRemove, className }: AvatarProps) {
 
-  const sizeStyles = { sm: 'w-[32px] h-[32px] text-caption-12-bold', md: 'w-[40px] h-[40px] text-body-14-bold', lg: 'w-[48px] h-[48px] text-body-large-16-bold', xl: 'w-[56px] h-[56px] text-body-large-18-bold', '2xl': 'w-[64px] h-[64px] text-heading-24-bold' }
+  const sizeStyles = { sm: 'w-[32px] h-[32px] text-caption-12 font-bold leading-16', md: 'w-[40px] h-[40px] text-body-14 font-bold leading-16 tracking-wide', lg: 'w-[48px] h-[48px] text-body-large-16 font-bold leading-16', xl: 'w-[56px] h-[56px] text-body-large-18 font-bold leading-16', '2xl': 'w-[64px] h-[64px] text-heading-24 font-bold leading-auto' }
 
   const getInitials = (name: string) => name.split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase()
   const initials = fallback ? getInitials(fallback) : '?'

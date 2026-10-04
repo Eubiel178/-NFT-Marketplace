@@ -19,10 +19,10 @@ export function Toaster() {
         unstyled: true,
         classNames: {
           toast: 'flex w-full items-start gap-3 rounded-6 border border-border bg-surface-card p-4 text-foreground shadow-cart-focus',
-          title: 'text-body-14-bold',
-          description: 'text-body-14-regular text-text-secondary',
-          actionButton: 'rounded-6 bg-primary px-3 py-1 text-body-14-bold text-ink',
-          cancelButton: 'rounded-6 border border-border px-3 py-1 text-body-14-bold text-foreground',
+          title: 'text-body-14 font-bold leading-16 tracking-wide',
+          description: 'text-body-14 font-normal leading-24 text-text-secondary',
+          actionButton: 'rounded-6 bg-primary px-3 py-1 text-body-14 font-bold leading-16 tracking-wide text-ink',
+          cancelButton: 'rounded-6 border border-border px-3 py-1 text-body-14 font-bold leading-16 tracking-wide text-foreground',
           closeButton: 'text-text-secondary hover:text-foreground',
         },
       }}

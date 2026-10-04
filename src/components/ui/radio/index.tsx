@@ -75,8 +75,8 @@ const Radio = forwardRef<HTMLInputElement, RadioProps>(
         {(icon || label || description) && (
           <div className="flex flex-col gap-1">
             {icon && <span aria-hidden="true">{icon}</span>}
-            {label && <label htmlFor={radioId} className="cursor-pointer text-body-14-medium text-foreground">{label}</label>}
-            {description && <p id={descriptionId} className="text-caption-12-regular text-text-secondary">{description}</p>}
+            {label && <label htmlFor={radioId} className="cursor-pointer text-body-14 font-medium leading-16 tracking-wide text-foreground">{label}</label>}
+            {description && <p id={descriptionId} className="text-caption-12 font-normal leading-16 text-text-secondary">{description}</p>}
           </div>
         )}
       </div>
@@ -105,7 +105,7 @@ export function RadioGroup({
         disabled={disabled}
         className="space-y-3"
       >
-        {label && <legend id={`${name}-label`} className="mb-2 block text-left text-body-14-medium text-text-secondary">{label}{required && <span className="ml-1 text-error" aria-hidden="true">*</span>}</legend>}
+        {label && <legend id={`${name}-label`} className="mb-2 block text-left text-body-14 font-medium leading-16 tracking-wide text-text-secondary">{label}{required && <span className="ml-1 text-error" aria-hidden="true">*</span>}</legend>}
         {options.map((option) => (
           <Radio
             key={option.value}
@@ -123,7 +123,7 @@ export function RadioGroup({
           />
         ))}
       </fieldset>
-      {error && <p id={`${name}-error`} className="mt-1.5 text-caption-12-regular text-error" role="alert">{error}</p>}
+      {error && <p id={`${name}-error`} className="mt-1.5 text-caption-12 font-normal leading-16 text-error" role="alert">{error}</p>}
     </div>
   )
 }

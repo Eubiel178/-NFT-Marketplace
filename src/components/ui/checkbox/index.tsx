@@ -49,8 +49,8 @@ const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
         </div>
         {(label || description) && (
           <div className="flex flex-col gap-1">
-            {label && <label htmlFor={checkboxId} className="cursor-pointer text-body-14-medium text-foreground">{label}</label>}
-            {description && <p id={descId} className="text-caption-12-regular text-text-secondary">{description}</p>}
+            {label && <label htmlFor={checkboxId} className="cursor-pointer text-body-14 font-medium leading-16 tracking-wide text-foreground">{label}</label>}
+            {description && <p id={descId} className="text-caption-12 font-normal leading-16 text-text-secondary">{description}</p>}
           </div>
         )}
       </div>

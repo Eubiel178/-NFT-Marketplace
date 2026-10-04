@@ -23,7 +23,7 @@ export const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
     return (
       <div className="w-full">
         {label && (
-          <label htmlFor={inputId} className="mb-2 block text-left text-body-14-medium text-text-secondary">
+          <label htmlFor={inputId} className="mb-2 block text-left text-body-14 font-medium leading-16 tracking-wide text-text-secondary">
             {label}
             {required && <span className="ml-1 text-error" aria-hidden="true">*</span>}
           </label>
@@ -38,7 +38,7 @@ export const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
             aria-invalid={error ? 'true' : 'false'}
             aria-describedby={describedBy}
              className={cn(
-               'w-full rounded-6 border border-border bg-surface-card px-4 text-body-14-regular text-foreground',
+               'w-full rounded-6 border border-border bg-surface-card px-4 text-body-14 font-normal leading-24 text-foreground',
                showToggle && 'pr-12',
               size === 'sm' ? 'h-10' : 'h-[50px]',
               'placeholder:text-text-secondary transition-colors duration-200',
@@ -59,8 +59,8 @@ export const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
             {showPassword ? <EyeOff className="h-5 w-5" aria-hidden="true" /> : <Eye className="h-5 w-5" aria-hidden="true" />}
            </button>}
         </div>
-        {error && <p id={errorId} className="mt-1.5 text-caption-12-regular text-error" role="alert">{error}</p>}
-        {helperText && !error && <p id={helperId} className="mt-1.5 text-caption-12-regular text-text-secondary">{helperText}</p>}
+        {error && <p id={errorId} className="mt-1.5 text-caption-12 font-normal leading-16 text-error" role="alert">{error}</p>}
+        {helperText && !error && <p id={helperId} className="mt-1.5 text-caption-12 font-normal leading-16 text-text-secondary">{helperText}</p>}
       </div>
     )
   },

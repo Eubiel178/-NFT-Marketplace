@@ -21,7 +21,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
 
     return (
       <div className="w-full">
-        {label && <label htmlFor={inputId} className="block text-body-14-medium text-left mb-2 text-text-secondary">{label}{required && <span className="text-error ml-1" aria-hidden="true">*</span>}</label>}
+        {label && <label htmlFor={inputId} className="block text-body-14 font-medium leading-16 tracking-wide text-left mb-2 text-text-secondary">{label}{required && <span className="text-error ml-1" aria-hidden="true">*</span>}</label>}
         <div className="relative">
           {leftIcon && <div className="absolute left-3 top-1/2 -translate-y-1/2 text-text-secondary pointer-events-none" aria-hidden="true">{leftIcon}</div>}
           <input
@@ -49,8 +49,8 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
           />
           {rightIcon && <div className="absolute right-3 top-1/2 -translate-y-1/2 text-text-secondary pointer-events-none" aria-hidden="true">{rightIcon}</div>}
         </div>
-        {error && <p id={errorId} className="mt-1.5 text-caption-12-regular text-error" role="alert">{error}</p>}
-        {helperText && !error && <p id={helperId} className="mt-1.5 text-caption-12-regular text-text-secondary">{helperText}</p>}
+        {error && <p id={errorId} className="mt-1.5 text-caption-12 font-normal leading-16 text-error" role="alert">{error}</p>}
+        {helperText && !error && <p id={helperId} className="mt-1.5 text-caption-12 font-normal leading-16 text-text-secondary">{helperText}</p>}
       </div>
     )
   }

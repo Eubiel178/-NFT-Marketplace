@@ -27,20 +27,24 @@ export function WalletSelectorMethod({
   return (
     <label
       className={cn(
-        "wallet-selector-method",
-        checked && "is-selected",
+        "relative flex min-h-16.25 min-w-0 cursor-pointer items-center gap-3 rounded-15 border border-border bg-surface-card px-4 py-3 text-foreground",
+        checked && "shadow-coinbase-selected",
         className,
       )}
       {...props}
     >
       <input
+        className="peer absolute inset-0 m-0 size-full cursor-pointer opacity-0"
         type="radio"
         name={name}
         value={value}
         checked={checked}
         onChange={onChange}
       />
-      <span className="wallet-selector-method-icon" aria-hidden="true">
+      <span
+        className="grid size-8 shrink-0 place-items-center rounded-full border border-border text-body-14 font-bold text-primary peer-focus-visible:outline-2 peer-focus-visible:outline-offset-3 peer-focus-visible:outline-primary"
+        aria-hidden="true"
+      >
         {icon ?? label.slice(0, 1)}
       </span>
       <span>{label}</span>

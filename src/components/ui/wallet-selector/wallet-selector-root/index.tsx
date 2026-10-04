@@ -8,7 +8,7 @@ export function WalletSelectorRoot({
   ...props
 }: ComponentProps<"fieldset">) {
   return (
-    <fieldset className={cn("wallet-selector-root", className)} {...props}>
+    <fieldset className={cn("m-0 grid min-w-0 gap-4 border-0 p-0", className)} {...props}>
       {children}
     </fieldset>
   );
