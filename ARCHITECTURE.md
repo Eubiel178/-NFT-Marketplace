@@ -154,7 +154,7 @@ As 76 classes `.figma-*` (cópia da lista de estilos do Figma em `px`) não eram
 
 ### Login e Cadastro: decisões e desvios (04/10/2026)
 
-- **Fundo só com o hero.** O frame desktop mostra a Início inteira atrás do cartão (hero, filtros e grade). O app reutiliza só o hero, sem alterá-lo; abaixo dele não há catálogo (o fundo é decorativo, `aria-hidden` e `inert`). Sem escurecimento, como no frame.
+- **Fundo só com o hero** (desvio confirmado pelo usuário). O frame desktop mostra a Início inteira atrás do cartão (hero, filtros e grade). O app reutiliza só o hero, sem alterá-lo; abaixo dele não há catálogo (o fundo é decorativo, `aria-hidden` e `inert`). Sem escurecimento, como no frame.
 - **Header.** O cartão fica em y=160, como no frame. O hero fica na mesma posição da Início (o header atual tem 45px, contra 68 no frame), então o texto do hero aparece 13px acima do frame.
 - **Botão do cadastro: "Criar perfil" nos dois tamanhos.** O frame desktop diz "Criar conta" e o mobile "Criar perfil". Mantido "Criar perfil" (os specs procuram esse nome, e assim o botão não repete o texto da aba "Criar conta").
 - **Título.** No desktop o `<h1>` é só para leitores de tela (o frame não mostra título); no login o nome acessível é "Login".
