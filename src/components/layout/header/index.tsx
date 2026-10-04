@@ -1,10 +1,15 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link, useLocation } from "@tanstack/react-router";
 
-import { cartOptions } from "@/features/cart/api";
-import { sessionOptions } from "@/features/session/api";
-
 import { Icon } from "@/components";
+import { sessionOptions } from "@/shared/api/session";
+import { useCartCount } from "@/shared/hooks/use-cart-count";
+import { useLogout } from "@/shared/hooks/use-logout";
+
+import { Avatar } from "../../ui/avatar";
+
+const actionClass =
+  "flex h-8.75 items-center gap-1 rounded-6 bg-primary px-2.5 text-body-large-16 font-medium leading-auto text-ink";
 
 const navigation = [
   { label: "Início", to: "/", match: (pathname: string) => pathname === "/" },
@@ -19,21 +24,16 @@ const navigation = [
 
 export function Header() {
   const { pathname } = useLocation();
-  const session = useQuery(sessionOptions);
-  const cart = useQuery({
-    ...cartOptions(session.data?.user?.id ?? null),
-    enabled: !session.isPending,
-  });
-
-  const cartCount =
-    cart.data?.items.reduce((total, item) => total + item.quantity, 0) ?? 0;
+  const user = useQuery(sessionOptions).data?.user;
+  const cartCount = useCartCount();
+  const logout = useLogout();
 
   return (
     <header className="hidden px-6 md:px-12 lg:block">
-      <div className="mx-auto flex h-17.25 max-w-content items-center border-b border-primary/25">
+      <div className="mx-auto flex items-center ga h-17.25 max-w-content  border-b border-primary/25">
         <Link
           to="/"
-          className="text-body-large-16 font-bold leading-auto text-foreground"
+          className="text-foreground font-mono text-body-14 font-bold leading-normal tracking-[1.4px]"
           aria-label="Kurio, início"
         >
           KURIO
@@ -70,6 +70,7 @@ export function Header() {
           >
             <Icon src="/assets/figma/mcp/svg/search.svg" className="size-6" />
           </Link>
+
           <Link
             to="/cart"
             aria-label={`Carrinho, ${cartCount} itens`}
@@ -83,14 +84,36 @@ export function Header() {
               {cartCount}
             </span>
           </Link>
-          <Link
-            to="/login"
-            search={{ redirect: "/", expired: false }}
-            className="flex h-8.75 items-center gap-1 rounded-6 bg-primary px-2.5 text-body-large-16 font-medium leading-auto text-ink"
-          >
-            <Icon src="/assets/figma/mcp/svg/iconly-curved-logout.svg" />
-            Entrar
-          </Link>
+
+          {user ? (
+            <>
+              <Link
+                to="/profile"
+                aria-label={`Perfil de ${user.name}`}
+                className="rounded-full"
+              >
+                <Avatar fallback={user.name} size="sm" />
+              </Link>
+              <button
+                type="button"
+                onClick={() => logout.mutate()}
+                disabled={logout.isPending}
+                className={actionClass}
+              >
+                <Icon src="/assets/figma/mcp/svg/iconly-curved-logout.svg" />
+                Sair
+              </button>
+            </>
+          ) : (
+            <Link
+              to="/login"
+              search={{ redirect: "/", expired: false }}
+              className={actionClass}
+            >
+              <Icon src="/assets/figma/mcp/svg/iconly-curved-logout.svg" />
+              Entrar
+            </Link>
+          )}
         </div>
       </div>
     </header>

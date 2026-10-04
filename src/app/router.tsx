@@ -5,16 +5,16 @@ import {
   redirect,
 } from "@tanstack/react-router";
 import { catalogSearchSchema } from "@/contracts";
-import { isSessionExpired, sessionOptions } from "@/features/session/api";
 import { queryClient } from "@/lib/query";
+import { isSessionExpired, sessionOptions } from "@/shared/api/session";
 import { Layout } from "./layout";
-import { CatalogPage, NftPage } from "@/features/catalog/pages";
-import { AuthPage } from "@/features/auth/auth-page";
-import { CartPage } from "@/features/cart/cart-page";
-import { CheckoutPage } from "@/features/checkout/checkout-page";
-import { OrderPage } from "@/features/orders/order-page";
 import { ProfilePage } from "@/features/account/profile-page";
 import { WalletsPage } from "@/features/account/wallets-page";
+import { AuthPage } from "@/features/auth/auth-page";
+import { CartPage } from "@/features/cart/cart-page";
+import { CatalogPage, NftPage } from "@/features/catalog/pages";
+import { CheckoutPage } from "@/features/checkout/checkout-page";
+import { OrderPage } from "@/features/orders/order-page";
 
 function safeRedirect(value: unknown) {
   return typeof value === "string" && value.startsWith("/") && !value.startsWith("//") ? value : "/";

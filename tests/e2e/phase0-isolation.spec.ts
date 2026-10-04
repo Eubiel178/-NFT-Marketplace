@@ -75,7 +75,7 @@ test('logout apaga cupom e chave de idempotência do usuário', async ({ page })
   ])
 
   await page.goto('/profile')
-  await page.getByRole('button', { name: 'Sair' }).click()
+  await page.getByRole('complementary', { name: 'Navegação da conta' }).getByRole('button', { name: 'Sair' }).click()
   await expect(page).toHaveURL(/\/$/)
   expect(await storedCheckoutItems(page)).toEqual([])
 })

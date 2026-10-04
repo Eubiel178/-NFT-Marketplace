@@ -22,3 +22,24 @@ test('main único com skip link e conteúdo em container de 1200px a 1440', asyn
   if (viewport === 1440) expect(content).toEqual({ left: 120, width: 1200 })
   else expect(content.width).toBeLessThan(1200)
 })
+
+test('header mostra sessão e carrinho e encerra a sessão', async ({ page }) => {
+  if ((page.viewportSize()?.width ?? 0) < 1024) return
+
+  const header = page.getByRole('banner')
+  await expect(header.getByRole('link', { name: 'Entrar' })).toBeVisible()
+  await expect(header.getByRole('link', { name: 'Carrinho, 0 itens' })).toBeVisible()
+
+  await header.getByRole('link', { name: 'Entrar' }).click()
+  await page.getByLabel('Email').fill('ana@example.test')
+  await page.getByRole('textbox', { name: 'Senha', exact: true }).fill('kurio-demo')
+  await page.getByRole('button', { name: 'Entrar' }).click()
+
+  await expect(header.getByRole('link', { name: 'Perfil de Ana Demo' })).toBeVisible()
+  await expect(header.getByRole('link', { name: 'Carrinho, 17 itens' })).toBeVisible()
+  await expect(header.getByRole('link', { name: 'Entrar' })).toHaveCount(0)
+
+  await header.getByRole('button', { name: 'Sair' }).click()
+  await expect(header.getByRole('link', { name: 'Entrar' })).toBeVisible()
+  await expect(header.getByRole('link', { name: 'Perfil de Ana Demo' })).toHaveCount(0)
+})

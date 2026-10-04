@@ -17,3 +17,7 @@ export function isSessionExpired(error: unknown) {
 export function useSessionUserId() {
   return useQuery(sessionOptions).data?.user?.id ?? ''
 }
+
+export async function logout() {
+  await http.post('/auth/logout')
+}

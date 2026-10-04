@@ -7,8 +7,8 @@ import { Heart, Minus, Plus, ShoppingCart } from 'lucide-react'
 import { Button } from '@/components'
 import type { Nft } from '@/contracts'
 import { addCartItem } from '@/features/cart/api'
-import { sessionOptions } from '@/features/session/api'
 import { keys } from '@/lib/query'
+import { sessionOptions } from '@/shared/api/session'
 
 export interface NftDetailSummaryProps {
   nft: Nft

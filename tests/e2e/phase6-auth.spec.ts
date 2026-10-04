@@ -41,7 +41,7 @@ test('sessão sobrevive ao refresh, logout limpa o acesso e permite trocar de us
   await page.reload()
   await expect(page.getByRole('heading', { name: 'Perfil do colecionador' })).toBeVisible()
   await expect(page.getByText('Ana Demo', { exact: true })).toBeVisible()
-  await page.getByRole('button', { name: 'Sair' }).click()
+  await page.getByRole('complementary', { name: 'Navegação da conta' }).getByRole('button', { name: 'Sair' }).click()
   await expect(page).toHaveURL(/\/$/)
 
   await signIn(page, 'bruno@example.test', 'bruno-demo', '/profile')
@@ -85,7 +85,7 @@ test('favoritos não vazam ao trocar de usuário', async ({ page }) => {
   await expect(activeFavorite).toBeVisible()
 
   await page.goto('/profile')
-  await page.getByRole('button', { name: 'Sair' }).click()
+  await page.getByRole('complementary', { name: 'Navegação da conta' }).getByRole('button', { name: 'Sair' }).click()
   await expect(page).toHaveURL(/\/$/)
   await signIn(page, 'bruno@example.test', 'bruno-demo', '/nfts/nft-1')
   const favoriteButton = (page.viewportSize()?.width ?? 0) < 640

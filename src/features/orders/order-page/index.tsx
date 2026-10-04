@@ -5,11 +5,11 @@ import { Link, useNavigate } from "@tanstack/react-router";
 import { ExternalLink, X } from "lucide-react";
 
 import { Button, Image } from "@/components";
-import { sessionOptions } from "@/features/session/api";
 import { fromWei, toWei } from "@/lib/eth";
 import { parseHttpError } from "@/lib/http";
 import { keys } from "@/lib/query";
 import { subscribeOrder, useRealtimeConnected } from "@/realtime";
+import { sessionOptions } from "@/shared/api/session";
 
 import { getOrder } from "../api";
 

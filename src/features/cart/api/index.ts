@@ -1,14 +1,5 @@
 import { cartSchema, quoteSchema, type CartItem } from '@/contracts'
 import { http } from '@/lib/http'
-import { keys } from '@/lib/query'
-import { queryOptions } from '@tanstack/react-query'
-
-export function cartOptions(userId: string | null) {
-  return queryOptions({
-    queryKey: keys.cart(userId),
-    queryFn: async ({ signal }) => cartSchema.parse((await http.get('/cart', { signal })).data),
-  })
-}
 
 export async function addCartItem(input: CartItem) {
   return cartSchema.parse((await http.post('/cart/items', input)).data)

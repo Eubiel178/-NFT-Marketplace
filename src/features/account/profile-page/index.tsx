@@ -4,8 +4,8 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 import { Button, Image, Input, PasswordInput } from '@/components'
 import { parseHttpError } from '@/lib/http'
-import { useSessionUserId } from '@/features/session/api'
 import { keys } from '@/lib/query'
+import { useSessionUserId } from '@/shared/api/session'
 
 import { AccountShell } from '../account-shell'
 import { getProfile, updateAvatar, updatePassword, updateProfile } from '../api'

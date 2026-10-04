@@ -12,8 +12,8 @@ import { NftDetailSummary } from '../nft-detail-summary'
 
 import type { Nft } from '@/contracts'
 import { addFavorite, getFavorites, removeFavorite } from '@/features/favorites/api'
-import { sessionOptions } from '@/features/session/api'
 import { keys } from '@/lib/query'
+import { sessionOptions } from '@/shared/api/session'
 
 export interface NftDetailRootProps {
   nft: Nft

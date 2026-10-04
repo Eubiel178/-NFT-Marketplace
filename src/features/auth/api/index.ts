@@ -11,7 +11,3 @@ export async function login(input: LoginInput) {
 export async function register(input: RegisterInput) {
   return sessionSchema.parse((await http.post('/auth/register', input)).data)
 }
-
-export async function logout() {
-  await http.post('/auth/logout')
-}
