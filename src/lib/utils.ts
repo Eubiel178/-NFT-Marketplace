@@ -27,7 +27,7 @@ const twMerge = extendTailwindMerge({
       ],
       shadow: ['cart-focus', 'buy-bar', 'wallet-selected', 'coinbase-selected'],
       'drop-shadow': ['tab-bar'],
-      leading: ['10', '15', '16', '18', '20', '22', '24', '30', '40', '45', 'auto'],
+      leading: ['10', '15', '16', '18', '20', '22', '24', '30', '40', '45', '70', 'auto'],
       tracking: ['tight', 'wide'],
     },
   },

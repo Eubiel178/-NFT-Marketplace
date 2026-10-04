@@ -3,15 +3,14 @@ import { expect, test } from './test'
 test('busca e filtros combinados refletem os parâmetros da URL', async ({ page }) => {
   await page.goto('/?q=Golden&network=polygon&priceMax=0.50')
 
-  const resultGrid = (page.viewportSize()?.width ?? 0) < 640 ? '.home-mobile-product-grid' : '.home-product-grid'
-  await expect(page.locator(resultGrid).getByRole('link', { name: /Golden Signal #160/ })).toHaveCount(1)
-  if ((page.viewportSize()?.width ?? 0) >= 640) await expect(page.locator('.home-results-status')).toHaveText('1 NFTs encontrados')
+  const resultGrid = page.getByRole('list', { name: 'NFTs do catálogo' })
+  await expect(resultGrid.getByRole('link', { name: /Golden Signal #160/ })).toHaveCount(1)
+  if ((page.viewportSize()?.width ?? 0) >= 640) await expect(page.getByRole('status').filter({ hasText: 'NFTs encontrados' })).toHaveText('1 NFTs encontrados')
   await expect(page).toHaveURL(/q=Golden/)
   await expect(page).toHaveURL(/network=polygon/)
   await expect(page).toHaveURL(/priceMax=/)
   await page.reload()
-  const visibleGrid = (page.viewportSize()?.width ?? 0) < 640 ? '.home-mobile-product-grid' : '.home-product-grid'
-  await expect(page.locator(visibleGrid)).toBeVisible()
+  await expect(page.getByRole('list', { name: 'NFTs do catálogo' })).toBeVisible()
 })
 
 test('busca digitada aguarda debounce e reinicia a página', async ({ page }) => {
@@ -22,7 +21,7 @@ test('busca digitada aguarda debounce e reinicia a página', async ({ page }) =>
   await search.fill('Golden')
   await expect(page).toHaveURL(/q=Golden/)
   await expect(page).toHaveURL(/page=1/)
-  await expect(page.locator('.home-mobile-product-grid').getByRole('link', { name: /Golden Signal #160/ }).first()).toBeVisible()
+  await expect(page.getByRole('list', { name: 'NFTs do catálogo' }).getByRole('link', { name: /Golden Signal #160/ }).first()).toBeVisible()
 })
 
 test('alterar um filtro reinicia a paginação e o histórico restaura a página anterior', async ({ page }) => {
@@ -39,8 +38,8 @@ test('alterar um filtro reinicia a paginação e o histórico restaura a página
       })()
     : page.getByRole('complementary', { name: 'Filtros do catálogo' })
 
-  await filterRoot.getByRole('button', { name: 'Coleção 01' }).click()
-  await expect(page).toHaveURL(/collection=Cole%C3%A7%C3%A3o(?:%20|\+)01/)
+  await filterRoot.getByRole('button', { name: 'Fotografia' }).click()
+  await expect(page).toHaveURL(/collection=Fotografia/)
   await expect(page).toHaveURL(/page=1/)
   await page.goBack()
   await expect(page).toHaveURL(/page=2/)

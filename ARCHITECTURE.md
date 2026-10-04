@@ -65,6 +65,27 @@ O único estilo com alinhamento (`display-32-bold`, centralizado) não leva o `t
 
 As 76 classes `.figma-*` (cópia da lista de estilos do Figma em `px`) não eram usadas por nenhum componente e foram removidas. O snapshot de estilos computados de 9 telas em 1440 e 390 deu 0 diferenças antes e depois.
 
+### Início: filtros, fixtures e desvios (04/10/2026)
+
+**Facets vêm do MSW.** `GET /api/nfts` devolve, além da página, `facets`: coleções (nome e contagem), redes (valor, rótulo e contagem) e a faixa de preço do catálogo inteiro (`catalogFacetsSchema` em `src/contracts`). O handler calcula tudo a partir do banco mock, independente da busca atual. O componente de filtros só renderiza o que chega; os rótulos e contagens que estavam fixos no componente foram removidos.
+
+**As contagens do Figma são inconsistentes.** O painel mostra 9 coleções que somam 239 NFTs (Arte digital 33, Fotografia 12, Música 65, Arte 3D 39, Colecionáveis 23, Generativa 17, Jogos 19, Assinaturas 13, Utilidade 18) e 3 redes que somam 283 (Ethereum 119, Polygon 78, Solana 86). Como cada NFT tem uma coleção e uma rede, as duas somas não podem bater. Por decisão do usuário, as fixtures reproduzem os números do Figma: o catálogo tem 283 NFTs e os **44 que sobram ficam na coleção "Edições avulsas", que não aparece no painel** (o MSW só lista as 9 coleções do Figma). A faixa de preço vai de 0,02 a 12,30 ETH, como no frame. Para isso o contrato ganhou a rede `solana` nos NFTs e na busca (carteiras e pedidos continuam só com Ethereum e Polygon), e os NFTs ganharam os campos opcionais `originalPrice` (preço riscado do card) e `rare` (selo "RARO"), que antes eram decididos pela posição do card no grid. A chave do banco mock passou para `v2`, para descartar bancos salvos com as fixtures antigas.
+
+**Decisões e desvios da tela:**
+
+- Uma versão no DOM: catálogo, abas, cards e paginação são um único grid responsivo (duas colunas desencontradas no mobile, três a partir de `sm`). Só o hero e a sidebar de filtros escolhem a versão com `useMediaQuery`: o hero porque textos e composição mudam entre os frames, a sidebar porque vira drawer abaixo de `lg`. A versão que não vale não é renderizada.
+- No mobile o grid mostra os 9 NFTs da página na ordem da API. O frame mostra o 7º NFT na 4ª posição; o app mostra o 4º.
+- A busca do mobile aparece também no tablet, onde a sidebar vira drawer, e ali é o único botão "Abrir filtros".
+- O coração de favorito do 1º card do frame mobile não foi incluído: o card é um link para o detalhe, e favoritar continua no detalhe.
+- O item escolhido nos filtros fica com a cor de destaque. No frame, "Arte digital" já aparece destacado sem filtro; no app, nenhum item é destacado sem filtro na URL.
+- Os botões do slider de preço ficam na posição do valor. No frame o botão da direita está no meio da faixa mesmo com o texto "12,30".
+- "Aplicar" fica sempre habilitado, como no frame; aplicar a mesma faixa não muda a URL.
+- Paginação: o app mostra a última página ("… 32") porque o catálogo tem 32 páginas; o frame mostra só "1 2 3 4 >".
+- Abas no mobile: 18px entre todas. No frame as duas primeiras se encostam e a terceira está a 18px.
+- Promoções e Diário da Cunhagem não aparecem abaixo de `sm`, porque o frame mobile mostra só a primeira dobra. Os títulos das promoções têm a quebra de linha do frame escrita no texto.
+- Título da página: o título visível do hero é o `h1`; "Marketplace de NFTs" (só para leitores de tela) virou `h2`, para a página ter um único `h1`.
+- Novo token `--leading-70` (4,375rem): entrelinha do título do hero, medida no frame (70px entre as duas linhas).
+
 ## Execução e deploy
 
 Vite é a ferramenta complementar escolhida; todas as tecnologias obrigatórias têm dependência/configuração dedicada. REST, Socket.IO, Router, Query, Axios, Tailwind e componentes iniciais já têm caminho de execução. Playwright exercita a infraestrutura. Lighthouse tem script preparado, sem atestar metas finais. Build de demonstração ativa MSW inclusive em produção; build normal permite API configurada, mas não existe backend externo entregue.

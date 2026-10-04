@@ -11,7 +11,7 @@ export function Mobile({ artwork }: { artwork: Nft }) {
       <Image src="/assets/figma/mobile-hero-mask.svg" alt="" fill aria-hidden="true" />
       <div className="relative flex w-[54%] max-w-47.5 flex-col items-start pt-1.5 pl-4">
         <p className="text-caption-12 font-medium leading-16">Bem-vindo à Kurio</p>
-        <h2 id="home-hero-title" className="mt-1.5 text-body-large-18-bold leading-30 tracking-tight">SEJA DONO DA<br />CULTURA DIGITAL</h2>
+        <h1 id="home-hero-title" className="mt-1.5 text-body-large-18-bold leading-30 tracking-tight">SEJA DONO DA<br />CULTURA DIGITAL</h1>
         <p className="mt-1.5 text-caption-12 leading-18 text-text-secondary">Descubra NFTs selecionados de criadores do mundo todo.</p>
         <a href="#home-products" className="mt-1 inline-flex items-center gap-3 text-caption-12-bold text-text-accent">
           EXPLORAR <Icon src="/assets/figma/mcp/svg/iconly-curved-arrow-right.svg" className="size-4" />

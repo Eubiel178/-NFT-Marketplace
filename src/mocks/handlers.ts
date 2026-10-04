@@ -11,6 +11,7 @@ import {
 } from "@/contracts";
 import { fromWei, toWei } from "@/lib/eth";
 import { db, resetDb, saveDb } from "./db";
+import { catalogCollections, catalogNetworks } from "./fixtures";
 import { getScenario, scenarios, setScenario } from "./scenarios";
 import {
   broadcastNft,
@@ -84,6 +85,24 @@ const orderBodySchema = z.object({
   network: z.enum(["ethereum", "polygon"]),
 });
 const scheduledOrders = new Set<string>();
+// Contagens e faixa de preço do catálogo inteiro, independentes da busca atual.
+function catalogFacets() {
+  const prices = db.nfts.map((nft) => nft.price);
+  const byWei = (a: string, b: string) => (toWei(a) < toWei(b) ? -1 : toWei(a) > toWei(b) ? 1 : 0);
+  const sorted = [...prices].sort(byWei);
+  return {
+    collections: catalogCollections.map(({ value }) => ({
+      value,
+      count: db.nfts.filter((nft) => nft.collection === value).length,
+    })),
+    networks: catalogNetworks.map(({ value, label }) => ({
+      value,
+      label,
+      count: db.nfts.filter((nft) => nft.network === value).length,
+    })),
+    price: { min: sorted[0] ?? "0", max: sorted.at(-1) ?? "0" },
+  };
+}
 function findSessionUser() {
   return db.sessionExpired
     ? null
@@ -376,6 +395,7 @@ export const handlers = [
       total: items.length,
       page: search.page,
       pageSize: 9,
+      facets: catalogFacets(),
     });
   }),
   http.get("/api/nfts/:id", async ({ request, params }) => {

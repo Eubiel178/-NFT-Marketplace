@@ -40,7 +40,7 @@ export function Pagination({ currentPage, totalPages, onPageChange, showFirstLas
           <li key={page}>
             <button
               type="button"
-              className={cn('rounded-4 p-2 text-body-14 font-medium leading-16 tracking-wide transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary', page === currentPage ? 'bg-primary text-ink' : 'hover:bg-surface-card')}
+              className={cn('grid size-8.75 place-items-center rounded-4 border border-border text-body-14 font-medium leading-16 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary', page === currentPage ? 'border-primary bg-primary text-ink' : 'hover:bg-surface-card')}
               onClick={() => onPageChange(page)}
               disabled={page === currentPage}
               aria-label={`Página ${page}`}

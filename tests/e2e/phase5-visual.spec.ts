@@ -9,7 +9,7 @@ async function waitForImages(page: import('@playwright/test').Page) {
 }
 
 async function waitForAuthBackground(page: import('@playwright/test').Page) {
-  if ((page.viewportSize()?.width ?? 0) >= 640) await expect(page.locator('.auth-marketplace-background .home-hero-desktop')).toBeVisible()
+  if ((page.viewportSize()?.width ?? 0) >= 640) await expect(page.locator('.auth-marketplace-background #home-hero-title')).toBeVisible()
 }
 
 test('telas restantes nos viewports oficiais @visual', async ({ page }) => {

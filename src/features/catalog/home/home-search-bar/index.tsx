@@ -13,7 +13,8 @@ export function SearchBar({ defaultValue, onSearch, onOpenFilters }: SearchBarPr
         <Icon src="/assets/figma/mcp/svg/search.svg" className="pointer-events-none absolute top-1/2 left-3.5 size-4.5 -translate-y-1/2 text-text-secondary" />
         <input
           key={defaultValue}
-          type="search"
+          type="text"
+          enterKeyHint="search"
           aria-label="Explorar coleções"
           placeholder="Explorar coleções"
           defaultValue={defaultValue}

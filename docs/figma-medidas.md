@@ -94,3 +94,73 @@ Captura dos estilos computados de todos os elementos dentro de `<main>` (posiç�
 
 - **390px:** 0 elementos diferentes nas 9 telas.
 - **1440px:** só o próprio `<main>` difere, de 1440px de largura com padding de 120px para 1296px com padding de 48px. O conteúdo continua em x=120, com 1200px. Nenhum elemento interno mudou.
+
+# Medidas contra o Figma — Início
+
+Data: 04/10/2026. Referências: `figma/Desktop/Início.png` (1440×3668) e `figma/Mobile/Início.png` (414×896). Mesmo método do layout global: caixa dos pixels visíveis de cada bloco nas duas imagens (página inteira em 1440; mobile em 414×896, a largura do frame, com conferência visual em 390). No mobile o app fica 14px acima do frame inteiro (o frame tem a área da barra de status acima da busca), e as linhas mobile descontam esse deslocamento.
+
+## Desktop (1440)
+
+| Bloco | Figma (x,y w×h) | App (x,y w×h) | Δx | Δy | Δw | Δh |
+| --- | --- | --- | ---: | ---: | ---: | ---: |
+| hero: imagem (versão do usuário) | 870,101 450x450 | 870,93 450x450 | 0 | **−8** | 0 | 0 |
+| hero: "Bem-vindo" (versão do usuário) | 161,146 164x12 | 130,138 155x12 | **−31** | **−8** | −9 | 0 |
+| filtros: "Coleções" | 140,668 86x18 | 140,668 86x18 | 0 | 0 | 0 | 0 |
+| filtros: 1ª coleção | 152,709 244x16 | 152,709 244x16 | 0 | 0 | 0 | 0 |
+| filtros: 9ª coleção | 153,1029 243x16 | 152,1029 244x16 | −1 | 0 | 1 | 0 |
+| filtros: "Faixa de preço" | 141,1096 150x18 | 141,1096 150x18 | 0 | 0 | 0 | 0 |
+| filtros: slider | 152,1123 258x21 | 150,1121 261x21 | −2 | −2 | **3** | 0 |
+| filtros: "Preço: 0,02 - 12,30 ETH" | 153,1161 206x15 | 153,1161 206x15 | 0 | 0 | 0 | 0 |
+| filtros: "Aplicar" | 152,1188 92x36 | 152,1190 91x36 | 0 | 2 | −1 | 0 |
+| filtros: "Rede" | 141,1265 42x15 | 140,1265 43x15 | −1 | 0 | 1 | 0 |
+| filtros: "Solana (86)" | 153,1386 255x16 | 152,1386 256x16 | −1 | 0 | 1 | 0 |
+| NFT em destaque | 120,1456 310x470 | 120,1454 310x470 | 0 | −2 | 0 | 0 |
+| destaque: imagem | 121,1560 308x366 | 121,1558 308x366 | 0 | −2 | 0 | 0 |
+| abas + ordenação | 478,650 841x20 | 478,648 840x22 | 0 | −2 | −1 | 2 |
+| card 1 | 478,697 258x300 | 478,698 258x300 | 0 | 1 | 0 | 0 |
+| card 2 | 770,697 258x300 | 770,698 258x300 | 0 | 1 | 0 | 0 |
+| card 3 | 1062,697 258x300 | 1062,698 258x300 | 0 | 1 | 0 | 0 |
+| card 4 (linha 2) | 478,1125 258x300 | 478,1123 258x300 | 0 | −2 | 0 | 0 |
+| card 7 (linha 3) | 478,1547 258x300 | 478,1548 258x300 | 0 | 1 | 0 | 0 |
+| nome, linha 1 | 479,1011 152x16 | 479,1012 152x16 | 0 | 1 | 0 | 0 |
+| preço, linha 1 | 479,1039 85x13 | 479,1036 85x14 | 0 | **−3** | 0 | 1 |
+| nome, linha 2 | 478,1439 163x13 | 478,1437 163x13 | 0 | −2 | 0 | 0 |
+| preço, linha 2 | 479,1461 85x13 | 479,1461 85x14 | 0 | 0 | 0 | 1 |
+| nome, linha 3 | 478,1861 153x13 | 478,1862 153x13 | 0 | 1 | 0 | 0 |
+| preço, linha 3 | 479,1883 85x13 | 479,1886 85x14 | 0 | **3** | 0 | 1 |
+| paginação ("1 2 3 4") | 1113,1985 157x35 | 1100,1983 170x35 | **−13** | −2 | **13** | 0 |
+| promo 1 | 120,2116 586x250 | 120,2114 586x250 | 0 | −2 | 0 | 0 |
+| promo 1: título | 471,2158 204x42 | 471,2157 205x42 | 0 | −1 | 1 | 0 |
+| promo 2: título | 900,2150 300x52 | 900,2150 300x52 | 0 | 0 | 0 | 0 |
+| promo: botão "Explorar" (linhas de tinta) | y 2280–2319 | y 2278–2317 | | −2 | | 0 |
+| "Diário da Cunhagem" | 570,2470 301x27 | 570,2468 301x27 | 0 | −2 | 0 | 0 |
+| subtítulo do diário (linhas de tinta) | y 2514–2527 | y 2514–2527 | | 0 | | 0 |
+| card do diário 1 | 120,2569 268x369 | 120,2569 268x369 | 0 | 0 | 0 | 0 |
+| card do diário 4 | 996,2569 268x369 | 996,2569 268x369 | 0 | 0 | 0 | 0 |
+| card do diário: linhas de texto | 2780, 2796, 2820, 2842, 2870, 2885, 2909 | 2780, 2796, 2820, 2843, 2870, 2885, 2910 | | ≤1 | | |
+| início do footer | y 3034 | y 3034 | | 0 | | |
+
+## Mobile (414, app deslocado −14px)
+
+| Bloco | Figma (x,y w×h) | App (x,y w×h) | Δx | Δy | Δw | Δh |
+| --- | --- | --- | ---: | ---: | ---: | ---: |
+| busca | 24,40 313x45 | 24,38 313x45 | 0 | −2 | 0 | 0 |
+| botão de filtros | 345,40 45x45 | 345,38 45x45 | 0 | −2 | 0 | 0 |
+| hero | 24,101 366x190 | 24,99 366x190 | 0 | −2 | 0 | 0 |
+| hero: arte | 232,108 145x145 | 232,108 145x145 | 0 | 0 | 0 | 0 |
+| hero: arte secundária | 242,195 70x70 | 242,195 70x70 | 0 | 0 | 0 | 0 |
+| aba "Todos os NFTs" | 24,309 110x18 | 24,309 114x22 | 0 | 0 | **4** | **4** |
+| aba "Novos lançamentos" | 141,309 139x14 | 159,309 132x14 | **18** | 0 | −7 | 0 |
+| aba "Em alta" | 298,309 57x12 | 290,309 88x12 | **−8** | 0 | (cortada pela borda) | 0 |
+| card 1 (moldura, topo) | y 343 | y 343 | | 0 | | |
+| card 2 (moldura, topo) | y 375 | y 375 | | 0 | | |
+| card 3 (moldura, topo) | y 611 | y 611 | | 0 | | |
+| card 4 (moldura, topo) | y 643 | y 643 | | 0 | | |
+| nome, card 1 | 33,555 142x7 | 33,555 142x7 | 0 | 0 | 0 | 0 |
+| preço, card 1 | 33,566 142x20 | 33,566 143x20 | 0 | 0 | 1 | 0 |
+| nome, card 2 | 224,587 133x7 | 223,587 135x7 | −1 | 0 | 2 | 0 |
+| preço, card 2 | 224,599 122x19 | 224,599 122x19 | 0 | 0 | 0 | 0 |
+
+Em 390 (sem frame): colunas de 163px (x 24–186 e 203–365), gutter de 24px e gap de 16px; a segunda coluna desce 32px como no frame.
+
+Diferenças acima de 2px e o motivo estão em `docs/progresso.md` (seção Início, "Ressalvas").

@@ -12,7 +12,6 @@ export { Toaster } from "./toaster";
 export { Icon } from "./icon";
 export { Checkbox } from "./checkbox";
 export { Pagination } from "./pagination";
-export { Filters } from "./filters";
 export { SocialButton } from "./social-button";
 export { CarouselDots } from "./carousel-dots";
 export { MobileSocialBlock } from "./mobile-social-block";

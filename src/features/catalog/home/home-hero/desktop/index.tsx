@@ -17,14 +17,14 @@ export function Desktop({ artwork }: { artwork: Nft }) {
             Bem-vindo à Kurio
           </p>
 
-          <h2
+          <h1
             id="home-hero-title"
             className="mb-1 font-mono text-display-43 font-bold leading-70 text-foreground"
           >
             SEJA DONO DO FUTURO
             <br />
             DA ARTE DIGITAL
-          </h2>
+          </h1>
 
           <p className="mb-8 font-mono text-sm font-normal leading-6 text-text-secondary">
             Descubra NFTs selecionados de criadores emergentes e consagrados.

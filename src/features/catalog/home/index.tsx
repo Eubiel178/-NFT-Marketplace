@@ -68,9 +68,9 @@ export function HomePage() {
       aria-labelledby="home-page-title"
       className="flex flex-col gap-4 sm:gap-24"
     >
-      <h1 id="home-page-title" className="sr-only">
+      <h2 id="home-page-title" className="sr-only">
         Marketplace de NFTs
-      </h1>
+      </h2>
 
       {!hasSidebar && (
         <SearchBar

@@ -41,7 +41,7 @@ const homeNfts: Nft[] = [
     id: "nft-1",
     name: "Emerald Ape #042",
     category: "art",
-    collection: "Kurio Apes",
+    collection: "Arte digital",
     network: "ethereum",
     image: imagePaths[0],
     price: "1.19",
@@ -59,7 +59,7 @@ const homeNfts: Nft[] = [
     id: "nft-2",
     name: "Sage Nomad #009",
     category: "music",
-    collection: "Sage Nomads",
+    collection: "Fotografia",
     network: "ethereum",
     image: imagePaths[1],
     price: "1.69",
@@ -70,10 +70,12 @@ const homeNfts: Nft[] = [
     id: "nft-3",
     name: "Neon Vessel #552",
     category: "photography",
-    collection: "Neon Vessels",
+    collection: "Música",
     network: "polygon",
     image: imagePaths[2],
     price: "1.99",
+    originalPrice: "2.29",
+    rare: true,
     available: 2,
     version: 1,
   },
@@ -81,7 +83,7 @@ const homeNfts: Nft[] = [
     id: "nft-4",
     name: "Cosmic Bloom #118",
     category: "art",
-    collection: "Cosmic Blooms",
+    collection: "Arte 3D",
     network: "ethereum",
     image: imagePaths[1],
     price: "1.29",
@@ -92,7 +94,7 @@ const homeNfts: Nft[] = [
     id: "nft-5",
     name: "Violet Nomad #314",
     category: "music",
-    collection: "Violet Nomads",
+    collection: "Colecionáveis",
     network: "polygon",
     image: imagePaths[1],
     price: "1.39",
@@ -103,7 +105,7 @@ const homeNfts: Nft[] = [
     id: "nft-6",
     name: "Ivory Baron #088",
     category: "photography",
-    collection: "Ivory Barons",
+    collection: "Generativa",
     network: "ethereum",
     image: imagePaths[2],
     price: "1.79",
@@ -114,7 +116,7 @@ const homeNfts: Nft[] = [
     id: "nft-7",
     name: "Golden Beat #207",
     category: "art",
-    collection: "Golden Beats",
+    collection: "Jogos",
     network: "polygon",
     image: imagePaths[3],
     price: "0.99",
@@ -125,7 +127,7 @@ const homeNfts: Nft[] = [
     id: "nft-8",
     name: "Golden Signal #160",
     category: "music",
-    collection: "Golden Signals",
+    collection: "Assinaturas",
     network: "ethereum",
     image: imagePaths[3],
     price: "0.39",
@@ -136,7 +138,7 @@ const homeNfts: Nft[] = [
     id: "nft-9",
     name: "Golden Signal #160",
     category: "photography",
-    collection: "Golden Signals",
+    collection: "Assinaturas",
     network: "polygon",
     image: imagePaths[3],
     price: "0.39",
@@ -145,17 +147,69 @@ const homeNfts: Nft[] = [
   },
 ];
 
-export const createNfts = (): Nft[] => [
-  ...homeNfts,
-  ...Array.from({ length: 24 }, (_, index) => ({
-    id: `nft-${index + 10}`,
-    name: `Coleção ${String(index + 1).padStart(2, "0")}`,
-    category: (["art", "music", "photography"] as const)[index % 3],
-    collection: `Coleção ${String(index + 1).padStart(2, "0")}`,
-    network: (["ethereum", "polygon"] as const)[index % 2],
-    image: imagePaths[index % imagePaths.length],
-    price: `0.${String(index + 1).padStart(3, "0")}`,
-    available: (index % 7) + 1,
-    version: 1,
-  })),
-];
+// Coleções e redes do painel de filtros do Figma, na ordem e com as contagens do frame.
+// As contagens do Figma não fecham entre si (coleções somam 239, redes 283): o catálogo
+// tem 283 NFTs e os 44 que sobram ficam numa coleção fora do painel.
+export const catalogCollections = [
+  { value: "Arte digital", count: 33 },
+  { value: "Fotografia", count: 12 },
+  { value: "Música", count: 65 },
+  { value: "Arte 3D", count: 39 },
+  { value: "Colecionáveis", count: 23 },
+  { value: "Generativa", count: 17 },
+  { value: "Jogos", count: 19 },
+  { value: "Assinaturas", count: 13 },
+  { value: "Utilidade", count: 18 },
+] as const;
+const unlistedCollection = { value: "Edições avulsas", count: 44 };
+
+export const catalogNetworks = [
+  { value: "ethereum", label: "Ethereum", count: 119 },
+  { value: "polygon", label: "Polygon", count: 78 },
+  { value: "solana", label: "Solana", count: 86 },
+] as const;
+
+// Distribui as vagas restantes alternando entre os grupos, para cada página do
+// catálogo misturar coleções e redes.
+function interleave<T extends string>(groups: { value: T; count: number }[], taken: T[]) {
+  const remaining = groups.map((group) => ({ value: group.value, left: group.count - taken.filter((value) => value === group.value).length }));
+  const slots: T[] = [];
+  while (remaining.some((group) => group.left > 0)) {
+    for (const group of remaining) {
+      if (group.left === 0) continue;
+      slots.push(group.value);
+      group.left -= 1;
+    }
+  }
+  return slots;
+}
+
+// Preço em centavos de ETH, sem float: de 0,02 a 12,30.
+function generatedPrice(index: number, last: boolean) {
+  const cents = last ? 1230 : 2 + ((index * 389) % 1228);
+  return `${Math.floor(cents / 100)}.${String(cents % 100).padStart(2, "0")}`;
+}
+
+export const createNfts = (): Nft[] => {
+  const collections = interleave<string>([...catalogCollections, unlistedCollection], homeNfts.map((nft) => nft.collection));
+  const networks = interleave<Nft["network"]>([...catalogNetworks], homeNfts.map((nft) => nft.network));
+  const numbers = new Map<string, number>();
+  return [
+    ...homeNfts,
+    ...collections.map((collection, index) => {
+      const number = (numbers.get(collection) ?? 0) + 1;
+      numbers.set(collection, number);
+      return {
+        id: `nft-${index + 10}`,
+        name: `${collection} #${String(number).padStart(3, "0")}`,
+        category: (["art", "music", "photography"] as const)[index % 3],
+        collection,
+        network: networks[index],
+        image: imagePaths[index % imagePaths.length],
+        price: generatedPrice(index, index === collections.length - 1),
+        available: (index % 7) + 1,
+        version: 1,
+      };
+    }),
+  ];
+};
