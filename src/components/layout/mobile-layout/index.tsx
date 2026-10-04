@@ -7,7 +7,7 @@ export interface MobileLayoutProps {
 
 export function MobileLayout({ children, tabBar }: MobileLayoutProps) {
   return (
-    <div className={tabBar ? 'mobile-layout has-tab-bar' : 'mobile-layout'}>
+    <div className={tabBar ? 'mobile-layout has-tab-bar w-full' : 'mobile-layout w-full'}>
       <main id="main" tabIndex={-1} className="layout-main container-content">
         {children}
       </main>

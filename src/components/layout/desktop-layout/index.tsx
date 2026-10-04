@@ -9,10 +9,10 @@ export interface DesktopLayoutProps {
 
 export function DesktopLayout({ children, footer }: DesktopLayoutProps) {
   return (
-    <div className="flex flex-col items-stretch min-h-screen w-full max-w-[62.5vw]">
+    <div className="flex min-h-screen w-full flex-col items-stretch">
       <Header />
 
-      <main tabIndex={-1} className="layout-main container-content">
+      <main id="main" tabIndex={-1} className="layout-main container-content min-w-0 flex-1">
         {children}
       </main>
 

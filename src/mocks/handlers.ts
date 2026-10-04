@@ -11,7 +11,6 @@ import {
 } from "@/contracts";
 import { fromWei, toWei } from "@/lib/eth";
 import { db, resetDb, saveDb } from "./db";
-import { createDefaultCart } from "./fixtures";
 import { getScenario, scenarios, setScenario } from "./scenarios";
 import { broadcastNft, broadcastOrder, disconnectSockets } from "./socket";
 
@@ -479,7 +478,6 @@ export const handlers = [
         "TRANSIENT_FAILURE",
         "Não foi possível carregar o carrinho",
       );
-    if (!db.carts.visitor) db.carts.visitor = createDefaultCart();
     return HttpResponse.json({ items: cartLines(cartOwnerId()) });
   }),
   http.post("/api/cart/items", async ({ request }) => {

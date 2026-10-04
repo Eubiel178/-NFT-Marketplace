@@ -15,7 +15,7 @@ export const socketHandlers = [
   channel.addEventListener("connection", (connection) => {
     const client = toSocketIo(connection);
     clients.add(client);
-    client.server.on("order.subscribe", (_event, payload: unknown) => {
+    client.client.on("order.subscribe", (_event, payload: unknown) => {
       const subscription = orderSubscriptionSchema.safeParse(payload);
       if (subscription.success) orderSubscriptions.set(client, subscription.data);
     });
