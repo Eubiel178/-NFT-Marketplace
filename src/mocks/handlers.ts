@@ -4,6 +4,7 @@ import {
   catalogSearchSchema,
   cartItemSchema,
   collectorSchema,
+  ethSchema,
   passwordChangeSchema,
   profileInputSchema,
   walletInputSchema,
@@ -490,6 +491,25 @@ export const handlers = [
       nft,
     });
     return HttpResponse.json(nft);
+  }),
+  // Reemite um nft.updated sem mexer no banco (duplicata ou versão antiga): o payload pode
+  // carregar um preço diferente do banco, que o cliente nunca deve aplicar.
+  http.post("/api/__mock/nfts/:id/event", async ({ request, params }) => {
+    const nft = db.nfts.find((item) => item.id === params.id);
+    if (!nft) return error(404, "NOT_FOUND", "NFT não encontrado");
+    const body = z
+      .object({ version: z.number().int().positive().optional(), price: ethSchema.optional() })
+      .safeParse(await request.json().catch(() => ({})));
+    if (!body.success) return error(422, "VALIDATION_ERROR", "Evento de NFT inválido");
+    const version = body.data.version ?? nft.version;
+    const event = {
+      eventId: `${nft.id}:${version}:${crypto.randomUUID()}`,
+      resourceId: nft.id,
+      version,
+      nft: { ...nft, version, price: body.data.price ?? nft.price },
+    };
+    broadcastNft(event);
+    return HttpResponse.json(event);
   }),
   http.post("/api/__mock/orders/:id/confirm", ({ params }) => {
     const order = confirmOrder(String(params.id));
