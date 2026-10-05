@@ -119,3 +119,28 @@ test('queda do socket com pedido pendente: ao reconectar o pedido é recuperado,
   await expect(page.getByRole('heading', { name: 'Seus NFTs agora estão na sua carteira' })).toBeVisible()
   expect(created).toEqual(['201'])
 })
+
+test('nft.updated com o mesmo eventId é descartado, mesmo com versão mais nova', async ({ page }) => {
+  await page.goto('/nfts/nft-1')
+  await expect(page.getByTestId('nft-price')).toBeVisible()
+  const current = await nftVersion(page, 'nft-1')
+
+  let detailReads = 0
+  page.on('request', (request) => {
+    if (request.method() === 'GET' && /\/api\/nfts\/nft-1$/.test(request.url())) detailReads += 1
+  })
+
+  // Primeira vez que o eventId aparece: aceito, o cliente relê o REST.
+  expect(await post(page, '/api/__mock/nfts/nft-1/event', { eventId: 'evento-repetido', version: current + 1 })).toBe(200)
+  await expect.poll(() => detailReads).toBeGreaterThan(0)
+  const readsAfterFirst = detailReads
+
+  // Mesmo eventId com versão ainda mais nova: seria aceito pela versão, mas é duplicata.
+  expect(await post(page, '/api/__mock/nfts/nft-1/event', { eventId: 'evento-repetido', version: current + 2 })).toBe(200)
+  await page.waitForTimeout(500)
+  expect(detailReads).toBe(readsAfterFirst)
+
+  // Um eventId novo com a mesma versão nova é aceito.
+  expect(await post(page, '/api/__mock/nfts/nft-1/event', { eventId: 'evento-novo', version: current + 2 })).toBe(200)
+  await expect.poll(() => detailReads).toBeGreaterThan(readsAfterFirst)
+})

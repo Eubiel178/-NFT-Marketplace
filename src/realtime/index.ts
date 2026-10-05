@@ -11,6 +11,9 @@ import { keys, queryClient } from '@/lib/query'
 const socket = io(env.socketUrl, { transports: ['websocket'], autoConnect: false })
 
 const versions = new Map<string, number>()
+// eventIds já processados: o mesmo evento reenviado é descartado mesmo com versão mais nova.
+const seenEventIds = new Set<string>()
+const maxSeenEventIds = 500
 const nftListeners = new Set<(event: NftUpdated) => void>()
 const connectionListeners = new Set<() => void>()
 const orderSubscriptions = new Map<string, { userId: string; orderId: string; count: number }>()
@@ -28,6 +31,17 @@ function acceptVersion(resource: string, version: number, cachedVersion: number 
   const latest = Math.max(versions.get(resource) ?? 0, cachedVersion ?? 0)
   if (version <= latest) return false
   versions.set(resource, version)
+  return true
+}
+
+// Registra o eventId e informa se ele ainda não tinha sido visto. A memória é limitada: o mais antigo sai primeiro.
+function isNewEvent(eventId: string) {
+  if (seenEventIds.has(eventId)) return false
+  seenEventIds.add(eventId)
+  if (seenEventIds.size > maxSeenEventIds) {
+    const oldest = seenEventIds.values().next().value
+    if (oldest !== undefined) seenEventIds.delete(oldest)
+  }
   return true
 }
 
@@ -58,6 +72,7 @@ function onDisconnect() {
 function onNftUpdated(event: NftUpdated) {
   const parsed = nftSchema.safeParse(event?.nft)
   if (!parsed.success || parsed.data.id !== event.resourceId || parsed.data.version !== event.version) return
+  if (!isNewEvent(event.eventId)) return
   const cached = queryClient.getQueryData<Nft>(keys.nft(event.resourceId))
   if (!acceptVersion(`nft:${event.resourceId}`, event.version, cached?.version)) return
   reconcileNfts()
@@ -67,10 +82,11 @@ function onNftUpdated(event: NftUpdated) {
 function onOrderUpdated(payload: unknown) {
   const parsed = orderUpdatedSchema.safeParse(payload)
   if (!parsed.success) return
-  const { userId, resourceId, version } = parsed.data
+  const { eventId, userId, resourceId, version } = parsed.data
   // Só pedidos assinados nesta sessão, do usuário que assinou, são aceitos.
   const subscription = orderSubscriptions.get(resourceId)
   if (!subscription || subscription.userId !== userId) return
+  if (!isNewEvent(eventId)) return
   const cached = queryClient.getQueryData<Order>(keys.order(userId, resourceId))
   if (!acceptVersion(`order:${resourceId}`, version, cached?.version)) return
   void queryClient.invalidateQueries({ queryKey: keys.order(userId, resourceId) })
@@ -115,7 +131,8 @@ export function subscribeOrder(userId: string, orderId: string) {
 // para que o servidor também esqueça as assinaturas da sessão anterior.
 export function resetPrivateRealtime() {
   orderSubscriptions.clear()
-  for (const resource of versions.keys()) if (resource.startsWith('order:')) versions.delete(resource)
+  versions.clear()
+  seenEventIds.clear()
   if (socket.connected || socket.active) {
     socket.disconnect()
     socket.connect()

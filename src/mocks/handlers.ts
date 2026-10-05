@@ -515,12 +515,12 @@ export const handlers = [
     const nft = db.nfts.find((item) => item.id === params.id);
     if (!nft) return error(404, "NOT_FOUND", "NFT não encontrado");
     const body = z
-      .object({ version: z.number().int().positive().optional(), price: ethSchema.optional() })
+      .object({ eventId: z.string().min(1).optional(), version: z.number().int().positive().optional(), price: ethSchema.optional() })
       .safeParse(await request.json().catch(() => ({})));
     if (!body.success) return error(422, "VALIDATION_ERROR", "Evento de NFT inválido");
     const version = body.data.version ?? nft.version;
     const event = {
-      eventId: `${nft.id}:${version}:${crypto.randomUUID()}`,
+      eventId: body.data.eventId ?? `${nft.id}:${version}:${crypto.randomUUID()}`,
       resourceId: nft.id,
       version,
       nft: { ...nft, version, price: body.data.price ?? nft.price },
@@ -543,6 +543,7 @@ export const handlers = [
     if (!order) return error(404, "NOT_FOUND", "Pedido não encontrado");
     const body = z
       .object({
+        eventId: z.string().min(1).optional(),
         version: z.number().int().positive().optional(),
         status: orderStatusSchema.optional(),
       })
@@ -550,7 +551,9 @@ export const handlers = [
     if (!body.success)
       return error(422, "VALIDATION_ERROR", "Evento de pedido inválido");
     const event = {
-      eventId: `${order.id}:${body.data.version ?? order.version}:${crypto.randomUUID()}`,
+      eventId:
+        body.data.eventId ??
+        `${order.id}:${body.data.version ?? order.version}:${crypto.randomUUID()}`,
       resourceId: order.id,
       version: body.data.version ?? order.version,
       userId: order.userId,
