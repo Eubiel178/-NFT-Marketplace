@@ -287,6 +287,8 @@ async function conditions(request: Request) {
         : 80,
   );
   if (scenario === "network-error") return HttpResponse.error();
+  // Conexão aberta e sem resposta: o Axios encerra no próprio timeout (8 s).
+  if (scenario === "timeout") await delay("infinite");
   if (scenario === "http-500")
     return error(
       503,
@@ -564,7 +566,9 @@ export const handlers = [
     disconnectSockets();
     return new HttpResponse(null, { status: 204 });
   }),
-  http.get("/api/cart", () => {
+  http.get("/api/cart", async ({ request }) => {
+    const failure = await conditions(request);
+    if (failure) return failure;
     if (getScenario() === "cart-load-error")
       return error(
         503,
@@ -574,6 +578,8 @@ export const handlers = [
     return HttpResponse.json({ items: cartLines(cartOwnerId()) });
   }),
   http.post("/api/cart/items", async ({ request }) => {
+    const failure = await conditions(request);
+    if (failure) return failure;
     if (getScenario() === "cart-error")
       return error(
         503,
@@ -602,6 +608,8 @@ export const handlers = [
     return HttpResponse.json({ items: cartLines(ownerId) }, { status: 201 });
   }),
   http.patch("/api/cart/items/:nftId", async ({ request, params }) => {
+    const failure = await conditions(request);
+    if (failure) return failure;
     if (getScenario() === "cart-error")
       return error(
         503,
@@ -632,7 +640,9 @@ export const handlers = [
     saveDb();
     return HttpResponse.json({ items: cartLines(ownerId) });
   }),
-  http.delete("/api/cart/items/:nftId", ({ request, params }) => {
+  http.delete("/api/cart/items/:nftId", async ({ request, params }) => {
+    const failure = await conditions(request);
+    if (failure) return failure;
     if (getScenario() === "cart-error")
       return error(
         503,
@@ -675,10 +685,11 @@ export const handlers = [
     saveDb();
     return HttpResponse.json(quote);
   }),
-  http.get("/api/profile", async () => {
+  http.get("/api/profile", async ({ request }) => {
     const user = currentUser();
     if (!user) return userError();
-    if (getScenario() === "slow") await delay(2_000);
+    const failure = await conditions(request);
+    if (failure) return failure;
     if (getScenario() === "profile-error")
       return error(
         503,
@@ -690,6 +701,8 @@ export const handlers = [
   http.patch("/api/profile", async ({ request }) => {
     const user = findSessionUser();
     if (!user) return userError();
+    const failure = await conditions(request);
+    if (failure) return failure;
     if (getScenario() === "profile-error")
       return error(
         503,

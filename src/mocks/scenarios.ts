@@ -4,6 +4,7 @@ export const scenarios = [
   "slow",
   "variable-latency",
   "network-error",
+  "timeout",
   "http-500",
   "unauthorized",
   "favorites-error",
