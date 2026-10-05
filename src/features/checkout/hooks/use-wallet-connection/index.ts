@@ -34,10 +34,10 @@ export function useWalletConnection(userId: string, walletId: string) {
   const connectedHere = current?.walletId === walletId
   const autoConnected = useRef(false)
   useEffect(() => {
-    if (autoConnected.current || connection.isPending || !walletId || connectedHere) return
+    if (autoConnected.current || disconnectedByUser || connection.isPending || !walletId || connectedHere) return
     autoConnected.current = true
     connect.mutate({ walletId, method: current?.method ?? 'coinbase' })
-  }, [connect, connectedHere, connection.isPending, current?.method, walletId])
+  }, [connect, connectedHere, connection.isPending, current?.method, disconnectedByUser, walletId])
 
   const status: ConnectionStatus = connect.isPending || disconnect.isPending
     ? 'connecting'
