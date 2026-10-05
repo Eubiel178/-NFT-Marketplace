@@ -19,3 +19,5 @@ skills-lock.json
 .gemini/
 .aider*
 .github/copilot-instructions.md
+AGENTS.md
+CLAUDE.md
