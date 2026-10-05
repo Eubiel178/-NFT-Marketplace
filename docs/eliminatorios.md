@@ -1,6 +1,6 @@
 # Auditoria dos requisitos eliminatórios (readme §3–§12)
 
-Data: 04/10/2026. Branch `feat/marketplace-complete`, árvore limpa no início, 13 commits à frente do `origin` (nada publicado). Nenhum código foi alterado.
+Data: 04/10/2026. **Atualizado depois dos commits `4979c7b` (paginação mobile), `3da74bf` (401 global e retomada do checkout) e do spec `phase16-pagination-session`; linhas alteradas marcadas com ✔.** Branch `feat/marketplace-complete`, árvore limpa no início, 13 commits à frente do `origin` (nada publicado). Nenhum código foi alterado.
 
 **Método.** Leitura do `readme.md`, `AGENTS.md`, `ARCHITECTURE.md`, `docs/progresso.md`, do código em `src/`, dos mocks e de `tests/e2e`. **Nenhum teste, build ou Lighthouse foi executado** (regra do `AGENTS.md`): onde a tabela diz "atende" para um teste, significa que o spec existe e cobre o ponto, não que passa hoje. Linhas citadas são do HEAD `4e0ee94`.
 
@@ -29,7 +29,7 @@ Legenda: **Atende**, **Parcial**, **Não atende**.
 
 | Requisito | Situação | Evidência | O que falta |
 | --- | --- | --- | --- |
-| Início: destaques, catálogo, busca, filtros, ordenação, navegação ao NFT | Atende | `features/catalog/home/*`; `use-catalog-search`; facets vindos do MSW; spec `phase7-marketplace` (3, 27, 48), `foundation` (15) | **No mobile a paginação fica oculta** (decisão pelo Figma, `ARCHITECTURE.md`): em 390 só se veem 9 de 283 NFTs e não há como chegar à página 2 pela UI, só pela URL. O readme exige paginação no estado da URL; o frame mobile não a mostra. Risco de leitura como fluxo incompleto |
+| Início: destaques, catálogo, busca, filtros, ordenação, navegação ao NFT | Atende ✔ | `features/catalog/home/*`; `use-catalog-search`; facets vindos do MSW; spec `phase7-marketplace` (3, 27, 48), `foundation` (15); **paginação também em 390** (`home-catalog/index.tsx`, centralizada, mesmo padrão do desktop; desvio em `ARCHITECTURE.md`), `phase16:42` | — |
 | URL como estado (busca, filtros, ordenação, página; refresh e histórico) | Atende | `catalogSearchSchema` (`contracts:18`), `router.tsx:42`; `phase7-marketplace:27` ("histórico restaura a página anterior"), `:3` | Ordenação não é exercitada em nenhum spec |
 | Mudança de filtro reinicia a paginação | Atende | `phase7-marketplace:27`, `:16` (busca com debounce reinicia) | — |
 | Consultas refletem parâmetros, vazio, falha, respostas fora de ordem | Parcial | `catalog/api:9` (params + `signal`); `keys.catalog(search)` inclui todos os parâmetros; `empty` (`phase7-marketplace:48`), `http-500`/`network-error` (`foundation:44`, `phase13:160`) | Não há spec de **resposta fora de ordem**: o cenário `variable-latency` existe no MSW e nunca é usado em teste. O descarte depende só de key por parâmetros + `signal` |
@@ -49,7 +49,7 @@ Legenda: **Atende**, **Parcial**, **Não atende**.
 | Recibo é snapshot | Atende | `snapshotItems` (`handlers.ts:214`); `phase13:72,169` | — |
 | Login/cadastro/logout/sessão; retorno ao fluxo anterior | Atende | `use-auth-form`, `safeRedirect`; `phase6-auth:11,27,39,97` | — |
 | Sessão recuperável após refresh | Atende | `/api/session` + DB mock em localStorage; `phase6-auth:39,128` | — |
-| **Expiração de sessão durante a navegação e durante o checkout, preservando contexto** | **Parcial** | Guard só roda ao **entrar** em rota privada (`router.tsx:74-88`); `use-checkout-data.ts:35-38` redireciona se as *queries* do checkout derem 401; `phase6-auth:51` | (1) Não há tratamento global de 401 (sem interceptor Axios nem `QueryCache.onError`): perfil e carteiras com sessão expirada mostram só a tela de erro/retry, sem ir ao login. (2) **Expiração no momento do "Enviar pedido"**: `usePlaceOrder.onError` só mostra a mensagem da API (`use-place-order:~88-95`), sem redirecionar nem guardar o contexto da revisão. (3) O teste de expiração usa `page.goto('/checkout')` (recarga total), não navegação interna nem submissão. (4) `useFavorite` leva ao login com `expired:false` |
+| **Expiração de sessão durante a navegação e durante o checkout, preservando contexto** | **Atende ✔** | Interceptor Axios (`lib/http.ts`) avisa qualquer 401 (menos login/cadastro/logout); `app/session-expiry/index.ts` guarda o contexto do pagamento, cancela queries (menos a sessão), `resetPrivateRealtime`, `queryClient.clear()` e leva ao login com `redirect` e `expired=true` (`app/router.tsx` `goToLoginExpired`); o guard (`beforeLoad`) faz a mesma limpeza a cada navegação privada. Checkout: `features/checkout/lib/checkout-resume` + `checkout-page/index.tsx` restauram formulário e reabrem a revisão; mesma chave de idempotência. Testes sem recarga: `phase16:71` (navegação), `:86` (ação na página), `:103` (envio do pedido) | Ressalva: o contexto guardado de um usuário não é lido por outro e só é apagado no próximo logout do dono (documentado). Visitante com 401 não é tratado como expiração |
 | Logout/troca de usuário limpam cache e subscriptions | Atende | `use-logout` (cancela, `resetPrivateRealtime`, `clearUserItems`, `queryClient.clear()`); mesmo padrão em `use-auth-form`; `phase0-isolation`, `phase0-realtime:50` | — |
 | Validação de cadastro/perfil/senha/carteiras, incluindo erros da API | Atende | `contracts` (`profileInputSchema`, `walletInputSchema`…), `fields` em 422/409; `phase15-account`, `phase6-auth:97` | — |
 | Alterações permanecem após refresh; senha com hash | Atende | DB mock persistida; hash SHA-256 com salt; `phase15:88` | — |
@@ -164,9 +164,9 @@ Legenda: **Atende**, **Parcial**, **Não atende**.
 
 | # | Item | Situação | Specs que cobrem | O que falta |
 | --- | --- | --- | --- | --- |
-| 1 | Busca, filtros combinados, ordenação, paginação, histórico | **Parcial** | `phase7-marketplace:3` (busca+filtros), `:16` (debounce, só mobile), `:27` (paginação+histórico, só desktop), `foundation:15` | **Ordenação sem teste.** Paginação só em desktop (oculta no mobile) |
+| 1 | Busca, filtros combinados, ordenação, paginação, histórico | **Parcial** ✔ | `phase7-marketplace:3` (busca+filtros), `:16` (debounce, só mobile), `:27` (paginação+histórico, só desktop), `foundation:15`, `phase16:42` (paginação, URL, histórico e refresh em desktop e mobile) | **Ordenação sem teste** |
 | 2 | Acesso direto ao detalhe e recurso inexistente | Atende | `foundation:4,11` (404 de NFT), `:24` (rota desconhecida) | — |
-| 3 | Cadastro, login, expiração, logout, troca de usuário | **Parcial** | `phase6-auth:11,27,39,51,76`, `phase0-isolation:18` | Expiração só por recarga completa (`:51-53`), não durante navegação interna nem na submissão do checkout |
+| 3 | Cadastro, login, expiração, logout, troca de usuário | **Atende ✔** | `phase6-auth:11,27,39,51,76`, `phase0-isolation:18`, `phase16:71,86,103` (expiração sem recarga: navegação, ação na página e envio do pedido com retomada) | — |
 | 4 | Favoritos com falha de mutation e recuperação | Atende | `phase7-resilience:17`, `phase11:76`, `phase8:38`, `phase6:76` | — |
 | 5 | Carrinho: quantidades, remoção, cupom, persistência após refresh/login | Atende | `phase13:31,62`, `phase7-resilience:33`, `phase9:17,69`, `phase11:24-66` | — |
 | 6 | Compra completa do catálogo ao recibo | Atende | `phase13:72` (começa no detalhe), `phase5:11,31` | — |
@@ -239,7 +239,7 @@ Requisitos transversais do §9:
 1. **Deploy inexistente.** `vercel.json` pronto, mas branch 13 commits à frente do `origin`, sem URL. Falta publicar e validar rota direta, refresh, MSW e Socket.IO na URL. (§12, P0)
 2. **Suíte E2E não passa inteira.** `visual-regression` falha nos 4 casos × 3 projetos por baselines do commit inicial, `phase5-visual` mobile também já falhou; baselines só `-win32`. `npm run test:e2e` completo não está verde nem comprovado. (§9, P0)
 3. **Lighthouse sem medição da entrega final.** Os números em `VALIDATION.md` são da estrutura e `reports/` está fora do git. Faltam as 12 medições novas, versionadas, com análise. (§10)
-4. **Expiração de sessão incompleta.** Sem tratamento global de 401; "Enviar pedido" com sessão expirada não leva ao login nem preserva a revisão; o teste só cobre recarga. (§3 Conta e sessão, §9 item 3)
+4. ~~Expiração de sessão incompleta.~~ **Resolvido** em `3da74bf` + `phase16` (ver §2).
 
 **Risco médio**
 
@@ -247,7 +247,7 @@ Requisitos transversais do §9:
 6. **Respostas fora de ordem sem prova.** `variable-latency` e `unauthorized` existem no MSW e nenhum spec os usa; ordenação sem spec; `wallet-rejected` sem spec. (§4, §6, §9 itens 1 e 3)
 7. **Timeout real de rede só no pedido.** Falta cenário em que a conexão exceda os 8 s do Axios em catálogo/detalhe; `conditions()` só vale para `GET /api/nfts` e detalhe. (§6)
 8. **Controle de relógio ausente.** Nenhum `page.clock`; debounce e confirmação automática (400 ms) dependem de tempo real. (§9)
-9. **Paginação inacessível no mobile.** Só 9 de 283 NFTs aparecem em 390; só pela URL se chega a outra página. Decisão por fidelidade ao Figma, mas conflita com o readme (§3 Catálogo). Merece decisão sua.
+9. ~~Paginação inacessível no mobile.~~ **Resolvido** em `4979c7b` (desvio do frame registrado em `ARCHITECTURE.md`).
 10. **Acessibilidade sem verificação automatizada.** Sem axe, sem `jsx-a11y`; teclado só em 4 pontos; diálogo "Revise sua compra" sem teste de foco. (§8, §9 item 11)
 
 **Risco baixo**
