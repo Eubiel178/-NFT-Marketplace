@@ -32,7 +32,7 @@ Legenda: **Atende**, **Parcial**, **Não atende**.
 | Início: destaques, catálogo, busca, filtros, ordenação, navegação ao NFT | Atende ✔ | `features/catalog/home/*`; `use-catalog-search`; facets vindos do MSW; spec `phase7-marketplace` (3, 27, 48), `foundation` (15); **paginação também em 390** (`home-catalog/index.tsx`, centralizada, mesmo padrão do desktop; desvio em `ARCHITECTURE.md`), `phase16:42` | — |
 | URL como estado (busca, filtros, ordenação, página; refresh e histórico) | Atende | `catalogSearchSchema` (`contracts:18`), `router.tsx:42`; `phase7-marketplace:27` ("histórico restaura a página anterior"), `:3` | Ordenação não é exercitada em nenhum spec |
 | Mudança de filtro reinicia a paginação | Atende | `phase7-marketplace:27`, `:16` (busca com debounce reinicia) | — |
-| Consultas refletem parâmetros, vazio, falha, respostas fora de ordem | Parcial | `catalog/api:9` (params + `signal`); `keys.catalog(search)` inclui todos os parâmetros; `empty` (`phase7-marketplace:48`), `http-500`/`network-error` (`foundation:44`, `phase13:160`) | Não há spec de **resposta fora de ordem**: o cenário `variable-latency` existe no MSW e nunca é usado em teste. O descarte depende só de key por parâmetros + `signal` |
+| Consultas refletem parâmetros, vazio, falha, respostas fora de ordem | Atende ✔ | `catalog/api:9` (params + `signal`); `keys.catalog(search)` inclui todos os parâmetros; `empty` (`phase7-marketplace:48`), `http-500`/`network-error` (`foundation:44`, `phase13:160`); **fora de ordem: `phase17:65`** | — |
 | Detalhe: galeria, edição, quantidade, favoritos, compra; acesso direto; inexistente; edição indisponível; limite | Atende | `features/catalog/nft-detail/*`; `foundation:4,11` (404), `phase8-details-profile:11`, `phase9-purchase:85` (edição esgotada `nft-4`) | — |
 | Favoritos persistem para o usuário | Atende | `features/favorites`, `keys.favorites(userId)`; `phase8:38`, `phase6-auth:76` | — |
 | Carrinho: add/alterar/remover com disponibilidade por NFT e edição | Atende | `use-cart-lines`, MSW soma edições (`handlers.ts:536-611`); `phase13:31`, `phase11:24-55` | — |
@@ -65,7 +65,7 @@ Legenda: **Atende**, **Parcial**, **Não atende**.
 | Contratos tipados transporte → estado → UI | Atende | `src/contracts` (zod) e `parse` em todas as APIs | Duplicação interface + zod em alguns tipos (`Order`, `Wallet`), sem erro funcional |
 | Estados de carregamento, vazio, erro, sucesso, atualização em segundo plano | Parcial | Skeletons, estados de erro com retry (`phase11`), vazio (`phase7`) | "Atualização em segundo plano" não tem indicação visível nem teste (nenhum `isFetching`/`placeholderData`; ao trocar de página o catálogo volta ao skeleton) |
 | Invalidação coerente após mutations e eventos | Atende | `reconcileNfts` (`realtime:34-39`), `useOrder` invalida o carrinho ao confirmar, `useAvatar/useProfileForm` com `setQueryData`; wallets key compartilhada com o pagamento (`phase15:241`) | — |
-| Cancelamento/descarte de respostas obsoletas | Parcial | `signal` do Query repassado ao Axios em todas as queries (`catalog/api:9`, `shared/api/*`); `cancelQueries` antes das mutations otimistas; keys por parâmetro | Nenhum teste de resposta fora de ordem (`variable-latency` sem uso). Comportamento por construção, não verificado |
+| Cancelamento/descarte de respostas obsoletas | Atende ✔ | `signal` do Query repassado ao Axios em todas as queries (`catalog/api:9`, `shared/api/*`); `cancelQueries` antes das mutações otimistas; keys por parâmetro; `phase17:65` (variable-latency: página 3 lenta, página 4 rápida, a tela fica na 4) | — |
 | Isolamento por usuário e parâmetros | Atende | `lib/query.ts:8-24` (`cart/favorites/profile/wallets/orders/quote` com `userId`); catálogo/NFT públicos sem usuário; `phase0-isolation` (3 testes) | `keys.session` e queries públicas sem usuário, por desenho |
 | Recuperação de falhas sem duplicar operações | Atende | Mutations sem retry (`query.ts:29`); idempotência no pedido | — |
 | Rotas inexistentes e acesso direto a qualquer tela | Parcial | `notFoundComponent` (`router.tsx:29`), 404 de NFT e pedido, `vercel.json` com rewrite; `foundation:24` | 404 global sem navegação de volta; acesso direto em **produção** não verificado (sem deploy) |
@@ -105,12 +105,12 @@ Legenda: **Atende**, **Parcial**, **Não atende**.
 | --- | --- | --- | --- | --- |
 | Sucesso | `default` | Atende | quase todos | — |
 | Resultado vazio | `empty` | Atende | `phase7-marketplace:48` | — |
-| Latência variável | `variable-latency` | Parcial | **nenhum** | Teste de ordem de chegada |
-| Respostas fora de ordem | `variable-latency` (páginas ímpares 900 ms / pares 100 ms) | Parcial | **nenhum** | Teste que navega páginas rápido e confere o resultado final |
+| Latência variável | `variable-latency` | Atende ✔ | `phase17:65` | — |
+| Respostas fora de ordem | `variable-latency` (páginas ímpares 900 ms / pares 100 ms) | Atende ✔ | `phase17:65` (página 3 lenta pedida antes da 4 rápida; a tela fica na 4 depois do atraso) | — |
 | Falha de conexão | `network-error` | Atende | `phase13:160` | — |
-| HTTP 4xx/5xx | `http-500` (503), `unauthorized` (401), 409/422 de negócio | Parcial | `foundation:44` (503) | Sem 4xx de catálogo coberto; `unauthorized` sem teste |
-| Sessão expirada | `POST /__mock/session/expire`, `unauthorized` | Parcial | `phase6-auth:51` | Só por recarga; ver §2 |
-| Acesso não autorizado | `unauthorized`, 401/403 nos handlers privados | Parcial | `phase7-resilience:92` (403) | `unauthorized` sem teste |
+| HTTP 4xx/5xx | `http-500` (503), `unauthorized` (401), 409/422 de negócio | Parcial ✔ | `foundation:44` (503), `phase18:24,38` (`unauthorized`) | Sem 4xx genérico de catálogo além do 401 |
+| Sessão expirada | `POST /__mock/session/expire`, `unauthorized` | Atende ✔ | `phase6-auth:51`, `phase16:71,86,103`, `phase18:38`, `phase19` (relógio parado) | — |
+| Acesso não autorizado | `unauthorized`, 401/403 nos handlers privados | Atende ✔ | `phase18:24` (visitante), `phase18:38` (com usuário), `phase7-resilience:92` (403) | — |
 | Conflito de cadastro | e-mail duplicado (409 com `fields.email`) | Atende | `phase6-auth:11,97` | — |
 | Validação de formulário | 422 com `fields` | Atende | `phase6-auth:97`, `phase15:67` | — |
 | Cupom inválido ou expirado | `INVALID_COUPON` / `COUPON_EXPIRED` | Atende | `phase9:17,69` | — |
@@ -119,7 +119,7 @@ Legenda: **Atende**, **Parcial**, **Não atende**.
 | Timeout após criar pedido, recuperação por idempotência | `payment-timeout` | Atende | `phase13:128`, `phase7-resilience:56,64` | — |
 | Pagamento confirmado | `default` | Atende | `phase5:11`, `phase13:72` | — |
 | Pagamento recusado | `payment-declined` | Atende | `phase7-resilience:47` | — |
-| (extra) Carteira recusada | `wallet-rejected` | Parcial | **nenhum** | Teste |
+| (extra) Carteira recusada | `wallet-rejected` | Atende ✔ | `phase18:59` | O teste achou e o `fix` corrigiu um bug: Desconectar religava a carteira sozinho |
 | (extra) Pedido pendente | `payment-pending`, `payment-held` | Atende | `phase10:49`, `phase0-realtime:79` | `payment-held` não está no README |
 
 ---
@@ -150,7 +150,7 @@ Legenda: **Atende**, **Parcial**, **Não atende**.
 | Movimento reduzido | Atende | `styles.css:345`, `motion-reduce:*`; `phase12:64` | — |
 | 390 / 768 / 1440 | Parcial | Três projetos Playwright; baselines nos três | Specs de fluxo nos 3 projetos, mas **tablet** não tem frame (docs do desvio em `ARCHITECTURE.md`) |
 | Teclado e foco visível | Atende | `styles.css:319-333` (`:focus-visible`), skip link (`foundation:57`) | Nenhum spec percorre um formulário ou fluxo inteiro só com teclado |
-| Foco em diálogos e drawers | Parcial | Radix `Modal`/`Sheet`; `phase12:11` (painel de filtros), `:27` (zoom da galeria) | **Diálogo "Revise sua compra" não tem teste de foco** (armadilha, devolução ao botão, Esc) |
+| Foco em diálogos e drawers | Atende ✔ | Radix `Modal`/`Sheet`; `phase12:11` (painel de filtros), `:27` (zoom da galeria); **`phase20` (diálogo "Revise sua compra": foco entra, fica preso em Tab/Shift+Tab, Esc e Fechar devolvem o foco ao botão)** | — |
 | Semântica, labels, erros associados | Atende | `aria-invalid`/`aria-describedby` em `TextField`/`Input`; `phase6:97`, `phase15:50` | — |
 | Alternativas textuais | Atende | `Image` com `alt`; checagem manual | Nenhuma verificação automatizada (sem axe, sem `eslint-plugin-jsx-a11y`) |
 | Contraste e estados não só por cor | Parcial | Ajustes registrados em `ARCHITECTURE.md` | Sem verificação automatizada |
@@ -164,7 +164,7 @@ Legenda: **Atende**, **Parcial**, **Não atende**.
 
 | # | Item | Situação | Specs que cobrem | O que falta |
 | --- | --- | --- | --- | --- |
-| 1 | Busca, filtros combinados, ordenação, paginação, histórico | **Parcial** ✔ | `phase7-marketplace:3` (busca+filtros), `:16` (debounce, só mobile), `:27` (paginação+histórico, só desktop), `foundation:15`, `phase16:42` (paginação, URL, histórico e refresh em desktop e mobile) | **Ordenação sem teste** |
+| 1 | Busca, filtros combinados, ordenação, paginação, histórico | **Atende ✔** | `phase7-marketplace:3` (busca+filtros), `:16`, `:27`, `foundation:15`, `phase16:42` (paginação), `phase17:22,46` (ordenação por preço e por nome, reinício da página, refresh), `phase17:65` (fora de ordem) | — |
 | 2 | Acesso direto ao detalhe e recurso inexistente | Atende | `foundation:4,11` (404 de NFT), `:24` (rota desconhecida) | — |
 | 3 | Cadastro, login, expiração, logout, troca de usuário | **Atende ✔** | `phase6-auth:11,27,39,51,76`, `phase0-isolation:18`, `phase16:71,86,103` (expiração sem recarga: navegação, ação na página e envio do pedido com retomada) | — |
 | 4 | Favoritos com falha de mutation e recuperação | Atende | `phase7-resilience:17`, `phase11:76`, `phase8:38`, `phase6:76` | — |
@@ -173,9 +173,9 @@ Legenda: **Atende**, **Parcial**, **Não atende**.
 | 7 | Falha de pagamento, clique repetido, timeout com mesmo pedido | Atende | `phase7-resilience:47,56,64`, `phase13:106,128` | — |
 | 8 | Perfil, avatar, senha, carteiras com erros de validação | Atende | `phase15-account` (14 testes), `phase8:55`, `phase13:141` | — |
 | 9 | Preço/disponibilidade via Socket.IO durante o checkout | Atende | `phase9:31,39,58` | — |
-| 10 | Eventos duplicados/antigos, desconexão, retomada de pedido pendente | Atende | `phase10-realtime:28,49`, `phase13:169`, `phase0-realtime:79` | — |
-| 11 | Teclado, foco de diálogos, validação de formulários | **Parcial** | `phase12:11,27,46`, `foundation:57`, validação em `phase6:97`, `phase15:50` | Sem teste de teclado em fluxo completo; diálogo de revisão sem foco testado; sem axe |
-| 12 | Skeletons com carga lenta, feedback de falha, nova tentativa | Atende | `foundation:44`, `phase11:17,32,55,66,100`, `phase13:160`, `phase15:147` | — |
+| 10 | Eventos duplicados/antigos, desconexão, retomada de pedido pendente | Atende ✔ | `phase10-realtime:28,49`, `phase13:169`, `phase0-realtime:79`, `phase21` (nft.updated duplicado/antigo sem refetch nem aplicação do payload; order.updated duplicado/antigo; queda do socket com pedido pendente, 1 só POST) | — |
+| 11 | Teclado, foco de diálogos, validação de formulários | **Parcial** ✔ | `phase12:11,27,46`, `phase20` (diálogo de revisão), `foundation:57`, validação em `phase6:97`, `phase15:50` | Sem teste de teclado em fluxo completo e sem axe |
+| 12 | Skeletons com carga lenta, feedback de falha, nova tentativa | Atende ✔ | `foundation:44`, `phase11:17,32,55,66,100`, `phase13:160`, `phase15:147`, `phase22` (detalhe em 768px: shimmer, sem overflow, CLS < 0,01, miniatura e título a ≤3px) | Abaixo da dobra o skeleton do detalhe em 768px é ~476px mais baixo que o conteúdo (2363 × 1887px de página); sem footer nessa largura, não há deslocamento |
 
 Requisitos transversais do §9:
 
@@ -184,7 +184,7 @@ Requisitos transversais do §9:
 | Chromium desktop e mobile nos fluxos principais | Atende | `playwright.config.ts` (3 projetos) | — |
 | **Regressão visual de início, detalhe, carrinho, pagamento com baselines versionadas e dados estáveis** | **Não atende** | `visual-regression.spec.ts:17-38`; 12 PNGs em `visual-regression.spec.ts-snapshots/` | Baselines são do primeiro commit (`db97731`), **anteriores a todas as telas refeitas**; o `progresso.md` registra falha em 8 casos + `phase5-visual` mobile e adia a regeneração. Nomes terminam em `-win32`: **falhariam no Linux/CI**. Teste só do `/` com `fullPage`, sem máscara de dados voláteis |
 | Estado isolado por teste | Atende | Contexto novo do Playwright (localStorage vazio) + `reset` | — |
-| **Controle de relógio, latência e disparo de eventos em cenários sensíveis a tempo** | **Parcial** | Latência e disparo controlados via cenários e `__mock/*`; | **`page.clock` não é usado em nenhum spec.** O debounce de 300 ms e o `setTimeout(400)` de confirmação dependem de tempo real |
+| **Controle de relógio, latência e disparo de eventos em cenários sensíveis a tempo** | **Atende ✔** | Latência e disparo por cenários e `__mock/*`; **`page.clock` em `phase19`** (pedido pendente até o relógio avançar, confirmação só pelo socket; expiração de sessão com o relógio parado) | O debounce de 300 ms não é controlado por relógio (usa espera real em `phase7-marketplace:16`, asserção existente) |
 | Relatório HTML e traces de falha | Atende | `playwright.config.ts`: `reporter html`, `trace: retain-on-failure` | — |
 | Testes de tempo real passam pelo socket.io-client; REST pelos handlers | Atende | Handlers MSW + `broadcast*` | — |
 | Última execução completa conhecida | Parcial | `progresso.md`: 132 testes passaram (sem visuais) depois do perfil | Nenhuma execução completa **incluindo** `visual-regression`; não reexecutado agora |
@@ -242,12 +242,12 @@ Requisitos transversais do §9:
 4. ~~Expiração de sessão incompleta.~~ **Resolvido** em `3da74bf` + `phase16` (ver §2).
 
 **Risco médio**
-
+6. ~~Respostas fora de ordem sem prova.~~ **Resolvido**: `phase17` (ordenação e fora de ordem), `phase18` (`unauthorized`, `wallet-rejected`; achou e corrigiu o bug do Desconectar).
 5. **README e `ARCHITECTURE.md` desatualizados.** Frases de "estrutura inicial", política de cache sem as otimistas e sem o descarte de respostas obsoletas, `startRealtime` descrito como no layout, `payment-held` e endpoints `__mock/*` sem documentação, README sem roteiro de reprodução das falhas. (§12)
-6. **Respostas fora de ordem sem prova.** `variable-latency` e `unauthorized` existem no MSW e nenhum spec os usa; ordenação sem spec; `wallet-rejected` sem spec. (§4, §6, §9 itens 1 e 3)
+8. ~~Controle de relógio ausente.~~ **Resolvido**: `phase19`.
 7. **Timeout real de rede só no pedido.** Falta cenário em que a conexão exceda os 8 s do Axios em catálogo/detalhe; `conditions()` só vale para `GET /api/nfts` e detalhe. (§6)
 8. **Controle de relógio ausente.** Nenhum `page.clock`; debounce e confirmação automática (400 ms) dependem de tempo real. (§9)
-9. ~~Paginação inacessível no mobile.~~ **Resolvido** em `4979c7b` (desvio do frame registrado em `ARCHITECTURE.md`).
+10. **Acessibilidade sem verificação automatizada.** Sem axe, sem `jsx-a11y`; teclado só em 4 pontos. O foco do diálogo "Revise sua compra" passou a ter teste (`phase20`). (§8, §9 item 11)
 10. **Acessibilidade sem verificação automatizada.** Sem axe, sem `jsx-a11y`; teclado só em 4 pontos; diálogo "Revise sua compra" sem teste de foco. (§8, §9 item 11)
 
 **Risco baixo**
