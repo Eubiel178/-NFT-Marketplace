@@ -5,8 +5,7 @@ dist/
 .env.*.local
 playwright-report/
 test-results/
-reports/lighthouse/
 .agents/
 opencode.json
-reports/
+reports/screenshots/
 skills-lock.json

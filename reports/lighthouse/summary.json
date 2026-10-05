@@ -1,0 +1,360 @@
+{
+  "date": "2026-10-05T00:51:04.932Z",
+  "node": "v24.18.0",
+  "platform": "win32",
+  "os": "Windows_NT 10.0.19045 (x64)",
+  "cpus": "12 x AMD Ryzen 5 5500",
+  "memoryGB": 16,
+  "base": "http://127.0.0.1:4173",
+  "note": "Build de demonstração otimizado (npm run build:demo + preview), cenário default do MSW, Chrome limpo sem cache; sem simplificações para a auditoria.",
+  "conditions": {
+    "mobile": {
+      "lighthouse": "13.5.0",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36",
+      "networkUserAgent": "Mozilla/5.0 (Linux; Android 11; moto g power (2022)) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Mobile Safari/537.36",
+      "benchmarkIndex": 3125,
+      "formFactor": "mobile",
+      "screenEmulation": {
+        "mobile": true,
+        "width": 412,
+        "height": 823,
+        "deviceScaleFactor": 1.75,
+        "disabled": false
+      },
+      "throttlingMethod": "simulate",
+      "throttling": {
+        "rttMs": 150,
+        "throughputKbps": 1638.4,
+        "requestLatencyMs": 562.5,
+        "downloadThroughputKbps": 1474.5600000000002,
+        "uploadThroughputKbps": 675,
+        "cpuSlowdownMultiplier": 4
+      }
+    },
+    "desktop": {
+      "lighthouse": "13.5.0",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36",
+      "networkUserAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+      "benchmarkIndex": 3186,
+      "formFactor": "desktop",
+      "screenEmulation": {
+        "mobile": false,
+        "width": 1440,
+        "height": 900,
+        "deviceScaleFactor": 1,
+        "disabled": false
+      },
+      "throttlingMethod": "simulate",
+      "throttling": {
+        "rttMs": 40,
+        "throughputKbps": 10240,
+        "requestLatencyMs": 0,
+        "downloadThroughputKbps": 0,
+        "uploadThroughputKbps": 0,
+        "cpuSlowdownMultiplier": 1
+      }
+    }
+  },
+  "results": [
+    {
+      "path": "/",
+      "profile": "mobile",
+      "runs": [
+        {
+          "version": "13.5.0",
+          "scores": {
+            "performance": 90,
+            "accessibility": 100,
+            "best-practices": 96,
+            "seo": 92
+          },
+          "LCP": 3394.3199999999997,
+          "CLS": 0,
+          "TBT": 110,
+          "environment": {
+            "networkUserAgent": "Mozilla/5.0 (Linux; Android 11; moto g power (2022)) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Mobile Safari/537.36",
+            "hostUserAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36",
+            "benchmarkIndex": 3125,
+            "credits": {
+              "axe-core": "4.13.0"
+            }
+          }
+        },
+        {
+          "version": "13.5.0",
+          "scores": {
+            "performance": 90,
+            "accessibility": 100,
+            "best-practices": 100,
+            "seo": 92
+          },
+          "LCP": 3394.2664000000004,
+          "CLS": 0,
+          "TBT": 113,
+          "environment": {
+            "networkUserAgent": "Mozilla/5.0 (Linux; Android 11; moto g power (2022)) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Mobile Safari/537.36",
+            "hostUserAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36",
+            "benchmarkIndex": 3184.5,
+            "credits": {
+              "axe-core": "4.13.0"
+            }
+          }
+        },
+        {
+          "version": "13.5.0",
+          "scores": {
+            "performance": 90,
+            "accessibility": 100,
+            "best-practices": 100,
+            "seo": 92
+          },
+          "LCP": 3388.1096,
+          "CLS": 0,
+          "TBT": 113,
+          "environment": {
+            "networkUserAgent": "Mozilla/5.0 (Linux; Android 11; moto g power (2022)) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Mobile Safari/537.36",
+            "hostUserAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36",
+            "benchmarkIndex": 3199,
+            "credits": {
+              "axe-core": "4.13.0"
+            }
+          }
+        }
+      ],
+      "median": {
+        "performance": 90,
+        "accessibility": 100,
+        "best-practices": 100,
+        "seo": 92,
+        "LCP": 3394.2664000000004,
+        "CLS": 0,
+        "TBT": 113
+      }
+    },
+    {
+      "path": "/",
+      "profile": "desktop",
+      "runs": [
+        {
+          "version": "13.5.0",
+          "scores": {
+            "performance": 99,
+            "accessibility": 97,
+            "best-practices": 100,
+            "seo": 92
+          },
+          "LCP": 938.5090499999999,
+          "CLS": 0.03326756814062446,
+          "TBT": 0,
+          "environment": {
+            "networkUserAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+            "hostUserAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36",
+            "benchmarkIndex": 3186,
+            "credits": {
+              "axe-core": "4.13.0"
+            }
+          }
+        },
+        {
+          "version": "13.5.0",
+          "scores": {
+            "performance": 100,
+            "accessibility": 97,
+            "best-practices": 100,
+            "seo": 92
+          },
+          "LCP": 821.2823000000001,
+          "CLS": 0.03326756814062446,
+          "TBT": 0,
+          "environment": {
+            "networkUserAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+            "hostUserAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36",
+            "benchmarkIndex": 3127.5,
+            "credits": {
+              "axe-core": "4.13.0"
+            }
+          }
+        },
+        {
+          "version": "13.5.0",
+          "scores": {
+            "performance": 99,
+            "accessibility": 97,
+            "best-practices": 100,
+            "seo": 92
+          },
+          "LCP": 960.02655,
+          "CLS": 0.03326756814062446,
+          "TBT": 0,
+          "environment": {
+            "networkUserAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+            "hostUserAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36",
+            "benchmarkIndex": 3196,
+            "credits": {
+              "axe-core": "4.13.0"
+            }
+          }
+        }
+      ],
+      "median": {
+        "performance": 99,
+        "accessibility": 97,
+        "best-practices": 100,
+        "seo": 92,
+        "LCP": 938.5090499999999,
+        "CLS": 0.03326756814062446,
+        "TBT": 0
+      }
+    },
+    {
+      "path": "/nfts/nft-1",
+      "profile": "mobile",
+      "runs": [
+        {
+          "version": "13.5.0",
+          "scores": {
+            "performance": 93,
+            "accessibility": 97,
+            "best-practices": 100,
+            "seo": 92
+          },
+          "LCP": 3068.1184000000003,
+          "CLS": 0,
+          "TBT": 89,
+          "environment": {
+            "networkUserAgent": "Mozilla/5.0 (Linux; Android 11; moto g power (2022)) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Mobile Safari/537.36",
+            "hostUserAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36",
+            "benchmarkIndex": 3195,
+            "credits": {
+              "axe-core": "4.13.0"
+            }
+          }
+        },
+        {
+          "version": "13.5.0",
+          "scores": {
+            "performance": 93,
+            "accessibility": 97,
+            "best-practices": 100,
+            "seo": 92
+          },
+          "LCP": 3034.0742,
+          "CLS": 0,
+          "TBT": 89,
+          "environment": {
+            "networkUserAgent": "Mozilla/5.0 (Linux; Android 11; moto g power (2022)) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Mobile Safari/537.36",
+            "hostUserAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36",
+            "benchmarkIndex": 3192.5,
+            "credits": {
+              "axe-core": "4.13.0"
+            }
+          }
+        },
+        {
+          "version": "13.5.0",
+          "scores": {
+            "performance": 93,
+            "accessibility": 97,
+            "best-practices": 100,
+            "seo": 92
+          },
+          "LCP": 3035.6422000000007,
+          "CLS": 0,
+          "TBT": 96,
+          "environment": {
+            "networkUserAgent": "Mozilla/5.0 (Linux; Android 11; moto g power (2022)) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Mobile Safari/537.36",
+            "hostUserAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36",
+            "benchmarkIndex": 3106.5,
+            "credits": {
+              "axe-core": "4.13.0"
+            }
+          }
+        }
+      ],
+      "median": {
+        "performance": 93,
+        "accessibility": 97,
+        "best-practices": 100,
+        "seo": 92,
+        "LCP": 3035.6422000000007,
+        "CLS": 0,
+        "TBT": 89
+      }
+    },
+    {
+      "path": "/nfts/nft-1",
+      "profile": "desktop",
+      "runs": [
+        {
+          "version": "13.5.0",
+          "scores": {
+            "performance": 99,
+            "accessibility": 97,
+            "best-practices": 100,
+            "seo": 92
+          },
+          "LCP": 851.11185,
+          "CLS": 0,
+          "TBT": 0,
+          "environment": {
+            "networkUserAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+            "hostUserAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36",
+            "benchmarkIndex": 3138.5,
+            "credits": {
+              "axe-core": "4.13.0"
+            }
+          }
+        },
+        {
+          "version": "13.5.0",
+          "scores": {
+            "performance": 99,
+            "accessibility": 97,
+            "best-practices": 100,
+            "seo": 92
+          },
+          "LCP": 846.3124250000001,
+          "CLS": 0,
+          "TBT": 0,
+          "environment": {
+            "networkUserAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+            "hostUserAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36",
+            "benchmarkIndex": 3191,
+            "credits": {
+              "axe-core": "4.13.0"
+            }
+          }
+        },
+        {
+          "version": "13.5.0",
+          "scores": {
+            "performance": 99,
+            "accessibility": 97,
+            "best-practices": 100,
+            "seo": 92
+          },
+          "LCP": 855.1663249999999,
+          "CLS": 0,
+          "TBT": 0,
+          "environment": {
+            "networkUserAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36",
+            "hostUserAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/154.0.0.0 Safari/537.36",
+            "benchmarkIndex": 3130,
+            "credits": {
+              "axe-core": "4.13.0"
+            }
+          }
+        }
+      ],
+      "median": {
+        "performance": 99,
+        "accessibility": 97,
+        "best-practices": 100,
+        "seo": 92,
+        "LCP": 851.11185,
+        "CLS": 0,
+        "TBT": 0
+      }
+    }
+  ]
+}

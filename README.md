@@ -299,9 +299,9 @@ npm run dev
 | `npm run test:e2e:ui` | Playwright em modo interativo |
 | `npm run test:report` | Relatório HTML; traces e screenshots de falhas em `test-results` |
 | `npm run test:visual` | Só os testes `@visual` (regressão visual) |
-| `npm run audit:lighthouse` | 12 medições (Home e Detalhe × mobile e desktop × 3), HTML/JSON e medianas em `reports/lighthouse/`; requer o preview em execução e Chrome |
+| `npm run audit:lighthouse` | 12 medições (Início e Detalhe × mobile e desktop × 3), HTML/JSON e medianas em `reports/lighthouse/` (versionados); requer o preview em execução e Chrome |
 
-Para um spec isolado: `npx playwright test phase23 --project=chromium-desktop --project=chromium-mobile`. Para Lighthouse, execute `npm run build:demo` e `npm run preview` em um terminal e `npm run audit:lighthouse` em outro. `CHROME_PATH` escolhe o Chrome/Chromium e `AUDIT_URL` muda a origem. A configuração não simplifica a aplicação para a auditoria.
+Para um spec isolado: `npx playwright test phase23 --project=chromium-desktop --project=chromium-mobile`. Para Lighthouse, execute `npm run build:demo` e `npm run preview` em um terminal e `npm run audit:lighthouse` em outro. `CHROME_PATH` escolhe o Chrome/Chromium e `AUDIT_URL` muda a origem. A configuração não simplifica a aplicação para a auditoria; o `summary.json` registra versões, sistema, emulação e throttling.
 
 ### Credenciais fictícias
 
@@ -395,6 +395,19 @@ Cenário com tempo real: abra `/nfts/nft-1`, aguarde o carregamento e execute `a
 - **Sessão expirada**: qualquer `401` do Axios (menos login, cadastro e logout) descarta os dados privados, encerra as assinaturas e vai ao login com o destino atual; o guard faz o mesmo a cada navegação privada. No pagamento, o formulário e a revisão aberta são guardados por usuário e restaurados depois do login, com a mesma chave de idempotência (sem pedido duplicado). Detalhes em [ARCHITECTURE.md](ARCHITECTURE.md).
 - **Pedido pendente**: `GET /api/orders?status=pending` (por usuário) faz o `/checkout` redirecionar para o pedido; `POST /api/orders` com pedido pendente responde `409 ORDER_PENDING`. Confirmado e recusado são terminais e liberam novo pagamento.
 - **ETH** é sempre string decimal (BigInt em wei nos cálculos) e quantidades são inteiras.
+
+### Desempenho (Lighthouse)
+
+Medianas de 3 medições por página e perfil, sobre o build de demonstração (`npm run build:demo` + `npm run preview`), cenário `default`, Lighthouse 13.5.0, Chrome 154, Node 24.18.0, Windows 10 x64 (04/10/2026). Relatórios HTML e JSON em [`reports/lighthouse/`](reports/lighthouse/); ambiente, throttling e diagnóstico em [ARCHITECTURE.md](ARCHITECTURE.md#desempenho-e-lighthouse-medição-de-04102026).
+
+| Página | Perfil | Performance | Accessibility | Best Practices | SEO | LCP (ms) | CLS | TBT (ms) |
+| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| Início | mobile | 90 | 100 | 100 | 92 | 3.394 | 0 | 113 |
+| Início | desktop | 99 | 97 | 100 | 92 | 939 | 0,0333 | 0 |
+| Detalhe | mobile | 93 | 97 | 100 | 92 | 3.036 | 0 | 89 |
+| Detalhe | desktop | 99 | 97 | 100 | 92 | 851 | 0 | 0 |
+
+Todas as medianas atendem as metas (≥ 90 / ≥ 95 / ≥ 95 / ≥ 90). O Início mobile está exatamente em 90 de Performance (LCP acima de 2,5 s). A medição foi local; deve ser repetida na URL publicada, que ainda não existe.
 
 ### Testes E2E (`tests/e2e`)
 

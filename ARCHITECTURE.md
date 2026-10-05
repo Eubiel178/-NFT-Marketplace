@@ -216,6 +216,38 @@ Qualquer `401` do Axios, exceto login, cadastro e logout (onde `401` é credenci
 
 `GET /api/orders?status=pending` devolve só os pedidos do usuário da sessão. Ao abrir `/checkout`, o cliente redireciona para o pedido pendente; `POST /api/orders` com pedido pendente do usuário responde `409 ORDER_PENDING` com `fields.orderId`, mesmo com outra chave de idempotência (a repetição da mesma chave continua devolvendo o mesmo pedido, antes dessa checagem). Confirmado e recusado são terminais e liberam um novo pagamento. Coberto por `phase23`.
 
+## Desempenho e Lighthouse (medição de 04/10/2026)
+
+**Ferramentas e ambiente.** Lighthouse 13.5.0; Chrome headless 154.0.0.0 (o instalado em `C:\Program Files\Google\Chrome`); Node v24.18.0; Windows 10.0.19045 x64; AMD Ryzen 5 5500 (12 threads), 16 GB; `benchmarkIndex` 3125 (mobile) e 3186 (desktop). Build `npm run build:demo` servido por `vite preview` em `http://127.0.0.1:4173`, cenário `default` do MSW, Chrome novo e sem cache a cada medição, mocks, imagens, fontes e Socket.IO ativos (nenhuma simplificação para a auditoria). Um servidor de desenvolvimento do Vite (porta 5173) estava aberto e ocioso durante a medição. Script: `scripts/lighthouse.mjs`; relatórios HTML e JSON de cada medição e o `summary.json` (versões, sistema, condições e medianas) estão em `reports/lighthouse/` e são versionados.
+
+| Perfil | Emulação | Throttling (`simulate`) |
+| --- | --- | --- |
+| Mobile | 412×823, DPR 1,75, UA de Android | RTT 150 ms, 1.638,4 Kbps, CPU 4× mais lenta |
+| Desktop | 1440×900, DPR 1 | RTT 40 ms, 10.240 Kbps, CPU 1× |
+
+**Medianas de 3 medições por página e perfil**
+
+| Página | Perfil | Performance | Accessibility | Best Practices | SEO | LCP (ms) | CLS | TBT (ms) |
+| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| Início | mobile | 90 | 100 | 100 | 92 | 3.394 | 0 | 113 |
+| Início | desktop | 99 | 97 | 100 | 92 | 939 | 0,0333 | 0 |
+| Detalhe | mobile | 93 | 97 | 100 | 92 | 3.036 | 0 | 89 |
+| Detalhe | desktop | 99 | 97 | 100 | 92 | 851 | 0 | 0 |
+
+Metas (Performance ≥ 90, Accessibility ≥ 95, Best Practices ≥ 95, SEO ≥ 90): **todas as medianas atendem**; nenhuma categoria ficou abaixo. As três medições de cada combinação deram a mesma pontuação, exceto Best Practices do Início mobile (96, 100, 100) e Performance do Início desktop (99, 100, 99). Nada foi corrigido nesta etapa: abaixo está só o diagnóstico do que fica perto da meta ou fora de 100, para referência.
+
+**Diagnóstico (nenhum item está abaixo da meta)**
+
+- **Performance do Início mobile = 90, exatamente na meta** (as 3 medições deram 90; LCP 3.394 ms, com nota 0,67 no audit de LCP, acima dos 2,5 s considerados bons). O elemento de LCP é `img.block` (`/assets/figma/mobile-hero-mask.svg`) no `section.relative` do hero, com `loading="lazy"`, sem `fetchpriority=high` e não descobrível no HTML inicial. A decomposição do LCP no relatório (tempo observado, sem o throttling simulado, ~600 ms) é: 348 ms de atraso até o recurso começar a carregar, 63 ms de download e 187 ms de atraso de renderização. A causa é a cadeia de carga de uma SPA com MSW: HTML → `index-*.js` → chunk `browser-*.js` (worker do MSW, 169,6 kB, ~530 ms de execução, 454 ms só de script) → `render-*.js` (740 kB, 258 ms) → `GET /api/nfts` (resposta só depois do worker pronto) → imagem. O chunk do MSW existe porque o build de demonstração precisa do mock em produção. Com o TBT de 113 ms (mobile, CPU 4× mais lenta), os mesmos dois chunks são os maiores responsáveis.
+- **Performance do Detalhe mobile = 93**: mesmo padrão (LCP 3.036 ms; imagem `Emerald Ape #042` com `loading="eager"`, mas não descobrível no HTML inicial e sem `fetchpriority=high`; atraso de carregamento 281 ms). TBT 89 ms.
+- **Início desktop e Detalhe desktop (99)**: LCP 939 e 851 ms, TBT 0. A imagem de LCP (`/assets/figma/home-hero.png`, `loading="eager"`) também não é descobrível no HTML inicial e não tem `fetchpriority=high`; atraso de carregamento de ~300 ms.
+- **CLS do Início desktop = 0,0333** (bom, abaixo de 0,1, e igual nas 3 medições). Vem de `section#home-products` (o catálogo, 1200×1379 px), que se desloca quando os dados chegam. Os demais perfis e o Detalhe têm CLS 0.
+- **Accessibility 97 (Início desktop, Detalhe mobile e desktop; meta 95)**: falha só o audit `target-size`. No Início desktop, os dois `input[type=range]` do filtro de preço (`aria-label` "Preço mínimo" e "Preço máximo", `pointer-events-none`, 16 px de altura). No Detalhe, os botões `role="tab"` "Página 1" e "Página 2" do `CarouselDots` (ponto visual de 12 px, área de toque de 24 px com margem negativa que se sobrepõe à do vizinho). O Início mobile deu 100.
+- **SEO 92 (meta 90)**: falha só `robots-txt` ("robots.txt is not valid"). `/robots.txt` não existe em `public/`, então o servidor responde 200 com o `index.html` (fallback de SPA); no deploy da Vercel o rewrite de `vercel.json` (que só exclui `assets/` e `mockServiceWorker.js`) faria o mesmo. O resto do SEO está atendido.
+- **Best Practices 96 em 1 de 3 medições do Início mobile (mediana 100)**: o audit `errors-in-console` registrou `GET /favicon.ico` com 404 (não há `favicon.ico`; só aparece quando o Chrome pede o ícone). Nas outras 11 medições, 100.
+
+**Limitações da medição.** Chrome headless e `vite preview` locais, sem CDN, e CPU do Windows com `simulate`: valores absolutos mudam em outro hardware e na URL publicada (o deploy ainda não existe). A medição do deploy deve ser repetida depois de publicar.
+
 ## Limitações conhecidas
 
 Tudo abaixo está registrado em [docs/eliminatorios.md](docs/eliminatorios.md) e não foi resolvido.
@@ -244,4 +276,4 @@ Tudo abaixo está registrado em [docs/eliminatorios.md](docs/eliminatorios.md) e
 
 **Acessibilidade e testes**
 - Não há verificação automatizada de acessibilidade (sem axe, sem `eslint-plugin-jsx-a11y`); teclado e foco são cobertos nos pontos citados em `docs/eliminatorios.md` (§8 e §9 item 11), sem um fluxo completo só por teclado.
-- Baselines visuais geradas no Windows (Chromium do Playwright); outro sistema com rasterização de fonte diferente pode exigir regenerá-las. O Lighthouse da entrega final: ver `docs/eliminatorios.md`.
+- Baselines visuais geradas no Windows (Chromium do Playwright); outro sistema com rasterização de fonte diferente pode exigir regenerá-las. O Lighthouse foi medido sobre o build de demonstração local; repetir na URL publicada (ver "Desempenho e Lighthouse").

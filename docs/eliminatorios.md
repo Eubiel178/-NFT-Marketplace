@@ -21,7 +21,7 @@ Legenda: **Atende**, **Parcial**, **Não atende**.
 | Socket.IO (socket.io-client) | Atende | `realtime/index.ts:11` `io(env.socketUrl, { transports: ['websocket'], autoConnect: false })`; eventos chegam por `socket.on`; nenhum setter/cache chamado direto pelo "evento" | O `README` de entrega ainda descreve só o básico (§6) |
 | MSW | Atende | `mocks/browser.ts` (`setupWorker`), `mocks/handlers.ts`, `public/mockServiceWorker.js`, `main.tsx` só importa `./mocks/browser` no bootstrap | — |
 | Playwright | Atende (exceto visual) | `playwright.config.ts`, 19 specs, 3 projetos | Ver §8 |
-| Lighthouse | Parcial | `scripts/lighthouse.mjs`, `npm run audit:lighthouse`; relatórios em `reports/lighthouse/` | Os relatórios são da estrutura inicial (02/10) e `reports/` está no `.gitignore`. Ver §9 |
+| Lighthouse | Atende ✔ | `scripts/lighthouse.mjs`, `npm run audit:lighthouse`; relatórios HTML/JSON versionados em `reports/lighthouse/` (medição de 04/10/2026, todas as metas atendidas) | Repetir na URL publicada |
 
 ---
 
@@ -195,10 +195,10 @@ Requisitos transversais do §9:
 
 | Requisito | Situação | Evidência | O que falta |
 | --- | --- | --- | --- |
-| Script versionado, 3 medições por página/perfil, medianas | Atende | `scripts/lighthouse.mjs`, `reports/lighthouse/summary.json` (12 medições) | — |
-| Metas (≥90/95/95/90) na aplicação final | **Não atende** | `docs/VALIDATION.md` (02/10): 98–100 / 100 / 100 / 91, LCP 2121–2384 ms mobile | Resultados são **da estrutura inicial**, o próprio documento diz que não valem. Nenhuma medição desde Início/Detalhe/Carrinho/Pagamento refeitos |
-| Relatórios HTML/JSON entregues com versões/ambiente | Parcial | Gerados | `reports/` e `reports/lighthouse/` estão no `.gitignore`: **não vão no repositório** |
-| Análise de LCP/CLS/TBT e justificativa abaixo da meta | Parcial | Tabela em `VALIDATION.md` | Refazer sobre a entrega final |
+| Script versionado, 3 medições por página/perfil, medianas | Atende ✔ | `scripts/lighthouse.mjs` (agora grava também sistema, CPU, Chrome, emulação e throttling), `reports/lighthouse/summary.json`, 12 medições de 04/10/2026 | — |
+| Metas (≥90/95/95/90) na aplicação final | **Atende ✔** | Medianas: Início mobile 90/100/100/92, Início desktop 99/97/100/92, Detalhe mobile 93/97/100/92, Detalhe desktop 99/97/100/92 (build demo final, cenário default); `ARCHITECTURE.md` §Desempenho | Início mobile está exatamente em 90 (LCP 3.394 ms). Medido localmente, não na URL publicada |
+| Relatórios HTML/JSON entregues com versões/ambiente | Atende ✔ | `reports/lighthouse/` versionado (`.gitignore` deixou de ignorá-lo; só `reports/screenshots/` segue ignorado); `summary.json` com Lighthouse 13.5.0, Chrome 154, Node 24.18.0, Windows 10 x64, CPU, throttling e emulação | — |
+| Análise de LCP/CLS/TBT e justificativa abaixo da meta | Atende ✔ | LCP 3.394/939 ms (Início m/d) e 3.036/851 ms (Detalhe m/d); CLS 0, 0,0333, 0, 0; TBT 113, 0, 89, 0 ms. Nenhuma categoria abaixo da meta; diagnóstico do que está na margem em `ARCHITECTURE.md` (cadeia SPA + MSW, imagem de LCP sem `fetchpriority`, `target-size`, `robots.txt`, `favicon.ico`) | Nada foi corrigido; as causas estão listadas |
 
 ---
 
@@ -238,7 +238,7 @@ Requisitos transversais do §9:
 
 1. **Deploy inexistente.** `vercel.json` pronto, mas branch 13 commits à frente do `origin`, sem URL. Falta publicar e validar rota direta, refresh, MSW e Socket.IO na URL. (§12, P0)
 2. ~~Suíte E2E não passa inteira.~~ **Regressão visual resolvida** (baselines regeneradas, sem `-win32`, duas rodadas consecutivas verdes). Falta uma execução completa de `npm run test:e2e` registrada.
-3. **Lighthouse sem medição da entrega final.** Os números em `VALIDATION.md` são da estrutura e `reports/` está fora do git. Faltam as 12 medições novas, versionadas, com análise. (§10)
+3. ~~Lighthouse sem medição da entrega final.~~ **Resolvido** (medição de 04/10/2026, relatórios versionados, todas as metas atendidas). Falta repetir na URL publicada.
 4. ~~Expiração de sessão incompleta.~~ **Resolvido** em `3da74bf` + `phase16` (ver §2).
 
 **Risco médio**
