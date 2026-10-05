@@ -20,6 +20,10 @@ export async function getOrderByKey(idempotencyKey: string, signal?: AbortSignal
   return orderSchema.parse((await http.get(`/orders/by-key/${encodeURIComponent(idempotencyKey)}`, { signal })).data)
 }
 
+export async function getPendingOrders(signal?: AbortSignal) {
+  return z.object({ items: z.array(orderSchema) }).parse((await http.get('/orders', { params: { status: 'pending' }, signal })).data).items
+}
+
 export async function getWalletConnection(signal?: AbortSignal) {
   return z.object({ connection: walletConnectionSchema.nullable() }).parse((await http.get('/wallets/connection', { signal })).data).connection
 }

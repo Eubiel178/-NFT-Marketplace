@@ -198,6 +198,21 @@ function confirmOrder(orderId: string) {
   });
   return current;
 }
+function declineOrder(orderId: string) {
+  const current = db.orders.find((candidate) => candidate.id === orderId);
+  if (!current || current.status !== "pending") return current;
+  current.status = "declined";
+  current.version += 1;
+  saveDb();
+  broadcastOrder({
+    eventId: `${current.id}:${current.version}`,
+    resourceId: current.id,
+    version: current.version,
+    userId: current.userId,
+    status: current.status,
+  });
+  return current;
+}
 function scheduleOrderConfirmation(order: Order) {
   // payment-held mantém o pedido pendente até POST /__mock/orders/:id/confirm.
   if (getScenario() === "payment-held") return;
@@ -513,6 +528,11 @@ export const handlers = [
   }),
   http.post("/api/__mock/orders/:id/confirm", ({ params }) => {
     const order = confirmOrder(String(params.id));
+    if (!order) return error(404, "NOT_FOUND", "Pedido não encontrado");
+    return HttpResponse.json(order);
+  }),
+  http.post("/api/__mock/orders/:id/decline", ({ params }) => {
+    const order = declineOrder(String(params.id));
     if (!order) return error(404, "NOT_FOUND", "Pedido não encontrado");
     return HttpResponse.json(order);
   }),
@@ -938,6 +958,17 @@ export const handlers = [
         return HttpResponse.json(previousOrder, { status: 200 });
       return permissionError();
     }
+    // Pedido pendente do usuário: terminal só com confirmação ou recusa. Não abre outro.
+    const pendingOrder = db.orders.find(
+      (candidate) => candidate.userId === user.id && candidate.status === "pending",
+    );
+    if (pendingOrder)
+      return error(
+        409,
+        "ORDER_PENDING",
+        "Você já tem um pedido aguardando confirmação",
+        { orderId: pendingOrder.id },
+      );
     if (getScenario() === "stale-quote")
       return error(
         409,
@@ -1041,6 +1072,17 @@ export const handlers = [
         "A confirmação demorou. O pedido será recuperado automaticamente",
       );
     return HttpResponse.json(order, { status: 201 });
+  }),
+  // Pedidos do usuário atual, opcionalmente só os de um estado (ex.: ?status=pending).
+  http.get("/api/orders", ({ request }) => {
+    const user = currentUser();
+    if (!user) return userError();
+    const status = orderStatusSchema.safeParse(new URL(request.url).searchParams.get("status"));
+    return HttpResponse.json({
+      items: db.orders.filter(
+        (candidate) => candidate.userId === user.id && (!status.success || candidate.status === status.data),
+      ),
+    });
   }),
   http.get("/api/orders/by-key/:key", ({ params }) => {
     const user = currentUser();

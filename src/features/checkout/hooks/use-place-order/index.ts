@@ -75,6 +75,8 @@ export function usePlaceOrder({ userId, items, coupon, quote, onFieldErrors }: P
     },
     onError: (error) => {
       const details = parseHttpError(error)
+      // O servidor já tem um pedido pendente deste usuário (outra aba, por exemplo): vai até ele.
+      if (details.code === 'ORDER_PENDING' && details.fields?.orderId) void navigate({ to: '/orders/$orderId', params: { orderId: details.fields.orderId } })
       if (details.code === 'QUOTE_STALE') revalidate.mutate()
       if (details.code === 'VALIDATION_ERROR' && details.fields) {
         setReview(null)

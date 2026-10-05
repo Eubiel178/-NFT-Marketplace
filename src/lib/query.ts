@@ -18,6 +18,7 @@ export const keys = {
   profile: (userId: string) => ['profile', userId] as const,
   wallets: (userId: string) => ['wallets', userId] as const,
   order: (userId: string, id: string) => ['orders', userId, id] as const,
+  pendingOrders: (userId: string) => ['orders', userId, 'pending'] as const,
   orderByKey: (userId: string, idempotencyKey: string) => ['orders', userId, 'by-key', idempotencyKey] as const,
   walletConnection: (userId: string) => ['wallet-connection', userId] as const,
 }
