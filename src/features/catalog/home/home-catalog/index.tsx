@@ -61,7 +61,7 @@ export function Catalog({
         />
       </div>
 
-      <div className="mt-14.75 flex items-center justify-end gap-2 max-sm:hidden">
+      <div className="mt-14.75 flex items-center justify-end gap-2 max-sm:mt-8 max-sm:justify-center">
         <Pagination
           currentPage={search.page}
           totalPages={pageCount}

@@ -19,7 +19,7 @@ Chaves públicas incluem todos os parâmetros: `['nfts','list',search]` e `['nft
 
 O socket público pertence ao layout raiz e tem cleanup de listeners/conexão, inclusive StrictMode. Pedidos pendentes abrem uma subscription privada própria, filtrada por `userId` e `orderId`, com reconciliação REST na conexão e reconexão; o cleanup é registrado para o logout. Eventos válidos causam reconsulta REST e versões antigas não regredem o estado. Logout cancela queries, encerra subscriptions privadas e limpa o cache antes de trocar identidade.
 
-O catálogo mantém busca, filtros combináveis, ordenação e paginação no estado da URL; a busca digitada aguarda 300 ms antes de consultar o mesmo `GET /api/nfts`. O filtro de preço usa a faixa visível no Figma (`0` a `2.29` ETH) e só aplica a alteração ao pressionar `Aplicar`. Em mobile a paginação permanece oculta conforme o frame Figma; em tablet os filtros usam o drawer previsto em `docs/figma/responsive.md`.
+O catálogo mantém busca, filtros combináveis, ordenação e paginação no estado da URL; a busca digitada aguarda 300 ms antes de consultar o mesmo `GET /api/nfts`. O filtro de preço usa a faixa visível no Figma (`0` a `2.29` ETH) e só aplica a alteração ao pressionar `Aplicar`. Em mobile a paginação aparece centralizada, com o mesmo padrão do desktop (desvio do frame, que não a desenha: o README exige paginação); em tablet os filtros usam o drawer previsto em `docs/figma/responsive.md`.
 
 ## Sessão, carrinho e dinheiro
 
@@ -81,6 +81,7 @@ As 76 classes `.figma-*` (cópia da lista de estilos do Figma em `px`) não eram
 - Os botões do slider de preço ficam na posição do valor. No frame o botão da direita está no meio da faixa mesmo com o texto "12,30".
 - "Aplicar" fica sempre habilitado, como no frame; aplicar a mesma faixa não muda a URL.
 - Paginação: o app mostra a última página ("… 32") porque o catálogo tem 32 páginas; o frame mostra só "1 2 3 4 >".
+- Paginação no mobile (desvio do frame): o frame mobile não tem paginação, mas o README exige paginação compondo a URL. O mesmo bloco do desktop (1 2 3 4 … 32 e seta) aparece abaixo do grid, centralizado e com 24px de respiro, em 390px; os botões mantêm 35×35.
 - Abas no mobile seguem o frame: as duas primeiras sem espaço entre si e 14px antes de "Em alta"; o sublinhado da aba ativa é 6px mais curto que o texto, como no frame.
 - Promoções e Diário da Cunhagem não aparecem abaixo de `sm`, porque o frame mobile mostra só a primeira dobra. Os títulos das promoções têm a quebra de linha do frame escrita no texto.
 - Título da página: o título visível do hero é o `h1`; "Marketplace de NFTs" (só para leitores de tela) virou `h2`, para a página ter um único `h1`.
