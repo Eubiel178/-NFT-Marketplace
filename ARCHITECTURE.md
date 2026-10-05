@@ -279,13 +279,12 @@ Tudo abaixo está registrado em [docs/eliminatorios.md](docs/eliminatorios.md) e
 - O deploy público ainda não existe (ver "Execução e deploy").
 
 **Tempo e rede nos mocks**
-- Só o pedido tem timeout simulado (`payment-timeout` responde `504`); nenhum cenário faz a conexão exceder os 8 s do Axios no catálogo ou no detalhe.
-- As condições de rede (`slow`, `variable-latency`, `network-error`, `http-500`, `unauthorized`) valem para `GET /api/nfts` e `GET /api/nfts/:id`; os demais recursos têm cenários de erro próprios.
+- As condições de rede (`slow`, `variable-latency`, `timeout`, `network-error`, `http-500`, `unauthorized`) valem para catálogo, detalhe, carrinho e perfil (`GET /api/profile` e `PATCH /api/profile`). Avatar, senha, carteiras, cotação e pedido seguem só com cenários de erro próprios (`profile-error`, `wallets-error`, `quote-error`, `order-error`, `payment-timeout`).
+- O cenário `timeout` deixa a conexão aberta; o erro só aparece depois dos 8 s do Axios mais 1 retry automático (cerca de 17 s), por isso o teste usa tempo real e um limite maior.
 - O debounce de 300 ms da busca não é controlado por `page.clock` (o teste usa espera real).
 
 **Tempo real**
-- O `eventId` é gerado, mas a deduplicação usa só a versão.
-- O mapa de versões vistas de NFT nunca é limpo; um reset do mock com a aba aberta faz as versões voltarem a 1 e o cliente ignora os eventos seguintes até recarregar.
+- A deduplicação usa `eventId` (últimos 500) e versão. O mapa de versões e os `eventId` são limpos no logout e na troca de usuário; um reset do mock com a aba aberta, sem logout, ainda faz as versões voltarem a 1 e o cliente ignora os eventos seguintes até recarregar.
 - Favoritos, perfil e carteiras não têm eventos nem reconciliação na reconexão.
 - A regra `quoteVersion !== 1 → QUOTE_STALE` do mock é um atalho.
 
@@ -294,7 +293,7 @@ Tudo abaixo está registrado em [docs/eliminatorios.md](docs/eliminatorios.md) e
 - O seletor "Ordenar por" só existe a partir de 640px; no mobile a ordenação vem das abas.
 - O skeleton do detalhe em 768px é cerca de 476px mais baixo que o conteúdo abaixo da dobra (sem footer nessa largura; sem deslocamento medido, CLS 0).
 - O 404 global é só um título, sem link de volta.
-- shadcn/ui: só o `Toaster` está montado e nenhum `toast()` é chamado; o `Modal` é próprio sobre o Radix `Dialog`.
+- shadcn/ui: o `Toaster` (Sonner, região `aria-live="polite"`) anuncia favorito, perfil salvo e cupom aplicado; os avisos inline com `role="status"` continuam, então o leitor de tela pode ouvir os dois. O `Modal` é próprio sobre o Radix `Dialog`.
 - Desvios do Figma por tela estão nas seções acima.
 
 **Acessibilidade e testes**
