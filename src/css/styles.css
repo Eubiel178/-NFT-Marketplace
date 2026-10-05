@@ -329,6 +329,33 @@ textarea:focus-visible {
   outline-offset: 4px;
 }
 
+/* Scrollbar global: Firefox usa as propriedades padrão; Chromium usa ::-webkit-scrollbar
+   (no Chromium recente, scrollbar-color anularia o ::-webkit-scrollbar). */
+@supports (-moz-appearance: none) {
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-border-soft) var(--color-ink);
+  }
+}
+
+::-webkit-scrollbar {
+  width: 0.5rem;
+  height: 0.5rem;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-ink);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-border-soft);
+  border-radius: 0.25rem;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-primary);
+}
+
 /* ==========================================================================
    SKELETON SHIMMER
    ========================================================================== */
