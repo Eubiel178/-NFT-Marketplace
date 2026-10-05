@@ -236,6 +236,8 @@ Qualquer `401` do Axios, exceto login, cadastro e logout (onde `401` é credenci
 
 Metas (Performance ≥ 90, Accessibility ≥ 95, Best Practices ≥ 95, SEO ≥ 90): **todas as medianas atendem**. Performance das 3 medições: Início mobile 89/94/94 (a primeira, com Chrome frio, costuma sair mais baixa), Início desktop 99/99/99, Detalhe mobile 89/91/91, Detalhe desktop 99/99/99.
 
+**Reconferência mobile (1 medição).** Reconferência das duas páginas mobile, com **1 medição** cada, sobre o HEAD final (Chrome frio, primeira medição): Início mobile **90** (LCP 3.432 ms, CLS 0, TBT 136 ms) e Detalhe mobile **93** (LCP 3.100 ms, CLS 0, TBT 96 ms); Accessibility 100 e 97, Best Practices 100 e 100, SEO 100 e 100. A tabela acima é a **mediana de 3 medições** feita antes; a reconferência não é mediana. O 90 do Início mobile é a mesma pontuação das primeiras medições a frio (89/90) e está na margem da meta; as medições seguintes, com o Chrome aquecido, deram 94. O diagnóstico é o mesmo: cadeia SPA + MSW (HTML → `index` → chunk do MSW → `render` → `GET /api/nfts`).
+
 **Antes × depois (medição de 04/10/2026 → esta)**
 
 | Métrica | Antes | Depois |

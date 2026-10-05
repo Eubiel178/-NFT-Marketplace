@@ -196,7 +196,7 @@ Requisitos transversais do §9:
 | Requisito | Situação | Evidência | O que falta |
 | --- | --- | --- | --- |
 | Script versionado, 3 medições por página/perfil, medianas | Atende ✔ | `scripts/lighthouse.mjs`, `reports/lighthouse/summary.json`, 12 medições de 05/10/2026 | — |
-| Metas (≥90/95/95/90) na aplicação final | **Atende ✔** | Medianas (05/10/2026, depois das correções): Início mobile 94/100/100/100, Início desktop 99/100/100/100, Detalhe mobile 91/97/100/100, Detalhe desktop 99/97/100/100 (build demo final, cenário default); `ARCHITECTURE.md` §Desempenho | Medido localmente, não na URL publicada |
+| Metas (≥90/95/95/90) na aplicação final | **Atende ✔** | Medianas (05/10/2026, depois das correções): Início mobile 94/100/100/100, Início desktop 99/100/100/100, Detalhe mobile 91/97/100/100, Detalhe desktop 99/97/100/100 (build demo final, cenário default); `ARCHITECTURE.md` §Desempenho | Medido localmente, não na URL publicada **Mediana de 3 medições é a de 05/10 acima; a reconferência final das duas páginas mobile foi de 1 medição: Início 90 (LCP 3.432 ms) e Detalhe 93 (LCP 3.100 ms)** |
 | Relatórios HTML/JSON entregues com versões/ambiente | Atende ✔ | `reports/lighthouse/` versionado (`.gitignore` deixou de ignorá-lo; só `reports/screenshots/` segue ignorado); `summary.json` com Lighthouse 13.5.0, Chrome 154, Node 24.18.0, Windows 10 x64, CPU, throttling e emulação | — |
 | Análise de LCP/CLS/TBT e justificativa abaixo da meta | Atende ✔ | LCP 2.688/930 ms (Início m/d) e 3.190/923 ms (Detalhe m/d); CLS 0 nas quatro; TBT 155, 0, 155, 0 ms. Nenhuma categoria abaixo da meta; causas corrigidas (hero mobile, robots.txt, favicon, `target-size` dos sliders, CLS do hero desktop) e o que resta (cadeia SPA + MSW, 97 de a11y no Detalhe pelo passo de 20 px dos pontos) em `ARCHITECTURE.md` | — |
 
@@ -238,7 +238,7 @@ Requisitos transversais do §9:
 
 1. **Deploy inexistente.** `vercel.json` pronto, mas branch 13 commits à frente do `origin`, sem URL. Falta publicar e validar rota direta, refresh, MSW e Socket.IO na URL. (§12, P0)
 2. ~~Suíte E2E não passa inteira.~~ **Regressão visual resolvida** (baselines regeneradas, sem `-win32`, duas rodadas consecutivas verdes). Falta uma execução completa de `npm run test:e2e` registrada.
-3. ~~Lighthouse sem medição da entrega final.~~ **Resolvido** (medição de 05/10/2026 depois das correções, relatórios versionados, todas as metas atendidas; Início mobile 94). Falta repetir na URL publicada.
+3. ~~Lighthouse sem medição da entrega final.~~ **Resolvido** (medição de 05/10/2026 depois das correções, relatórios versionados, todas as metas atendidas; Início mobile 94). Falta repetir na URL publicada. Reconferência final com 1 medição: Início mobile 90 (na margem da meta; a frio) e Detalhe mobile 93.
 4. ~~Expiração de sessão incompleta.~~ **Resolvido** em `3da74bf` + `phase16` (ver §2).
 
 **Risco médio**

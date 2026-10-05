@@ -407,7 +407,7 @@ Medianas de 3 medições por página e perfil, sobre o build de demonstração (
 | Detalhe | mobile | 91 | 97 | 100 | 100 | 3.190 | 0 | 155 |
 | Detalhe | desktop | 99 | 97 | 100 | 100 | 923 | 0 | 0 |
 
-Todas as medianas atendem as metas (≥ 90 / ≥ 95 / ≥ 95 / ≥ 90). Antes das correções: Início mobile 90 (LCP 3.394 ms), SEO 92, CLS 0,0333 no Início desktop. A medição foi local; deve ser repetida na URL publicada, que ainda não existe.
+Todas as medianas atendem as metas (≥ 90 / ≥ 95 / ≥ 95 / ≥ 90). Antes das correções: Início mobile 90 (LCP 3.394 ms), SEO 92, CLS 0,0333 no Início desktop. Reconferência das duas páginas mobile, com **1 medição** cada, sobre o HEAD final (Chrome frio, primeira medição): Início mobile **90** (LCP 3.432 ms, CLS 0, TBT 136 ms) e Detalhe mobile **93** (LCP 3.100 ms, CLS 0, TBT 96 ms); Accessibility 100 e 97, Best Practices 100 e 100, SEO 100 e 100. A tabela acima é a **mediana de 3 medições** feita antes; a reconferência não é mediana. O 90 do Início mobile é a mesma pontuação das primeiras medições a frio (89/90) e está na margem da meta; as medições seguintes, com o Chrome aquecido, deram 94. O diagnóstico é o mesmo: cadeia SPA + MSW (HTML → `index` → chunk do MSW → `render` → `GET /api/nfts`). A medição foi local; deve ser repetida na URL publicada, que ainda não existe.
 
 ### Testes E2E (`tests/e2e`)
 
