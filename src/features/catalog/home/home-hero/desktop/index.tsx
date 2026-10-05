@@ -48,7 +48,7 @@ export function Desktop({ artwork }: { artwork: Nft }) {
           to="/nfts/$nftId"
           params={{ nftId: artwork.id }}
           aria-label={`Ver ${artwork.name}`}
-          className="w-fit shrink-0 overflow-hidden"
+          className="size-112.5 shrink-0 overflow-hidden"
         >
           <Image
             src={artwork.image}
