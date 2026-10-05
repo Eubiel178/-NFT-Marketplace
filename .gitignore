@@ -20,4 +20,6 @@ skills-lock.json
 .aider*
 .github/copilot-instructions.md
 AGENTS.md
-CLAUDE.md
+.claude
+claude.md
+opencode.json
