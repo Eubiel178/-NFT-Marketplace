@@ -263,9 +263,11 @@ A entrega deve executar a partir de um checkout limpo, sem depender de serviços
 
 ---
 
-## 13. Solução — estrutura inicial
+## 13. Solução
 
-O enunciado acima foi preservado integralmente. Esta etapa prepara configuração e integrações; não conclui os fluxos de compra/conta nem a fidelidade ao Figma. Consulte [checklist por requisito](docs/CHECKLIST.md), [arquitetura](ARCHITECTURE.md) e [contratos REST/eventos](docs/CONTRACTS.md).
+Marketplace de NFTs em React + TypeScript (Vite), com TanStack Router, TanStack Query, Axios, Socket.IO (`socket.io-client`), Tailwind CSS v4, shadcn/ui (Radix + CVA), MSW (REST e Socket.IO via `@mswjs/socket.io-binding`), Playwright e Lighthouse. Não há backend: toda a API e o tempo real são simulados por MSW no navegador, inclusive no build de demonstração.
+
+Documentos: [arquitetura, decisões, desvios do Figma e limitações](ARCHITECTURE.md), [contratos REST e eventos](docs/CONTRACTS.md), [progresso por tela](docs/progresso.md), [auditoria dos requisitos](docs/eliminatorios.md), [medidas contra o Figma](docs/figma-medidas.md), [validação inicial](docs/VALIDATION.md).
 
 ### Setup e comandos
 
@@ -277,84 +279,136 @@ npx playwright install chromium
 npm run dev
 ```
 
-`dev` usa `.env.demo` e atende em `http://127.0.0.1:5173`. Para personalizar, copie `.env.example` para `.env.local`. Variáveis públicas (nunca inserir segredos): `VITE_ENABLE_MOCKS=true`, `VITE_API_URL=/api`, `VITE_SOCKET_URL` opcional (origem atual por padrão). Os mocks iniciais atendem `/api` na mesma origem; mantenha esse prefixo na demonstração. Sem mocks, configure um backend compatível; nenhum serviço privado é necessário para o modo demo.
+`dev` usa `.env.demo` e atende em `http://127.0.0.1:5173`. Para personalizar, copie `.env.example` para `.env.local`.
+
+| Variável (públicas, nunca inserir segredos) | Padrão | Efeito |
+| --- | --- | --- |
+| `VITE_ENABLE_MOCKS` | `true` | Liga o MSW (REST e Socket.IO). Sem ele, a aplicação espera um backend compatível; nenhum é entregue |
+| `VITE_API_URL` | `/api` | Prefixo da API. Os mocks atendem `/api` na mesma origem; mantenha na demonstração |
+| `VITE_SOCKET_URL` | vazio | Origem do Socket.IO; vazio usa a origem atual |
 
 | Comando | Finalidade |
 | --- | --- |
 | `npm run dev` | Desenvolvimento com MSW |
-| `npm run build` | Tipos e build; mocks conforme ambiente |
-| `npm run build:demo` | Build otimizado com MSW habilitado |
-| `npm run preview` | Servir build em `http://127.0.0.1:4173` |
+| `npm run build` | Tipos e build; mocks conforme o ambiente |
+| `npm run build:demo` | Build otimizado com MSW habilitado (usado no deploy) |
+| `npm run preview` | Servir o build em `http://127.0.0.1:4173` |
 | `npm run typecheck` | Verificação TypeScript estrita |
 | `npm run lint` | ESLint sem warnings |
-| `npm run test:e2e` | Playwright, build demo automático, Chromium 390/768/1440 |
-| `npm run test:e2e:ui` | Testes no modo interativo |
-| `npm run test:report` | Relatório HTML; traces de falhas em `test-results` |
-| `npm run test:visual` | Reserva para testes `@visual`; ainda sem testes/baselines finais |
-| `npm run audit:lighthouse` | 12 medições, HTML/JSON e medianas (requer preview em execução e Chrome) |
+| `npm run test:e2e` | Playwright: build demo automático, Chromium 1440 (`chromium-desktop`), 768 (`chromium-tablet`) e 390 (`chromium-mobile`) |
+| `npm run test:e2e:ui` | Playwright em modo interativo |
+| `npm run test:report` | Relatório HTML; traces e screenshots de falhas em `test-results` |
+| `npm run test:visual` | Só os testes `@visual` (regressão visual) |
+| `npm run audit:lighthouse` | 12 medições (Home e Detalhe × mobile e desktop × 3), HTML/JSON e medianas em `reports/lighthouse/`; requer o preview em execução e Chrome |
 
-Para Lighthouse, execute `npm run build:demo` e `npm run preview` em um terminal; em outro, `npm run audit:lighthouse`. `CHROME_PATH` permite escolher Chrome/Chromium, `AUDIT_URL` altera a origem. Relatórios locais em `reports/lighthouse/` (não versionados automaticamente); entregar os relatórios finais conforme §10. Configuração não simplifica a aplicação para auditoria. Metas finais ainda não aferidas.
+Para um spec isolado: `npx playwright test phase23 --project=chromium-desktop --project=chromium-mobile`. Para Lighthouse, execute `npm run build:demo` e `npm run preview` em um terminal e `npm run audit:lighthouse` em outro. `CHROME_PATH` escolhe o Chrome/Chromium e `AUDIT_URL` muda a origem. A configuração não simplifica a aplicação para a auditoria.
 
-### Credenciais e cenários disponíveis
+### Credenciais fictícias
 
-As fixtures reservam `ana@example.test` / `kurio-demo` e `bruno@example.test` / `bruno-demo`. No pagamento desktop, o código de indicação (obrigatório) aceito é `KURIO-2026`. São credenciais fictícias exclusivas do modo demo; não usar dados reais. As senhas são persistidas apenas como hash com salt no mock. Novos cadastros também recebem hash e sessão automaticamente.
+| Usuário | E-mail | Senha |
+| --- | --- | --- |
+| Ana | `ana@example.test` | `kurio-demo` |
+| Bruno | `bruno@example.test` | `bruno-demo` |
 
-Seleção de cenário no console do navegador da aplicação, com MSW ativo:
+Usadas só no modo demo; as senhas ficam no mock apenas como hash SHA-256 com salt, e novos cadastros também. O código de indicação (obrigatório no pagamento desktop e na carteira) aceito é `KURIO-2026`; outro código devolve `422` no campo.
+
+### Mocks, cenários e reset
+
+O banco do mock (catálogo, usuários, sessão, carrinhos, favoritos, perfil, carteiras, cotações, pedidos e chaves de idempotência) persiste em `localStorage` (`nft-marketplace:mock-db:v8`); o cenário ativo, em `nft-marketplace:scenario`. Os endpoints abaixo só existem no mock e são chamados do console do navegador da aplicação, com o MSW ativo. Eles não fazem parte do contrato de produto.
 
 ```js
+// Seleciona um cenário e recarrega
 await fetch('/api/__mock/scenario', {
   method: 'POST', headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify({ scenario: 'slow' }),
 })
 location.reload()
-```
 
-Disponíveis: `default`, `empty`, `slow` (2 s no catálogo, na cotação, no perfil e nas carteiras), `variable-latency` (páginas ímpares 900 ms/pares 100 ms), `network-error`, `http-500` (503), `unauthorized` (401 nas consultas de NFTs), `favorites-error` (503 em favoritos), `cart-error`, `cart-load-error`, `quote-error`, `profile-error`, `wallets-error`, `order-error`, `payment-declined`, `wallet-rejected`, `payment-pending`, `payment-timeout` e `stale-quote`. A configuração persiste localmente. Para recuperação/reset:
-
-```js
+// Restaura o banco inteiro e o cenário `default`
 await fetch('/api/__mock/reset', { method: 'POST' })
 location.reload()
 ```
 
-Para exercitar REST + Socket.IO, abra `/nfts/nft-1`, aguarde o carregamento e execute:
-
-```js
-await fetch('/api/__mock/nfts/nft-1/update', { method: 'POST' })
-```
-
-O preço persistido muda para `0.125` ETH, o mock emite pelo protocolo Socket.IO e o cliente reconcilia por REST. Os cenários de pagamento, favoritos, idempotência e sessão são exclusivos do modo de demonstração e podem ser selecionados pelo mesmo endpoint.
-
-#### Pagamento
-
-- Código de indicação aceito: `KURIO-2026` (outro código → `422` com o erro no campo).
-- A Ana começa com a carteira "Reserva" (`wallet-2`, Polygon) conectada via Coinbase Wallet, como no frame mobile; o pagamento abre com a carteira conectada selecionada (sem conexão, a principal) e a conecta se for preciso. Cenário `wallet-rejected`: a carteira recusa a conexão (`409 WALLET_REJECTED`). "Desconectar" desliga; o pedido exige carteira conectada.
-- "Confirmar compra" abre a revisão com a cotação revalidada; mudanças de preço, disponibilidade, cupom ou taxa aparecem listadas e exigem novo clique em "Enviar pedido".
-
-#### Cupons
-
-| Código | Resposta de `POST /api/quote` |
+| Endpoint (`/api/__mock/...`) | Efeito |
 | --- | --- |
-| `KURIO10` | 10% de desconto no subtotal |
-| `KURIO5` | `409 COUPON_EXPIRED` — "Este cupom expirou" |
-| qualquer outro | `409 INVALID_COUPON` — "Cupom inválido" |
+| `POST /scenario` `{ scenario }` | Seleciona o cenário (`422` se desconhecido) |
+| `POST /reset` | Restaura o banco e o cenário `default` |
+| `POST /session/expire` | Marca a sessão como expirada (`GET /session` passa a dar `401`) |
+| `POST /nfts/:id/update` | Sobe a versão do NFT, muda o preço para `0.125` ETH, persiste e emite `nft.updated` |
+| `POST /nfts/:id/event` `{ version?, price? }` | Reemite `nft.updated` **sem alterar o banco**, para duplicata ou versão antiga; o preço do payload nunca é aplicado pelo cliente |
+| `POST /orders/:id/confirm` | Confirma um pedido pendente (tira do carrinho só o que foi comprado) e emite `order.updated` |
+| `POST /orders/:id/decline` | Recusa um pedido pendente (carrinho preservado) e emite `order.updated` |
+| `POST /orders/:id/event` `{ version?, status? }` | Emite `order.updated` sem alterar o pedido (duplicata ou versão antiga); só chega ao socket inscrito do dono |
+| `GET /socket/clients` | Quantidade de conexões Socket.IO abertas no mock |
+| `POST /socket/disconnect` | Derruba as conexões Socket.IO (o cliente reconecta sozinho) |
 
-A cotação também responde para visitante (o carrinho do visitante mostra subtotal, desconto, taxa e total); criar o pedido continua exigindo sessão.
+Cenários (`default` é o padrão):
 
-#### Edições esgotadas nas fixtures
+| Cenário | Efeito |
+| --- | --- |
+| `default` | Sucesso |
+| `empty` | `GET /nfts` devolve lista vazia |
+| `slow` | 2 s no catálogo, no detalhe, na cotação, no perfil e nas carteiras |
+| `variable-latency` | Catálogo: páginas ímpares 900 ms e pares 100 ms (respostas fora de ordem) |
+| `network-error` | Falha de conexão no catálogo e no detalhe |
+| `http-500` | `503 TRANSIENT_FAILURE` no catálogo e no detalhe |
+| `unauthorized` | `401 SESSION_EXPIRED` no catálogo e no detalhe |
+| `favorites-error` | `503` em favoritos |
+| `cart-error` / `cart-load-error` | `503` ao alterar / ao carregar o carrinho |
+| `quote-error` | `503` na cotação |
+| `profile-error` / `wallets-error` | `503` em perfil / carteiras |
+| `order-error` | `503` ao consultar um pedido |
+| `wallet-rejected` | A carteira recusa a conexão (`409 WALLET_REJECTED`) |
+| `payment-declined` | O pedido nasce recusado |
+| `payment-pending` | O pedido nasce pendente e é confirmado sozinho em 400 ms, pelo evento `order.updated` |
+| `payment-held` | O pedido nasce pendente e só muda com `POST /__mock/orders/:id/confirm` ou `/decline` |
+| `payment-timeout` | O pedido é criado, mas a resposta é `504 ORDER_TIMEOUT`; o cliente recupera o mesmo pedido pela chave de idempotência |
+| `stale-quote` | Todo `POST /orders` devolve `409 QUOTE_STALE` |
 
-O campo `soldOutEditions` do NFT lista as edições sem estoque (`src/mocks/fixtures.ts`). Hoje há uma:
+Como reproduzir os fluxos de falha:
 
-| NFT | Edição esgotada | Onde aparece |
-| --- | --- | --- |
-| `nft-4` — Cosmic Bloom #118 | `1/1` | `/nfts/nft-4`: o botão "1/1" fica desabilitado e riscado, com o nome acessível "1/1 (esgotada)"; `POST /api/cart/items` com essa edição responde `409 OUT_OF_STOCK` ("Esta edição está esgotada"). |
+| Fluxo | Como |
+| --- | --- |
+| Lentidão e skeletons | `slow`, abrir `/`, `/nfts/nft-1`, `/profile` ou `/wallets` |
+| Erro e nova tentativa | `network-error` ou `http-500`, abrir `/`, voltar a `default` e clicar em "Tentar novamente" |
+| Respostas fora de ordem | `variable-latency`, ir da página 2 para a 3 e logo para a 4: a tela fica na 4 |
+| Sessão expirada | Logado, `POST /session/expire` e navegar para uma rota privada ou salvar o perfil: vai ao login com `expired=true` e volta ao destino depois do login |
+| Acesso não autorizado | `unauthorized` (visitante só vê o erro; com usuário na sessão, vai ao login) |
+| Cupom inválido ou expirado | No carrinho, `INVALIDO` ou `KURIO5` |
+| Preço alterado | Com um NFT no carrinho, `POST /nfts/nft-1/update` |
+| Edição esgotada | `/nfts/nft-4`, edição `1/1` |
+| Carteira recusada | `wallet-rejected`, "Desconectar" e "Conectar" no pagamento |
+| Pagamento recusado | `payment-declined` e enviar o pedido |
+| Timeout após criar o pedido | `payment-timeout` e enviar o pedido: abre o mesmo pedido, pendente, e a confirmação chega pelo socket |
+| Clique repetido / idempotência | Clicar várias vezes em "Enviar pedido": um único `POST /orders` bem-sucedido |
+| Pedido pendente | `payment-held`, enviar o pedido e voltar a `/checkout`: leva ao pedido |
+| Queda do Socket.IO | `payment-held`, enviar o pedido, `POST /socket/disconnect` e `POST /orders/:id/confirm`: ao reconectar o pedido aparece confirmado |
 
-Uso nos testes: `phase9-purchase` ("edição esgotada (nft-4)…") confere o botão desabilitado, a recusa `409` da API e a compra seguindo com a edição disponível (1/50). Os demais specs usam `nft-1` e `nft-2`, e a edição esgotada fica fora desses dois de propósito. O `phase7-resilience` adiciona `nft-2` edição `1/1` ao carrinho do visitante e espera `201`, então marcar uma edição desses NFTs como esgotada quebraria os testes de carrinho, detalhe e compra. Para conferir à mão, abra `/nfts/nft-4` ou rode no console:
+Cenário com tempo real: abra `/nfts/nft-1`, aguarde o carregamento e execute `await fetch('/api/__mock/nfts/nft-1/update', { method: 'POST' })`. O preço persistido muda, o mock emite `nft.updated` pelo protocolo Socket.IO e o cliente reconcilia por REST.
 
-```js
-await fetch('/api/cart/items', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ nftId: 'nft-4', editionId: '1/1', quantity: 1 }) })
-// → 409 { code: 'OUT_OF_STOCK', message: 'Esta edição está esgotada' }
-```
+### Regras de comportamento
 
-### Entrega e limitações atuais
+- **Cache** (`src/lib/query.ts`): dados frescos por 30 s, coletados após 5 min sem uso, reconsulta ao voltar o foco da janela. Queries repetem uma vez, apenas em falha de rede ou 5xx (nunca 4xx); mutations não têm retry. A sessão tem `staleTime` 0 e sem retry. As chaves levam o usuário (`cart`, `favorites`, `profile`, `wallets`, `orders`, cotações) e todos os parâmetros do catálogo.
+- **Respostas obsoletas**: o `AbortSignal` do Query chega ao Axios em todas as consultas; mudar os parâmetros abandona a consulta anterior, e a resposta atrasada nunca ocupa a tela.
+- **Atualização otimista com rollback**: favoritos, quantidade e remoção no carrinho, e troca da carteira principal.
+- **Tempo real**: o socket é criado antes da aplicação (o MSW precisa estar ativo antes de o `socket.io-client` ser avaliado, por isso `main.tsx` importa `app/render` depois de `worker.start()`). Eventos só invalidam queries e o REST é a fonte da verdade. Duplicatas e eventos antigos são descartados pela versão; reconexão reconcilia catálogo, carrinho, cotações e pedidos por REST; eventos de pedido só valem para quem assinou, e a assinatura é descartada no logout e na troca de usuário.
+- **Sessão expirada**: qualquer `401` do Axios (menos login, cadastro e logout) descarta os dados privados, encerra as assinaturas e vai ao login com o destino atual; o guard faz o mesmo a cada navegação privada. No pagamento, o formulário e a revisão aberta são guardados por usuário e restaurados depois do login, com a mesma chave de idempotência (sem pedido duplicado). Detalhes em [ARCHITECTURE.md](ARCHITECTURE.md).
+- **Pedido pendente**: `GET /api/orders?status=pending` (por usuário) faz o `/checkout` redirecionar para o pedido; `POST /api/orders` com pedido pendente responde `409 ORDER_PENDING`. Confirmado e recusado são terminais e liberam novo pagamento.
+- **ETH** é sempre string decimal (BigInt em wei nos cálculos) e quantidades são inteiras.
 
-Configuração SPA da Vercel preparada em `vercel.json`; deploy e URL de repositório ainda pendentes. Os fluxos de conta, carrinho, favoritos e pedidos descritos nesta etapa usam MSW e possuem cobertura E2E. Permanecem no checklist os refinamentos de perfil/avatar/senha, alguns cenários completos de catálogo/cupom/tempo real, baselines visuais finais, auditoria Lighthouse final e o deploy público. Resultado das verificações desta etapa em [docs/VALIDATION.md](docs/VALIDATION.md).
+### Testes E2E (`tests/e2e`)
+
+Os specs rodam pelos handlers MSW e pelo `socket.io-client`; cada teste parte de um contexto isolado e do reset do mock. Relatório HTML e traces de falha pelo `playwright.config.ts`. Os specs `phase16` a `phase23`:
+
+| Spec | Cobertura |
+| --- | --- |
+| `phase16-pagination-session` | Paginação (URL, histórico, refresh, sem overflow em 390); sessão expirada sem recarregar (navegação, ação na página e envio do pedido, com retomada e sem pedido duplicado) |
+| `phase17-ordering-latency` | Ordenação por preço e por nome; respostas fora de ordem com `variable-latency` |
+| `phase18-scenarios` | `unauthorized` (visitante e logado) e `wallet-rejected` |
+| `phase19-clock` | `page.clock`: pedido pendente após timeout até o relógio avançar; expiração com o relógio parado |
+| `phase20-review-dialog-focus` | Foco do diálogo "Revise sua compra": entra, fica preso, Esc e Fechar devolvem ao botão |
+| `phase21-realtime-events` | `nft.updated` e `order.updated` duplicados ou antigos; queda do socket com pedido pendente |
+| `phase22-detail-skeleton-tablet` | Skeleton do detalhe em 768px |
+| `phase23-pending-order` | Pedido pendente bloqueia novo checkout; terminais liberam; isolamento entre usuários |
+
+Os demais specs (`foundation`, `phase0-*`, `phase2` a `phase15`, `phase5-visual`, `home-visual`, `visual-regression`) cobrem os fluxos de catálogo, conta, carrinho, compra, perfil, carteiras, estados e acessibilidade; o mapeamento item a item do §9 está em [docs/eliminatorios.md](docs/eliminatorios.md).

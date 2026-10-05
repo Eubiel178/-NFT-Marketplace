@@ -1,35 +1,54 @@
-# Arquitetura e estado da entrega
+# Arquitetura, decisões e limitações
 
-Esta é a **estrutura inicial**, não a solução completa. Requisitos normativos preservados no [README](README.md), rastreabilidade em [docs/CHECKLIST.md](docs/CHECKLIST.md), contratos em [docs/CONTRACTS.md](docs/CONTRACTS.md).
+Documento da solução entregue. Requisitos normativos no [README](README.md) (§1–§12), instruções de execução, cenários e endpoints de mock no README (§13), contratos em [docs/CONTRACTS.md](docs/CONTRACTS.md), progresso por tela em [docs/progresso.md](docs/progresso.md) e auditoria dos requisitos em [docs/eliminatorios.md](docs/eliminatorios.md).
 
 ## Organização
 
-- `src/app`: composição de rotas e layout provisório.
-- `src/components/ui`: componentes shadcn/ui sob controle do projeto, Radix Slot/CVA; barrel existente em `src/components/index.ts`.
-- `src/contracts`: esquemas de transporte e envelopes compartilhados.
-- `src/features/catalog`, `src/features/account` e `src/features/session`: integrações por domínio. Criar os demais domínios quando implementados, evitando módulos vazios.
-- `src/lib`: Axios, ambiente, QueryClient, precisão ETH e ciclo de vida Socket.IO.
-- `src/mocks`: fixtures, banco persistido e handlers REST/socket; nenhuma resposta fictícia no cliente HTTP, hooks ou componentes.
-- `tests/e2e`: smoke tests que passam pela rede MSW e cliente Socket.IO.
-- `scripts`: auditoria Lighthouse. `public/mockServiceWorker.js`: worker gerado, necessário também no deploy de demonstração.
+- `src/app`: bootstrap da aplicação (`render.tsx`), rotas (`router.tsx`, com guard das rotas privadas), layout e `session-expiry` (tratamento global de sessão expirada).
+- `src/routes` e `src/shared` do `AGENTS.md` não existem como pastas: as rotas ficam em `app/router.tsx` e o código compartilhado em `src/shared` (hooks, API de sessão, carrinho e cotação), `src/lib` (Axios, ambiente, QueryClient, ETH, armazenamento por usuário) e `src/components`.
+- `src/components`: componentes de UI (shadcn/ui com Radix e CVA, mais componentes próprios) e layout (header, footer, tab bar), com barrel em `src/components/index.ts`.
+- `src/contracts`: esquemas Zod dos contratos de transporte, compartilhados por cliente e mocks.
+- `src/features/<nome>`: `account`, `auth`, `cart`, `catalog`, `checkout`, `favorites`, `orders`; cada uma com `api/`, `hooks/`, `lib/` (regras puras) e componentes, e `index.ts` como API pública.
+- `src/realtime`: cliente Socket.IO, assinaturas e reconciliação com REST.
+- `src/mocks`: fixtures, banco persistido, cenários, handlers REST e servidor Socket.IO simulado; importado só no bootstrap. Nenhuma resposta fictícia no cliente HTTP, nos hooks ou nos componentes.
+- `tests/e2e`: specs Playwright; `scripts`: auditoria Lighthouse; `public/mockServiceWorker.js`: worker gerado, necessário também no deploy.
 
 ## Cache, retries e sincronização
 
-Chaves públicas incluem todos os parâmetros: `['nfts','list',search]` e `['nfts','detail',id]`. `AbortSignal` do Query chega ao Axios. Dados ficam frescos por 30 s e são coletados após 5 min sem uso; foco da janela e conexão disparam reconciliação. Queries repetem uma vez apenas falhas de rede/5xx, nunca 4xx; mutations não têm retry automático. Sessão usa staleTime zero e sem retry.
+**Política** (`src/lib/query.ts`)
 
-O socket público pertence ao layout raiz e tem cleanup de listeners/conexão, inclusive StrictMode. Pedidos pendentes abrem uma subscription privada própria, filtrada por `userId` e `orderId`, com reconciliação REST na conexão e reconexão; o cleanup é registrado para o logout. Eventos válidos causam reconsulta REST e versões antigas não regredem o estado. Logout cancela queries, encerra subscriptions privadas e limpa o cache antes de trocar identidade.
+- Dados frescos por 30 s (`staleTime`) e coletados após 5 min sem uso (`gcTime`); reconsulta ao voltar o foco da janela e na (re)conexão do socket.
+- Queries repetem uma vez, apenas em falha de rede ou 5xx; nunca em 4xx. Mutations não têm retry automático, para nunca duplicar uma operação; o pedido se recupera pela chave de idempotência.
+- A sessão tem `staleTime` 0 e sem retry. A consulta de pedidos pendentes ao abrir o pagamento é sempre relida (`staleTime` 0, `gcTime` 0, `refetchOnMount: 'always'`).
+- As chaves públicas levam todos os parâmetros (`['nfts','list',search]`, `['nfts','detail',id]`). As privadas levam o usuário: `cart`, `favorites`, `profile`, `wallets`, `orders`, pedidos pendentes, conexão da carteira e cotações. O cache de uma sessão nunca atende outra.
+- Logout e troca de usuário cancelam as queries, encerram as assinaturas privadas, apagam o cupom e a chave de idempotência guardados e limpam o cache antes de trocar a identidade.
+
+**Respostas obsoletas.** O `AbortSignal` do Query é repassado ao Axios em todas as consultas. Como a chave inclui os parâmetros, mudar busca, filtro, ordenação ou página abandona a consulta anterior (que o Query cancela) e a resposta atrasada nunca ocupa a tela. Coberto por `phase17` (`variable-latency`: página 3 lenta pedida antes da 4 rápida; a tela fica na 4 depois do atraso).
+
+**Atualização otimista com rollback.**
+
+| Interação | Hook |
+| --- | --- |
+| Favoritar | `useFavorite` (`onMutate` guarda o anterior e `onError` o restaura) |
+| Quantidade e remoção no carrinho | `useCartLines` |
+| Trocar a carteira principal | `useSetPrimaryWallet` |
+
+Todas cancelam as consultas da mesma chave antes de escrever no cache.
+
+**Sincronização REST × Socket.IO.** Eventos só invalidam queries: o payload nunca é copiado para o cache e o REST é a fonte da verdade.
+
+- `nft.updated` invalida catálogo, detalhe, carrinho e cotações. O cliente valida o NFT e aceita só versões mais novas que a última vista no socket e no cache (duplicata e evento antigo não têm efeito).
+- `order.updated` só vale para pedidos assinados nesta sessão, do usuário que assinou (a assinatura privada leva `userId` e `orderId` e o mock só entrega ao socket inscrito), e invalida o pedido.
+- Na reconexão, o cliente reconcilia catálogo, carrinho, cotações e pedidos assinados por REST. Pedidos confirmados e recusados são terminais.
+- **Inicialização.** O `socket.io-client` captura o `WebSocket` ao ser avaliado, então o MSW precisa estar ativo antes. `main.tsx` inicia o worker e só então importa dinamicamente `app/render`, que chama `startRealtime()` antes de montar o React (um socket por aba, vivo enquanto a aba existir). A função de cleanup que `startRealtime()` devolve não é usada. Os listeners de NFT e as assinaturas de pedido têm cleanup nos hooks.
 
 O catálogo mantém busca, filtros combináveis, ordenação e paginação no estado da URL; a busca digitada aguarda 300 ms antes de consultar o mesmo `GET /api/nfts`. O filtro de preço usa a faixa visível no Figma (`0` a `2.29` ETH) e só aplica a alteração ao pressionar `Aplicar`. Em mobile a paginação aparece centralizada, com o mesmo padrão do desktop (desvio do frame, que não a desenha: o README exige paginação); em tablet os filtros usam o drawer previsto em `docs/figma/responsive.md`.
 
 ## Sessão, carrinho e dinheiro
 
-**Expiração da sessão.** Qualquer 401 do Axios (exceto login, cadastro e logout, onde 401 é credencial inválida) chama o handler instalado em `app/session-expiry`. Se havia usuário na sessão em cache, ele guarda o contexto do pagamento (formulário e revisão aberta, por usuário), cancela as queries (menos a da sessão, que o guard pode estar aguardando), encerra as assinaturas privadas, limpa o cache e leva ao login com `redirect` para o destino atual e `expired=true`. Visitante com 401 não é expiração. O guard das rotas privadas roda a cada navegação e faz a mesma limpeza antes de redirecionar. Cupom e chave de idempotência do usuário permanecem; depois do login, o pagamento relê o contexto guardado (uma vez), restaura o formulário e reabre a revisão revalidando a cotação. O envio reaproveita a mesma chave, então não cria pedido duplicado. Se outro usuário entrar depois da expiração, o contexto guardado do anterior não é lido por ele (a chave é por usuário) e só é apagado no próximo logout daquele usuário.
-
 O endpoint de sessão retorna visitante ou a conta autenticada persistida no mock. Cadastro e login usam Axios/MSW, guardas preservam o destino e distinguem visitante de sessão expirada. Usuários de fixture e novos cadastros armazenam somente hash SHA-256 com salt; a resposta pública remove os campos secretos. Login faz merge por NFT/edição do carrinho visitante, e logout limpa o cache do TanStack Query antes de trocar para visitante. `POST /api/__mock/session/expire` permite reproduzir expiração sem expor uma ação de produto.
 
 Carrinho é persistido na DB mock, com identificador de visitante e merge por NFT/edição ao login. Cotação é a autoridade de preço e taxas: cada resposta fica registrada por `quoteId` para revalidar preço, disponibilidade, cupom e itens antes do pedido. Helpers convertem strings ETH para wei usando BigInt (sem float). A chave de idempotência fica no localStorage durante a tentativa e no mock até o reset; o pedido guarda snapshot de preço, nome e imagem, transições terminais e recuperação por chave. Recusa mantém o carrinho; confirmação remove somente os itens e quantidades do snapshot comprado.
-
-**Pedido pendente bloqueia novo checkout.** `GET /api/orders?status=pending` devolve só os pedidos do usuário da sessão (o MSW filtra por `userId`; outro usuário nunca vê nem é redirecionado). Ao abrir `/checkout`, `usePendingOrder` consulta essa listagem (`staleTime: 0`, `gcTime: 0`, `refetchOnMount: 'always'`, também ao voltar o foco da janela) e redireciona para `/orders/:id`; assim a regra sobrevive a refresh e a outra aba, sem depender do `localStorage`. Defesa no servidor: `POST /api/orders` com pedido pendente do usuário responde `409 ORDER_PENDING` com `fields.orderId` (a repetição da mesma chave de idempotência continua devolvendo o mesmo pedido, antes dessa checagem), e o cliente navega para o pedido indicado. Confirmado e recusado são terminais: saem da listagem e liberam um novo pagamento (a confirmação já tirou os itens comprados do carrinho; a recusa os mantém). A chave de idempotência guardada de um pedido já terminal é apagada, para o próximo pagamento usar uma nova. Para os testes, `POST /api/__mock/orders/:id/decline` recusa um pedido pendente (emite `order.updated`).
 
 ## Persistência e cenários
 
@@ -40,9 +59,9 @@ Atualmente a DB local versionada contém catálogo, usuários, sessão, carrinho
  As telas de detalhe, carrinho, pagamento, confirmação e carteiras foram comparadas aos frames disponíveis em `figma/` com screenshots em `1440px`, `768px` e `390px`; a fixture de demonstração mantém uma carteira secundária cadastrada, enquanto o frame de carteiras mostra o estado vazio, portanto a tela exibe a contagem e a ação de edição. A aplicação usa os assets locais disponíveis e equivalentes Lucide para ícones sem marca específica; isso pode causar diferenças de rasterização em relação aos ícones proprietários do Figma. Não são usadas imagens remotas ou compra decorativa para simular funcionalidade.
  O frame mobile não expõe uma ação visual de favorito, embora o README exija favoritos autenticados; por isso a ação foi adicionada como controle acessível na buy bar mobile, preservando o restante da composição. O estado é compartilhado entre a galeria e o resumo do detalhe e é persistido pelo recurso de favoritos.
  A seleção de thumbnails, o limite inteiro de quantidade e o estado de edição indisponível são dirigidos pelo `Nft` retornado pela API. Comprar e adicionar ao carrinho usam o handler REST existente, atualizam a query do carrinho e só então navegam.
- O README exige perfil com avatar e senha, então o avatar usa `PATCH /api/profile/avatar` com o conteúdo selecionado pelo usuário e a senha valida a senha atual, confirmação e persiste novo hash com salt no mock. Não foi criada uma rota independente de coleção: o requisito disponível é atendido pelo bloco `Mais desta coleção` no detalhe, pois o README não especifica uma tela de coleção.
+ O README exige perfil com avatar e senha, então o avatar usa `POST /api/profile/avatar` (multipart, com tipo e tamanho validados) e `DELETE` para remover, e a senha valida a senha atual, confirmação e persiste novo hash com salt no mock. Não foi criada uma rota independente de coleção: o requisito disponível é atendido pelo bloco `Mais desta coleção` no detalhe, pois o README não especifica uma tela de coleção.
 
-  Base inclui link de salto, landmark principal, foco visível, feedback semântico, skeleton shimmer e redução de movimento. Acessibilidade completa exige formularios, dialogs/drawers, foco na navegação, imagens finais e auditoria. As medidas de Lighthouse da estrutura não podem ser apresentadas como pontuação da solução final. O texto dos CTAs âmbar e o texto secundário sobre o card claro usam cores de maior contraste que o raster original quando necessário para cumprir WCAG; os indicadores de carrossel mantêm o ponto visual de 8px dentro de uma área de toque de 24px.
+  Base inclui link de salto, landmark principal, foco visível, feedback semântico, skeleton shimmer e redução de movimento. O foco de diálogos e drawers (Radix) é coberto em `phase12` e `phase20`; a verificação automatizada de acessibilidade é uma limitação (ver "Limitações conhecidas"). O texto dos CTAs âmbar e o texto secundário sobre o card claro usam cores de maior contraste que o raster original quando necessário para cumprir WCAG; os indicadores de carrossel mantêm o ponto visual de 8px dentro de uma área de toque de 24px.
   Na fundação responsiva da Etapa 4, o shell troca em `1024px`: abaixo desse limite usa a composição mobile do Figma (conteúdo fluido, Tab Bar quando a tela permite e sem footer), e a partir dele usa o header horizontal, container de `1200px` em `1440px`, sidebar e footer desktop. O Figma não fornece frame tablet; em `640px–1023px` mantemos a adaptação já documentada em `docs/figma/responsive.md` (grid de três colunas e filtros em drawer nas telas que os exibem), sem criar um terceiro shell visual ou afirmar que essa faixa é um frame do Figma.
 
 ### Desvios registrados do Figma (layout global e componentes base)
@@ -183,8 +202,46 @@ As 76 classes `.figma-*` (cópia da lista de estilos do Figma em `px`) não eram
 
 ## Execução e deploy
 
-Vite é a ferramenta complementar escolhida; todas as tecnologias obrigatórias têm dependência/configuração dedicada. REST, Socket.IO, Router, Query, Axios, Tailwind e componentes iniciais já têm caminho de execução. Playwright exercita a infraestrutura. Lighthouse tem script preparado, sem atestar metas finais. Build de demonstração ativa MSW inclusive em produção; build normal permite API configurada, mas não existe backend externo entregue.
+Vite é a ferramenta complementar escolhida. O build de demonstração (`npm run build:demo`) liga o MSW inclusive em produção; o build normal permite uma API configurada, mas nenhum backend é entregue. A configuração da Vercel está em `vercel.json` (build de demonstração, fallback SPA para o `index.html` exceto `assets/` e `mockServiceWorker.js`, e `no-cache` no worker). O deploy ainda não foi publicado: a URL pública, o acesso direto às rotas, o refresh e o funcionamento do MSW e do Socket.IO no ambiente publicado precisam ser validados depois de publicar.
 
-Configuração Vercel prepara build e fallback SPA, sem publicar nesta etapa. Acesso público, HTTPS/socket, rotas diretas e paridade com código entregue precisam de validação após deploy. `.git` foi preservado e passou a ser reconhecido pelo Git na verificação posterior; não foi reinicializado. `home-desktop.pdf`, surgido durante o trabalho, também foi preservado e ainda precisa de inspeção na etapa visual.
+O MSW deve iniciar antes de importar o módulo que carrega `socket.io-client`, pois o transporte captura a implementação de WebSocket ao avaliar o módulo (ver "Sincronização REST × Socket.IO"). O handler `ws.link` usa a origem/namespace `/`: o MSW normaliza `/socket.io/` na correspondência. Esses detalhes são cobertos pelos testes de evento real.
 
-MSW deve iniciar antes de importar o módulo que carrega `socket.io-client`, pois o transporte captura a implementação de WebSocket ao avaliar o módulo. Por isso `main.tsx` importa `app/render` dinamicamente após `worker.start()`. O handler `ws.link` usa a origem/namespace `/`: MSW normaliza `/socket.io/` na correspondência. Esses detalhes são cobertos pelo teste de integração do evento real.
+**Transporte Socket.IO e limitações no ambiente de mocks.** WebSocket (`transports: ['websocket']`), namespace padrão, origem atual. O MSW intercepta a rede e `@mswjs/socket.io-binding` 0.2.0 codifica frames e handshake; o binding publicado não implementa heartbeat, então o mock envia o ping textual a cada 20 s, e não oferece rooms, namespaces nem broadcast completos (o mock percorre os clientes e filtra os pedidos privados por usuário e pedido). Polling, anexos binários e implantação real não foram validados.
+
+## Sessão expirada (política)
+
+Qualquer `401` do Axios, exceto login, cadastro e logout (onde `401` é credencial inválida), chama o handler instalado por `app/session-expiry`. Se havia usuário na sessão em cache, ele guarda o contexto do pagamento (formulário e revisão aberta, por usuário), cancela as queries (menos a da sessão, que o guard pode estar aguardando), encerra as assinaturas privadas, limpa o cache e leva ao login com `redirect` para o destino atual e `expired=true`. Visitante com `401` não é expiração. O guard das rotas privadas roda a cada navegação e faz a mesma limpeza antes de redirecionar. Cupom e chave de idempotência do usuário permanecem; depois do login, o pagamento relê o contexto guardado (uma vez), restaura o formulário e reabre a revisão revalidando a cotação. O envio reaproveita a mesma chave, então não cria pedido duplicado. Se outro usuário entrar depois da expiração, o contexto guardado do anterior não é lido por ele (a chave é por usuário) e só é apagado no próximo logout daquele usuário. Coberto por `phase16` e `phase19`.
+
+## Pedido pendente
+
+`GET /api/orders?status=pending` devolve só os pedidos do usuário da sessão. Ao abrir `/checkout`, o cliente redireciona para o pedido pendente; `POST /api/orders` com pedido pendente do usuário responde `409 ORDER_PENDING` com `fields.orderId`, mesmo com outra chave de idempotência (a repetição da mesma chave continua devolvendo o mesmo pedido, antes dessa checagem). Confirmado e recusado são terminais e liberam um novo pagamento. Coberto por `phase23`.
+
+## Limitações conhecidas
+
+Tudo abaixo está registrado em [docs/eliminatorios.md](docs/eliminatorios.md) e não foi resolvido.
+
+**Entrega**
+- O deploy público ainda não existe (ver "Execução e deploy").
+
+**Tempo e rede nos mocks**
+- Só o pedido tem timeout simulado (`payment-timeout` responde `504`); nenhum cenário faz a conexão exceder os 8 s do Axios no catálogo ou no detalhe.
+- As condições de rede (`slow`, `variable-latency`, `network-error`, `http-500`, `unauthorized`) valem para `GET /api/nfts` e `GET /api/nfts/:id`; os demais recursos têm cenários de erro próprios.
+- O debounce de 300 ms da busca não é controlado por `page.clock` (o teste usa espera real).
+
+**Tempo real**
+- O `eventId` é gerado, mas a deduplicação usa só a versão.
+- O mapa de versões vistas de NFT nunca é limpo; um reset do mock com a aba aberta faz as versões voltarem a 1 e o cliente ignora os eventos seguintes até recarregar.
+- Favoritos, perfil e carteiras não têm eventos nem reconciliação na reconexão.
+- A regra `quoteVersion !== 1 → QUOTE_STALE` do mock é um atalho.
+
+**Interface e Figma**
+- Tablet não tem frame no Figma; usa a adaptação descrita em `docs/figma/responsive.md`.
+- O seletor "Ordenar por" só existe a partir de 640px; no mobile a ordenação vem das abas.
+- O skeleton do detalhe em 768px é cerca de 476px mais baixo que o conteúdo abaixo da dobra (sem footer nessa largura; sem deslocamento medido, CLS 0).
+- O 404 global é só um título, sem link de volta.
+- shadcn/ui: só o `Toaster` está montado e nenhum `toast()` é chamado; o `Modal` é próprio sobre o Radix `Dialog`.
+- Desvios do Figma por tela estão nas seções acima.
+
+**Acessibilidade e testes**
+- Não há verificação automatizada de acessibilidade (sem axe, sem `eslint-plugin-jsx-a11y`); teclado e foco são cobertos nos pontos citados em `docs/eliminatorios.md` (§8 e §9 item 11), sem um fluxo completo só por teclado.
+- Medições e baselines: ver o estado atual de regressão visual e do Lighthouse em `docs/eliminatorios.md` e na seção de desempenho abaixo, quando houver.
