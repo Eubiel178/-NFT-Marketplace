@@ -1,6 +1,6 @@
 import { useSyncExternalStore } from 'react'
 
-import { io } from 'socket.io-client'
+import type { Socket } from 'socket.io-client'
 
 import { nftSchema, orderUpdatedSchema, type Nft, type NftUpdated, type Order } from '@/contracts'
 import { env } from '@/lib/env'
@@ -8,7 +8,11 @@ import { keys, queryClient } from '@/lib/query'
 
 // Um único socket por aba. Eventos só invalidam queries: o REST continua sendo a
 // fonte da verdade, e o payload do evento nunca é copiado para o cache.
-const socket = io(env.socketUrl, { transports: ['websocket'], autoConnect: false })
+// O socket.io-client captura o WebSocket ao ser avaliado, então só é carregado em
+// startRealtime(), depois de o MSW estar ativo (isso permite baixar o resto da
+// aplicação em paralelo com o worker). Até lá `socket` é nulo e as assinaturas ficam
+// registradas: onConnect envia todas.
+let socket: Socket | null = null
 
 const versions = new Map<string, number>()
 const nftListeners = new Set<(event: NftUpdated) => void>()
@@ -39,7 +43,7 @@ function reconcileNfts() {
 }
 
 function subscribeOrderOnServer({ userId, orderId }: { userId: string; orderId: string }) {
-  socket.emit('order.subscribe', { userId, orderId })
+  socket?.emit('order.subscribe', { userId, orderId })
   void queryClient.invalidateQueries({ queryKey: keys.order(userId, orderId) })
 }
 
@@ -76,19 +80,16 @@ function onOrderUpdated(payload: unknown) {
   void queryClient.invalidateQueries({ queryKey: keys.order(userId, resourceId) })
 }
 
-export function startRealtime() {
-  socket.on('connect', onConnect)
-  socket.on('disconnect', onDisconnect)
-  socket.on('nft.updated', onNftUpdated)
-  socket.on('order.updated', onOrderUpdated)
-  socket.connect()
-  return () => {
-    socket.off('connect', onConnect)
-    socket.off('disconnect', onDisconnect)
-    socket.off('nft.updated', onNftUpdated)
-    socket.off('order.updated', onOrderUpdated)
-    socket.disconnect()
-  }
+export async function startRealtime() {
+  if (socket) return
+  const { io } = await import('socket.io-client')
+  const created = io(env.socketUrl, { transports: ['websocket'], autoConnect: false })
+  socket = created
+  created.on('connect', onConnect)
+  created.on('disconnect', onDisconnect)
+  created.on('nft.updated', onNftUpdated)
+  created.on('order.updated', onOrderUpdated)
+  created.connect()
 }
 
 export function subscribeNftUpdates(listener: (event: NftUpdated) => void) {
@@ -101,7 +102,7 @@ export function subscribeOrder(userId: string, orderId: string) {
   if (current && current.userId === userId) current.count += 1
   else {
     orderSubscriptions.set(orderId, { userId, orderId, count: 1 })
-    if (socket.connected) subscribeOrderOnServer({ userId, orderId })
+    if (socket?.connected) subscribeOrderOnServer({ userId, orderId })
   }
   return () => {
     const subscription = orderSubscriptions.get(orderId)
@@ -116,7 +117,7 @@ export function subscribeOrder(userId: string, orderId: string) {
 export function resetPrivateRealtime() {
   orderSubscriptions.clear()
   for (const resource of versions.keys()) if (resource.startsWith('order:')) versions.delete(resource)
-  if (socket.connected || socket.active) {
+  if (socket && (socket.connected || socket.active)) {
     socket.disconnect()
     socket.connect()
   }

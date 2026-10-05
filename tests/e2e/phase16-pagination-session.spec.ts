@@ -85,10 +85,12 @@ test('sessão expira durante a navegação, sem recarregar, e volta ao destino d
 
 test('401 em uma ação da própria página descarta a sessão e leva ao login sem recarregar', async ({ page }) => {
   await signIn(page, '/profile')
+  // A tela carrega por rota (chunk próprio): só expira a sessão com o perfil já na tela.
+  const form = page.getByRole('form', { name: 'Perfil do colecionador' })
+  await expect(form).toBeVisible()
   await markDocument(page)
   await expireSession(page)
 
-  const form = page.getByRole('form', { name: 'Perfil do colecionador' })
   await form.getByLabel('Nome de exibição').fill('Ana Expirada')
   await form.getByRole('button', { name: 'Salvar' }).click()
 

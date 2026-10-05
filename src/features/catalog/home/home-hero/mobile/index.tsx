@@ -1,11 +1,13 @@
 import { Link } from "@tanstack/react-router";
 
-import { Icon, Image } from "@/components";
+import { Icon, Image, Skeleton } from "@/components";
 import type { Nft } from "@/contracts";
 
 import { Dots } from "../dots";
 
-export function Mobile({ artwork }: { artwork: Nft }) {
+// Sem `artwork` (catálogo ainda carregando) o texto e a máscara já aparecem e a arte é um
+// skeleton do mesmo tamanho: o hero é o elemento de LCP e não depende da API.
+export function Mobile({ artwork }: { artwork?: Nft }) {
   return (
     <section
       aria-labelledby="home-hero-title"
@@ -15,6 +17,7 @@ export function Mobile({ artwork }: { artwork: Nft }) {
         src="/assets/figma/mobile-hero-mask.svg"
         alt=""
         fill
+        priority
         aria-hidden="true"
       />
       <div className="relative flex w-[54%] max-w-47.5 flex-col items-start pt-1.5 pl-4">
@@ -44,6 +47,7 @@ export function Mobile({ artwork }: { artwork: Nft }) {
         </a>
       </div>
 
+      {artwork ? (
       <Link
         to="/nfts/$nftId"
         params={{ nftId: artwork.id }}
@@ -67,6 +71,9 @@ export function Mobile({ artwork }: { artwork: Nft }) {
           className="absolute top-22.25 left-3.5 size-14.5 rounded-16 object-cover"
         />
       </Link>
+      ) : (
+        <Skeleton className="absolute top-2.5 right-4 size-34.5 rounded-16" />
+      )}
 
       <Dots className="absolute bottom-2 left-1/2 -translate-x-1/2" />
     </section>
