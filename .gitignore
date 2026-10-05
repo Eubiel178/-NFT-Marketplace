@@ -9,3 +9,13 @@ test-results/
 opencode.json
 reports/screenshots/
 skills-lock.json
+.claude/
+.mcp.json
+.opencode/
+.cursor/
+.cursorrules
+.windsurf/
+.codex/
+.gemini/
+.aider*
+.github/copilot-instructions.md
