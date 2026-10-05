@@ -19,7 +19,6 @@ export const Image = forwardRef<HTMLImageElement, ImageProps>(
         className
       )}
       loading={priority ? 'eager' : 'lazy'}
-      fetchPriority={priority ? 'high' : undefined}
       {...props}
     />
   )

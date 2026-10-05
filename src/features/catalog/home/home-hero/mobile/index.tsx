@@ -18,6 +18,7 @@ export function Mobile({ artwork }: { artwork?: Nft }) {
         alt=""
         fill
         priority
+        fetchPriority="high"
         aria-hidden="true"
       />
       <div className="relative flex w-[54%] max-w-47.5 flex-col items-start pt-1.5 pl-4">
