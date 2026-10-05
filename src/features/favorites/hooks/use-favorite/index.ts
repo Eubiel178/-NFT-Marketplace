@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useLocation, useNavigate } from '@tanstack/react-router'
+import { toast } from 'sonner'
 
 import type { Favorites } from '@/contracts'
 import { keys } from '@/lib/query'
@@ -26,6 +27,10 @@ export function useFavorite(nftId: string) {
       const others = (previous?.items ?? []).filter((id) => id !== nftId)
       queryClient.setQueryData<Favorites>(favoritesKey, { items: next ? [...others, nftId] : others })
       return { previous }
+    },
+    // O Toaster é uma região aria-live: o resultado é anunciado sem tirar o foco do botão.
+    onSuccess: (_data, next) => {
+      toast.success(next ? 'Adicionado aos favoritos' : 'Removido dos favoritos')
     },
     onError: (_error, _next, context) => {
       if (context?.previous) queryClient.setQueryData(favoritesKey, context.previous)

@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from 'react'
 
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { toast } from 'sonner'
 
 import type { PasswordChange, Profile, ProfileInput } from '@/contracts'
 import { parseHttpError } from '@/lib/http'
@@ -31,7 +32,10 @@ export function useProfileForm(profile: Profile) {
       if (password) await updatePassword(password)
       return next
     },
-    onSuccess: () => setForm(clearPasswords),
+    onSuccess: () => {
+      setForm(clearPasswords)
+      toast.success('Alterações salvas')
+    },
     onError: (error) => {
       const apiError = parseHttpError(error)
       const fields = Object.fromEntries(Object.entries(apiError.fields ?? {}).map(([field, message]) => [formField(field), message]))

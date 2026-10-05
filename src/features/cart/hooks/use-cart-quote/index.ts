@@ -1,6 +1,7 @@
 import { useState } from 'react'
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { toast } from 'sonner'
 
 import type { CartItem } from '@/contracts'
 import { parseHttpError } from '@/lib/http'
@@ -28,6 +29,7 @@ export function useCartQuote(userId: string | null, items: CartItem[]) {
     onSuccess: (next, code) => {
       queryClient.setQueryData(keys.cartQuote(owner, items, code), next)
       setApplied(code)
+      toast.success(`Cupom ${code} aplicado`)
       if (userId) writeUserItem('checkout-coupon', userId, code)
     },
   })
