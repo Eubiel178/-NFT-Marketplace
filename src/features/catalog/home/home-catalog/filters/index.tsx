@@ -14,7 +14,7 @@ export interface FiltersProps {
 
 const groupTitle = "mb-3 font-mono text-lg font-bold leading-4 text-foreground";
 const rangeInput =
-  "pointer-events-none absolute inset-x-0 top-0 h-4 w-full appearance-none bg-transparent [&::-moz-range-thumb]:pointer-events-auto [&::-moz-range-thumb]:size-[1.3125rem] [&::-moz-range-thumb]:cursor-pointer [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:border-[0.1875rem] [&::-moz-range-thumb]:border-ink [&::-moz-range-thumb]:bg-primary [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:size-[1.3125rem] [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:border-[0.1875rem] [&::-webkit-slider-thumb]:border-ink [&::-webkit-slider-thumb]:bg-primary";
+  "pointer-events-none absolute inset-x-0 -top-1 h-6 w-full appearance-none bg-transparent [&::-moz-range-thumb]:pointer-events-auto [&::-moz-range-thumb]:size-[1.3125rem] [&::-moz-range-thumb]:cursor-pointer [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:border-[0.1875rem] [&::-moz-range-thumb]:border-ink [&::-moz-range-thumb]:bg-primary [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:size-[1.3125rem] [&::-webkit-slider-thumb]:cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:border-[0.1875rem] [&::-webkit-slider-thumb]:border-ink [&::-webkit-slider-thumb]:bg-primary";
 
 // Coleções, rede e faixa de preço vêm dos facets da API; a faixa só é aplicada no "Aplicar".
 export function Filters({ facets, search, onChange }: FiltersProps) {

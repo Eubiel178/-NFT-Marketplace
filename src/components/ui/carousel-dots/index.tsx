@@ -4,9 +4,10 @@ import { cva } from 'class-variance-authority'
 
 import { cn } from '@/lib/utils'
 
-// Área de toque de 1.5rem em volta de um ponto de 0.75rem (Figma: pontos de 12px a cada 20px).
+// Área de toque de 1.25rem × 1.5rem (a largura é o passo de 20px do Figma, sem sobreposição)
+// em volta de um ponto de 0.75rem, que continua a cada 20px.
 const dot = cva(
-  "relative -m-2 size-6 cursor-pointer rounded-full bg-transparent p-0 focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-primary before:absolute before:top-1/2 before:left-1/2 before:size-3 before:-translate-x-1/2 before:-translate-y-1/2 before:rounded-full before:border before:border-primary before:content-['']",
+  "relative -my-1.5 h-6 w-5 cursor-pointer rounded-full bg-transparent p-0 focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-primary before:absolute before:top-1/2 before:left-1/2 before:size-3 before:-translate-x-1/2 before:-translate-y-1/2 before:rounded-full before:border before:border-primary before:content-['']",
   {
     variants: {
       active: { true: 'before:bg-primary', false: '' },
@@ -22,7 +23,7 @@ export interface CarouselDotsProps extends Omit<ComponentProps<'div'>, 'onSelect
 
 export function CarouselDots({ activeIndex = 1, className, count = 3, onSelect, ...props }: CarouselDotsProps) {
   return (
-    <div className={cn('flex h-3 items-center justify-center gap-3', className)} role="tablist" aria-label="Páginas do carrossel" {...props}>
+    <div className={cn('flex h-3 items-center justify-center', className)} role="tablist" aria-label="Páginas do carrossel" {...props}>
       {Array.from({ length: count }, (_, index) => (
         <button
           type="button"
