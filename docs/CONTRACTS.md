@@ -1,6 +1,26 @@
 # Contratos REST e eventos
 
-Fonte: README §§4–7. Prefixo `/api`; todas as chamadas da aplicação passam pelo Axios (`src/lib/http.ts`) e todas as respostas são validadas com Zod (`src/contracts/index.ts`, compartilhado por cliente e mocks). A API é simulada por MSW (`src/mocks`). ETH é string decimal não negativa com até 18 casas (`^\d+(\.\d{1,18})?$`); cálculos em wei com BigInt; quantidades são inteiros.
+Fonte: README §§4–7. Prefixo `/api`; todas as chamadas da aplicação passam pelo Axios (`src/lib/http.ts`) e todas as respostas são validadas com Zod (`src/contracts/`, compartilhado por cliente e mocks). A API é simulada por MSW (`src/mocks`). ETH é string decimal não negativa com até 18 casas (`^\d+(\.\d{1,18})?$`); cálculos em wei com BigInt; quantidades são inteiros.
+
+## Organização de `src/contracts/`
+
+`index.ts` é um barrel que reexporta tudo (`@/contracts` não mudou). Cada domínio fica em `<pasta>/index.ts`:
+
+| Pasta | Conteúdo |
+| --- | --- |
+| `eth` | `ethSchema`, `Eth`, `Network` |
+| `session` | `sessionSchema` |
+| `nfts` | NFT, busca do catálogo, facets e `catalogSchema` |
+| `favorites` | `favoritesSchema` |
+| `cart` | item, linha e carrinho |
+| `quote` | `quoteSchema` |
+| `orders` | pedido, status, método de pagamento, conexão de carteira e dados do colecionador |
+| `profile` | perfil, `ensSchema`, edição de perfil e troca de senha |
+| `wallets` | carteira e cadastro de carteira |
+| `events` | eventos Socket.IO (`ResourceEvent`, `NftUpdated`, `orderUpdatedSchema`) |
+| `errors` | `apiErrorSchema` |
+
+`CartItem`, `Quote`, `Order`, `OrderStatus` e `Wallet` agora vêm de `z.infer` do schema (antes eram interfaces duplicadas), sem mudança de formato.
 
 ## Erros
 
