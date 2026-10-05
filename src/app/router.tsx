@@ -2,7 +2,6 @@ import {
   createRootRoute,
   createRoute,
   createRouter,
-  lazyRouteComponent,
   redirect,
 } from "@tanstack/react-router";
 import { catalogSearchSchema } from "@/contracts";
@@ -10,15 +9,13 @@ import { queryClient } from "@/lib/query";
 import { isSessionExpired, sessionOptions } from "@/shared/api/session";
 import { Layout } from "./layout";
 import { discardExpiredSession } from "./session-expiry";
+import { ProfilePage } from "@/features/account/profile-page";
+import { WalletsPage } from "@/features/account/wallets-page";
+import { AuthPage } from "@/features/auth/auth-page";
+import { CartPage } from "@/features/cart/cart-page";
 import { CatalogPage, NftPage } from "@/features/catalog/pages";
-
-// Telas que a Início e o Detalhe não usam saem do pacote inicial e carregam por rota.
-const ProfilePage = lazyRouteComponent(() => import("@/features/account/profile-page"), "ProfilePage");
-const WalletsPage = lazyRouteComponent(() => import("@/features/account/wallets-page"), "WalletsPage");
-const AuthPage = lazyRouteComponent(() => import("@/features/auth/auth-page"), "AuthPage");
-const CartPage = lazyRouteComponent(() => import("@/features/cart/cart-page"), "CartPage");
-const CheckoutPage = lazyRouteComponent(() => import("@/features/checkout/checkout-page"), "CheckoutPage");
-const OrderPage = lazyRouteComponent(() => import("@/features/orders/order-page"), "OrderPage");
+import { CheckoutPage } from "@/features/checkout/checkout-page";
+import { OrderPage } from "@/features/orders/order-page";
 
 function safeRedirect(value: unknown) {
   return typeof value === "string" && value.startsWith("/") && !value.startsWith("//") ? value : "/";

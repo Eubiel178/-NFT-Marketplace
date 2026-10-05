@@ -9,7 +9,7 @@ import { goToLoginExpired, router } from "./router";
 import { installSessionExpiry } from "./session-expiry";
 
 export function renderApp() {
-  void startRealtime();
+  startRealtime();
   installSessionExpiry(goToLoginExpired);
   createRoot(document.getElementById("root")!).render(
     <StrictMode>
