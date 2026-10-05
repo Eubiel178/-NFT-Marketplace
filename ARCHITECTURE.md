@@ -216,37 +216,58 @@ Qualquer `401` do Axios, exceto login, cadastro e logout (onde `401` é credenci
 
 `GET /api/orders?status=pending` devolve só os pedidos do usuário da sessão. Ao abrir `/checkout`, o cliente redireciona para o pedido pendente; `POST /api/orders` com pedido pendente do usuário responde `409 ORDER_PENDING` com `fields.orderId`, mesmo com outra chave de idempotência (a repetição da mesma chave continua devolvendo o mesmo pedido, antes dessa checagem). Confirmado e recusado são terminais e liberam um novo pagamento. Coberto por `phase23`.
 
-## Desempenho e Lighthouse (medição de 04/10/2026)
+## Desempenho e Lighthouse (medição de 05/10/2026)
 
-**Ferramentas e ambiente.** Lighthouse 13.5.0; Chrome headless 154.0.0.0 (o instalado em `C:\Program Files\Google\Chrome`); Node v24.18.0; Windows 10.0.19045 x64; AMD Ryzen 5 5500 (12 threads), 16 GB; `benchmarkIndex` 3125 (mobile) e 3186 (desktop). Build `npm run build:demo` servido por `vite preview` em `http://127.0.0.1:4173`, cenário `default` do MSW, Chrome novo e sem cache a cada medição, mocks, imagens, fontes e Socket.IO ativos (nenhuma simplificação para a auditoria). Um servidor de desenvolvimento do Vite (porta 5173) estava aberto e ocioso durante a medição. Script: `scripts/lighthouse.mjs`; relatórios HTML e JSON de cada medição e o `summary.json` (versões, sistema, condições e medianas) estão em `reports/lighthouse/` e são versionados.
+**Ferramentas e ambiente.** Lighthouse 13.5.0; Chrome headless 154.0.0.0 (o instalado em `C:\Program Files\Google\Chrome`); Node v24.18.0; Windows 10.0.19045 x64; AMD Ryzen 5 5500 (12 threads), 16 GB. Build `npm run build:demo` servido por `vite preview` em `http://127.0.0.1:4173`, cenário `default` do MSW, Chrome novo e sem cache a cada medição, mocks, imagens, fontes e Socket.IO ativos (nenhuma simplificação para a auditoria). Um servidor de desenvolvimento do Vite (porta 5173) estava aberto e ocioso. Script: `scripts/lighthouse.mjs`; relatórios HTML/JSON de cada medição e o `summary.json` (versões, sistema, condições e medianas) em `reports/lighthouse/`, versionados.
 
 | Perfil | Emulação | Throttling (`simulate`) |
 | --- | --- | --- |
 | Mobile | 412×823, DPR 1,75, UA de Android | RTT 150 ms, 1.638,4 Kbps, CPU 4× mais lenta |
 | Desktop | 1440×900, DPR 1 | RTT 40 ms, 10.240 Kbps, CPU 1× |
 
-**Medianas de 3 medições por página e perfil**
+**Medianas de 3 medições por página e perfil (depois das correções)**
 
 | Página | Perfil | Performance | Accessibility | Best Practices | SEO | LCP (ms) | CLS | TBT (ms) |
 | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Início | mobile | 90 | 100 | 100 | 92 | 3.394 | 0 | 113 |
-| Início | desktop | 99 | 97 | 100 | 92 | 939 | 0,0333 | 0 |
-| Detalhe | mobile | 93 | 97 | 100 | 92 | 3.036 | 0 | 89 |
-| Detalhe | desktop | 99 | 97 | 100 | 92 | 851 | 0 | 0 |
+| Início | mobile | 94 | 100 | 100 | 100 | 2.688 | 0 | 155 |
+| Início | desktop | 99 | 100 | 100 | 100 | 930 | 0 | 0 |
+| Detalhe | mobile | 91 | 97 | 100 | 100 | 3.190 | 0 | 155 |
+| Detalhe | desktop | 99 | 97 | 100 | 100 | 923 | 0 | 0 |
 
-Metas (Performance ≥ 90, Accessibility ≥ 95, Best Practices ≥ 95, SEO ≥ 90): **todas as medianas atendem**; nenhuma categoria ficou abaixo. As três medições de cada combinação deram a mesma pontuação, exceto Best Practices do Início mobile (96, 100, 100) e Performance do Início desktop (99, 100, 99). Nada foi corrigido nesta etapa: abaixo está só o diagnóstico do que fica perto da meta ou fora de 100, para referência.
+Metas (Performance ≥ 90, Accessibility ≥ 95, Best Practices ≥ 95, SEO ≥ 90): **todas as medianas atendem**. Performance das 3 medições: Início mobile 89/94/94 (a primeira, com Chrome frio, costuma sair mais baixa), Início desktop 99/99/99, Detalhe mobile 89/91/91, Detalhe desktop 99/99/99.
 
-**Diagnóstico (nenhum item está abaixo da meta)**
+**Antes × depois (medição de 04/10/2026 → esta)**
 
-- **Performance do Início mobile = 90, exatamente na meta** (as 3 medições deram 90; LCP 3.394 ms, com nota 0,67 no audit de LCP, acima dos 2,5 s considerados bons). O elemento de LCP é `img.block` (`/assets/figma/mobile-hero-mask.svg`) no `section.relative` do hero, com `loading="lazy"`, sem `fetchpriority=high` e não descobrível no HTML inicial. A decomposição do LCP no relatório (tempo observado, sem o throttling simulado, ~600 ms) é: 348 ms de atraso até o recurso começar a carregar, 63 ms de download e 187 ms de atraso de renderização. A causa é a cadeia de carga de uma SPA com MSW: HTML → `index-*.js` → chunk `browser-*.js` (worker do MSW, 169,6 kB, ~530 ms de execução, 454 ms só de script) → `render-*.js` (740 kB, 258 ms) → `GET /api/nfts` (resposta só depois do worker pronto) → imagem. O chunk do MSW existe porque o build de demonstração precisa do mock em produção. Com o TBT de 113 ms (mobile, CPU 4× mais lenta), os mesmos dois chunks são os maiores responsáveis.
-- **Performance do Detalhe mobile = 93**: mesmo padrão (LCP 3.036 ms; imagem `Emerald Ape #042` com `loading="eager"`, mas não descobrível no HTML inicial e sem `fetchpriority=high`; atraso de carregamento 281 ms). TBT 89 ms.
-- **Início desktop e Detalhe desktop (99)**: LCP 939 e 851 ms, TBT 0. A imagem de LCP (`/assets/figma/home-hero.png`, `loading="eager"`) também não é descobrível no HTML inicial e não tem `fetchpriority=high`; atraso de carregamento de ~300 ms.
-- **CLS do Início desktop = 0,0333** (bom, abaixo de 0,1, e igual nas 3 medições). Vem de `section#home-products` (o catálogo, 1200×1379 px), que se desloca quando os dados chegam. Os demais perfis e o Detalhe têm CLS 0.
-- **Accessibility 97 (Início desktop, Detalhe mobile e desktop; meta 95)**: falha só o audit `target-size`. No Início desktop, os dois `input[type=range]` do filtro de preço (`aria-label` "Preço mínimo" e "Preço máximo", `pointer-events-none`, 16 px de altura). No Detalhe, os botões `role="tab"` "Página 1" e "Página 2" do `CarouselDots` (ponto visual de 12 px, área de toque de 24 px com margem negativa que se sobrepõe à do vizinho). O Início mobile deu 100.
-- **SEO 92 (meta 90)**: falha só `robots-txt` ("robots.txt is not valid"). `/robots.txt` não existe em `public/`, então o servidor responde 200 com o `index.html` (fallback de SPA); no deploy da Vercel o rewrite de `vercel.json` (que só exclui `assets/` e `mockServiceWorker.js`) faria o mesmo. O resto do SEO está atendido.
-- **Best Practices 96 em 1 de 3 medições do Início mobile (mediana 100)**: o audit `errors-in-console` registrou `GET /favicon.ico` com 404 (não há `favicon.ico`; só aparece quando o Chrome pede o ícone). Nas outras 11 medições, 100.
+| Métrica | Antes | Depois |
+| --- | --- | --- |
+| Início mobile: Performance / LCP | 90 / 3.394 ms | 94 / 2.688 ms |
+| Detalhe mobile: Performance / LCP | 93 / 3.036 ms | 91 / 3.190 ms |
+| SEO (todas) | 92 | 100 |
+| Best Practices Início mobile (pior medição) | 96 | 100 |
+| Accessibility Início desktop | 97 | 100 |
+| CLS Início desktop | 0,0333 | 0 |
 
-**Limitações da medição.** Chrome headless e `vite preview` locais, sem CDN, e CPU do Windows com `simulate`: valores absolutos mudam em outro hardware e na URL publicada (o deploy ainda não existe). A medição do deploy deve ser repetida depois de publicar.
+**O que foi corrigido**
+
+- **Hero mobile (LCP do Início mobile):** a imagem `mobile-hero-mask.svg` deixou de ser `loading="lazy"`, ganhou `fetchpriority="high"` e um `<link rel="preload">` (só até 639px) em `index.html`. Enquanto o catálogo carrega, o mobile já mostra o hero (texto e máscara, que não dependem da API) com a busca e a arte como skeletons das mesmas dimensões.
+- **SEO:** `public/robots.txt` válido; título e descrição sem "estrutura inicial"; `lang` e `viewport` já estavam corretos.
+- **Best Practices:** `public/favicon.svg` e `<link rel="icon">` (acabou o 404 de `favicon.ico`).
+- **Accessibility:** os `input[type=range]` do filtro de preço passaram de 16 para 24 px de altura (`-top-1 h-6`, com o botão no mesmo lugar) e os pontos do carrossel do Detalhe para áreas de 20×24 px, sem sobreposição e sem mover os pontos.
+- **CLS do Início desktop:** a imagem do hero não tinha tamanho reservado (o link era `w-fit`), então o hero crescia de 366 para 450 px quando a imagem carregava e empurrava o catálogo; agora o link tem 450×450 px. O skeleton de sm em diante também espelha o layout carregado (margem do hero, busca abaixo de lg, filtros e destaque a partir de lg, abas, grade 3×3 e paginação).
+
+**Tentado e descartado (medido pior)**
+
+- Iniciar o MSW em paralelo com o render, ou só depois do primeiro commit (consultas pausadas até o worker responder): Início mobile 83–87 e Detalhe 83. A ordem original (worker primeiro, depois a aplicação) ficou melhor e foi mantida.
+- Dividir o código por rota (`lazyRouteComponent`) e carregar o `socket.io-client` sob demanda: ajudava o Início em ~1 ponto, mas o Detalhe caiu de ~92 para ~89; revertido.
+- `fetchpriority="high"` em todas as imagens `priority`: piorava o Detalhe (83); ficou só no hero mobile.
+
+**O que ainda limita o resultado (nenhuma meta está abaixo)**
+
+- **Início e Detalhe mobile, LCP de 2,7 a 3,2 s** (acima dos 2,5 s considerados bons): a página é uma SPA com MSW; a cadeia é HTML → `index-*.js` → chunk `browser-*.js` (worker do MSW, ~170 kB gz, ~450 ms de execução) → `render-*.js` (~218 kB gz) → `GET /api/nfts` → imagem. No Detalhe, o LCP é a imagem do NFT (`loading="eager"`, mas só descobrível depois da API e sem `fetchpriority`). O chunk do MSW existe porque o build de demonstração precisa do mock em produção. O TBT de 155 ms (CPU 4× mais lenta) vem desses mesmos dois chunks.
+- **Accessibility 97 no Detalhe:** falha só `target-size` nos três pontos do carrossel (`role="tab"` "Página 1…3"): o Figma fixa o passo de 20 px entre pontos, e para passar a regra de 24 px o passo teria que ser de 24 px, o que mudaria o desenho. Mantido por fidelidade ao Figma.
+- **Imagens grandes:** `home-hero.png`, `featured-nft.png`, `neon-vessel.png` e `golden-beat.png` têm ~2 MB cada (assets do Figma). Não pesam no LCP medido do Início mobile (o LCP é o SVG), mas pesam no Detalhe e em conexões lentas; recodificar para WebP exigiria uma ferramenta que não está instalada.
+
+**Limitações da medição.** Chrome headless e `vite preview` locais, sem CDN, e CPU do Windows com `simulate`: valores absolutos mudam em outro hardware e na URL publicada (o deploy ainda não existe). A primeira medição de cada perfil costuma sair 2 a 5 pontos abaixo; a mediana descarta essa. Repetir depois de publicar.
 
 ## Limitações conhecidas
 

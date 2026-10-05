@@ -398,16 +398,16 @@ Cenário com tempo real: abra `/nfts/nft-1`, aguarde o carregamento e execute `a
 
 ### Desempenho (Lighthouse)
 
-Medianas de 3 medições por página e perfil, sobre o build de demonstração (`npm run build:demo` + `npm run preview`), cenário `default`, Lighthouse 13.5.0, Chrome 154, Node 24.18.0, Windows 10 x64 (04/10/2026). Relatórios HTML e JSON em [`reports/lighthouse/`](reports/lighthouse/); ambiente, throttling e diagnóstico em [ARCHITECTURE.md](ARCHITECTURE.md#desempenho-e-lighthouse-medição-de-04102026).
+Medianas de 3 medições por página e perfil, sobre o build de demonstração (`npm run build:demo` + `npm run preview`), cenário `default`, Lighthouse 13.5.0, Chrome 154, Node 24.18.0, Windows 10 x64 (05/10/2026, depois das correções de desempenho). Relatórios HTML e JSON em [`reports/lighthouse/`](reports/lighthouse/); ambiente, throttling e diagnóstico em [ARCHITECTURE.md](ARCHITECTURE.md).
 
 | Página | Perfil | Performance | Accessibility | Best Practices | SEO | LCP (ms) | CLS | TBT (ms) |
 | --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Início | mobile | 90 | 100 | 100 | 92 | 3.394 | 0 | 113 |
-| Início | desktop | 99 | 97 | 100 | 92 | 939 | 0,0333 | 0 |
-| Detalhe | mobile | 93 | 97 | 100 | 92 | 3.036 | 0 | 89 |
-| Detalhe | desktop | 99 | 97 | 100 | 92 | 851 | 0 | 0 |
+| Início | mobile | 94 | 100 | 100 | 100 | 2.688 | 0 | 155 |
+| Início | desktop | 99 | 100 | 100 | 100 | 930 | 0 | 0 |
+| Detalhe | mobile | 91 | 97 | 100 | 100 | 3.190 | 0 | 155 |
+| Detalhe | desktop | 99 | 97 | 100 | 100 | 923 | 0 | 0 |
 
-Todas as medianas atendem as metas (≥ 90 / ≥ 95 / ≥ 95 / ≥ 90). O Início mobile está exatamente em 90 de Performance (LCP acima de 2,5 s). A medição foi local; deve ser repetida na URL publicada, que ainda não existe.
+Todas as medianas atendem as metas (≥ 90 / ≥ 95 / ≥ 95 / ≥ 90). Antes das correções: Início mobile 90 (LCP 3.394 ms), SEO 92, CLS 0,0333 no Início desktop. A medição foi local; deve ser repetida na URL publicada, que ainda não existe.
 
 ### Testes E2E (`tests/e2e`)
 
