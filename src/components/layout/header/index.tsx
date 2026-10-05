@@ -36,7 +36,7 @@ export function Header() {
 
   return (
     <header className="hidden lg:flex lg:justify-center">
-      <div className="flex h-11.25 max-w-content items-center justify-between border-b border-primary/25 w-full pt-6">
+      <div className="flex h-17.25 max-w-content items-center border-b border-primary/25 w-full pt-3.75">
         <Link
           to="/"
           className="font-mono text-sm font-bold leading-normal tracking-wide text-foreground"
@@ -47,7 +47,7 @@ export function Header() {
 
         <nav
           aria-label="Principal"
-          className="flex flex-1 justify-center self-stretch"
+          className="ml-81.75 self-stretch"
         >
           <ul className="flex h-full gap-10">
             {navigation.map((item) => {
@@ -64,7 +64,7 @@ export function Header() {
                     }
                     aria-current={active ? "page" : undefined}
                     className={cn(
-                      "relative flex h-full items-center font-mono text-base leading-normal hover:text-text-accent after:absolute after:inset-x-0 after:bottom-0 after:h-0.5",
+                      "relative flex h-full items-start pt-2 font-mono text-base leading-normal hover:text-text-accent after:absolute after:inset-x-0 after:bottom-0 after:h-0.5",
                       active
                         ? "font-bold text-text-accent after:bg-primary"
                         : "font-normal text-foreground after:text-foreground",
@@ -78,7 +78,7 @@ export function Header() {
           </ul>
         </nav>
 
-        <div className="flex items-center gap-6">
+        <div className="ml-auto flex items-center gap-7">
           <Link
             to="/"
             aria-label="Buscar NFTs"
@@ -93,14 +93,14 @@ export function Header() {
           <Link
             to="/cart"
             aria-label={`Carrinho, ${cartCount} itens`}
-            className="relative flex size-6 items-center justify-center text-foreground"
+            className="relative mr-2.75 flex h-5.75 w-5 items-center justify-center text-foreground"
           >
             <Icon
               src="/assets/figma/mcp/svg/shopping.svg"
               className="size-full"
             />
             <span
-              className="absolute top-1.25 -right-1 grid size-4 place-items-center rounded-full border-2 border-ink bg-primary text-tiny-9 font-bold leading-auto text-ink"
+              className="absolute top-0 -right-2.75 grid size-4 place-items-center rounded-full border-2 border-ink bg-primary text-tiny-9 font-bold leading-auto text-ink"
               aria-hidden="true"
             >
               {cartCount}
