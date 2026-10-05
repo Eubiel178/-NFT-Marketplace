@@ -8,6 +8,7 @@ import { catalogSearchSchema } from "@/contracts";
 import { queryClient } from "@/lib/query";
 import { isSessionExpired, sessionOptions } from "@/shared/api/session";
 import { Layout } from "./layout";
+import { discardExpiredSession } from "./session-expiry";
 import { ProfilePage } from "@/features/account/profile-page";
 import { WalletsPage } from "@/features/account/wallets-page";
 import { AuthPage } from "@/features/auth/auth-page";
@@ -77,6 +78,8 @@ const privateRoot = createRoute({
       session = await queryClient.fetchQuery(sessionOptions);
     } catch (error) {
       if (isSessionExpired(error)) {
+        // Expirou entre uma navegação e outra: descarta o que era do usuário antes de ir ao login.
+        await discardExpiredSession();
         throw redirect({ to: "/login", search: { redirect: location.href, expired: true } });
       }
       throw error;
@@ -113,6 +116,12 @@ const order = createRoute({
     return <OrderPage id={orderId} />;
   },
 });
+// Sessão expirada fora de uma navegação (ação na própria página): login com retorno ao destino atual.
+export function goToLoginExpired() {
+  const { pathname, href } = router.latestLocation;
+  if (pathname === "/login" || pathname === "/register") return;
+  void router.navigate({ to: "/login", search: { redirect: href, expired: true }, replace: true });
+}
 export const router = createRouter({
   routeTree: root.addChildren([
     home,

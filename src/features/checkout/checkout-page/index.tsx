@@ -1,3 +1,5 @@
+import { useEffect, useRef, useState } from 'react'
+
 import { Link } from '@tanstack/react-router'
 
 import { Button, Skeleton } from '@/components'
@@ -13,6 +15,7 @@ import { usePendingOrder } from '../hooks/use-pending-order'
 import { usePlaceOrder } from '../hooks/use-place-order'
 import { useWalletConnection } from '../hooks/use-wallet-connection'
 import { defaultWallet, initialForm, paymentMethods, toCollector } from '../lib/checkout-form'
+import { clearCheckoutResume, readCheckoutResume, trackCheckoutResume } from '../lib/checkout-resume'
 import { Desktop } from './desktop'
 import { Mobile } from './mobile'
 import { ReviewDialog } from './review-dialog'
@@ -76,10 +79,25 @@ interface CheckoutContentProps {
 // Só compõe: dados, formulário, conexão da carteira e envio vêm dos hooks.
 function CheckoutContent({ data, wallets, isDesktop }: CheckoutContentProps) {
   const realtimeConnected = useRealtimeConnected()
-  const checkout = useCheckoutForm(initialForm({ profile: data.profile.data, email: data.user?.email, name: data.user?.name, wallet: defaultWallet(wallets, data.connection.data?.walletId) }), isDesktop)
+  // Sessão expirada no pagamento: depois do login, volta o formulário e a revisão que estavam abertas.
+  const [resume] = useState(() => readCheckoutResume(data.userId))
+  const checkout = useCheckoutForm(resume?.form ?? initialForm({ profile: data.profile.data, email: data.user?.email, name: data.user?.name, wallet: defaultWallet(wallets, data.connection.data?.walletId) }), isDesktop)
   const connection = useWalletConnection(data.userId, checkout.form.walletId)
   const order = usePlaceOrder({ userId: data.userId, items: data.items, coupon: data.coupon, quote: data.quote.data, onFieldErrors: checkout.showApiErrors })
   const liveNotice = useCheckoutLive(data.lines, order.refreshReview)
+
+  const reviewing = order.reviewing || order.review !== null
+  const resumed = useRef(false)
+  useEffect(() => {
+    if (!resume || resumed.current) return
+    resumed.current = true
+    clearCheckoutResume(data.userId)
+    if (resume.reviewing) order.openReview()
+  }, [resume, data.userId, order])
+  useEffect(() => {
+    trackCheckoutResume({ userId: data.userId, resume: { form: checkout.form, reviewing } })
+    return () => trackCheckoutResume(null)
+  }, [data.userId, checkout.form, reviewing])
 
   const wallet = wallets.find((candidate) => candidate.id === checkout.form.walletId)
   const network = checkout.form.network || wallet?.network || 'ethereum'
@@ -117,7 +135,7 @@ function CheckoutContent({ data, wallets, isDesktop }: CheckoutContentProps) {
     >
       {isDesktop ? <Desktop {...view} /> : <Mobile {...view} />}
       <ReviewDialog
-        open={order.reviewing || order.review !== null}
+        open={reviewing}
         review={order.review}
         reviewing={order.reviewing}
         reviewError={order.reviewError}

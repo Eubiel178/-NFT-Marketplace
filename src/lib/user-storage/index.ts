@@ -1,6 +1,6 @@
 // Preferências de checkout persistidas por usuário, para que outra sessão no
 // mesmo navegador nunca reaproveite cupom ou chave de idempotência alheios.
-const items = ['checkout-coupon', 'checkout-idempotency'] as const
+const items = ['checkout-coupon', 'checkout-idempotency', 'checkout-resume'] as const
 
 type UserStorageItem = (typeof items)[number]
 

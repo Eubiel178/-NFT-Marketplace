@@ -5,10 +5,12 @@ import { RouterProvider } from "@tanstack/react-router";
 import { Toaster } from "@/components";
 import { queryClient } from "@/lib/query";
 import { startRealtime } from "@/realtime";
-import { router } from "./router";
+import { goToLoginExpired, router } from "./router";
+import { installSessionExpiry } from "./session-expiry";
 
 export function renderApp() {
   startRealtime();
+  installSessionExpiry(goToLoginExpired);
   createRoot(document.getElementById("root")!).render(
     <StrictMode>
       <QueryClientProvider client={queryClient}>
