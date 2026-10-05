@@ -182,7 +182,7 @@ Requisitos transversais do §9:
 | Requisito | Situação | Evidência | O que falta |
 | --- | --- | --- | --- |
 | Chromium desktop e mobile nos fluxos principais | Atende | `playwright.config.ts` (3 projetos) | — |
-| **Regressão visual de início, detalhe, carrinho, pagamento com baselines versionadas e dados estáveis** | **Não atende** | `visual-regression.spec.ts:17-38`; 12 PNGs em `visual-regression.spec.ts-snapshots/` | Baselines são do primeiro commit (`db97731`), **anteriores a todas as telas refeitas**; o `progresso.md` registra falha em 8 casos + `phase5-visual` mobile e adia a regeneração. Nomes terminam em `-win32`: **falhariam no Linux/CI**. Teste só do `/` com `fullPage`, sem máscara de dados voláteis |
+| **Regressão visual de início, detalhe, carrinho, pagamento com baselines versionadas e dados estáveis** | **Atende ✔** | `visual-regression.spec.ts:17-38`; 12 PNGs regeneradas em `visual-regression.spec.ts-snapshots/` (4 telas × desktop, tablet e mobile), sem a plataforma no nome (`snapshotPathTemplate` em `playwright.config.ts`), `maxDiffPixelRatio` 0,002, `animations: 'disabled'` e `caret: 'hide'` no config; dados do mock determinísticos (reset a cada teste). Rodada duas vezes seguidas sem alteração: 12 passaram nas duas | Baselines geradas no Windows com Chromium do Playwright; em outro SO, diferenças de rasterização de fonte acima de 0,2% exigiriam regenerar. Nenhuma tela mostra data ou hora, então o relógio não precisou ser controlado |
 | Estado isolado por teste | Atende | Contexto novo do Playwright (localStorage vazio) + `reset` | — |
 | **Controle de relógio, latência e disparo de eventos em cenários sensíveis a tempo** | **Atende ✔** | Latência e disparo por cenários e `__mock/*`; **`page.clock` em `phase19`** (pedido pendente até o relógio avançar, confirmação só pelo socket; expiração de sessão com o relógio parado) | O debounce de 300 ms não é controlado por relógio (usa espera real em `phase7-marketplace:16`, asserção existente) |
 | Relatório HTML e traces de falha | Atende | `playwright.config.ts`: `reporter html`, `trace: retain-on-failure` | — |
@@ -237,7 +237,7 @@ Requisitos transversais do §9:
 **Risco alto (podem eliminar ou derrubar nota de forma visível)**
 
 1. **Deploy inexistente.** `vercel.json` pronto, mas branch 13 commits à frente do `origin`, sem URL. Falta publicar e validar rota direta, refresh, MSW e Socket.IO na URL. (§12, P0)
-2. **Suíte E2E não passa inteira.** `visual-regression` falha nos 4 casos × 3 projetos por baselines do commit inicial, `phase5-visual` mobile também já falhou; baselines só `-win32`. `npm run test:e2e` completo não está verde nem comprovado. (§9, P0)
+2. ~~Suíte E2E não passa inteira.~~ **Regressão visual resolvida** (baselines regeneradas, sem `-win32`, duas rodadas consecutivas verdes). Falta uma execução completa de `npm run test:e2e` registrada.
 3. **Lighthouse sem medição da entrega final.** Os números em `VALIDATION.md` são da estrutura e `reports/` está fora do git. Faltam as 12 medições novas, versionadas, com análise. (§10)
 4. ~~Expiração de sessão incompleta.~~ **Resolvido** em `3da74bf` + `phase16` (ver §2).
 

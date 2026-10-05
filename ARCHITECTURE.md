@@ -244,4 +244,4 @@ Tudo abaixo está registrado em [docs/eliminatorios.md](docs/eliminatorios.md) e
 
 **Acessibilidade e testes**
 - Não há verificação automatizada de acessibilidade (sem axe, sem `eslint-plugin-jsx-a11y`); teclado e foco são cobertos nos pontos citados em `docs/eliminatorios.md` (§8 e §9 item 11), sem um fluxo completo só por teclado.
-- Medições e baselines: ver o estado atual de regressão visual e do Lighthouse em `docs/eliminatorios.md` e na seção de desempenho abaixo, quando houver.
+- Baselines visuais geradas no Windows (Chromium do Playwright); outro sistema com rasterização de fonte diferente pode exigir regenerá-las. O Lighthouse da entrega final: ver `docs/eliminatorios.md`.

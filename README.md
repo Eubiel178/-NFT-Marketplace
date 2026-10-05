@@ -398,7 +398,7 @@ Cenário com tempo real: abra `/nfts/nft-1`, aguarde o carregamento e execute `a
 
 ### Testes E2E (`tests/e2e`)
 
-Os specs rodam pelos handlers MSW e pelo `socket.io-client`; cada teste parte de um contexto isolado e do reset do mock. Relatório HTML e traces de falha pelo `playwright.config.ts`. Os specs `phase16` a `phase23`:
+Os specs rodam pelos handlers MSW e pelo `socket.io-client`; cada teste parte de um contexto isolado e do reset do mock. Relatório HTML e traces de falha pelo `playwright.config.ts`. A regressão visual (`visual-regression.spec.ts`: Início, Detalhe, Carrinho e Pagamento em 1440, 768 e 390) usa baselines versionadas em `tests/e2e/visual-regression.spec.ts-snapshots/`, nomeadas só por tela e projeto (sem plataforma), com `maxDiffPixelRatio` 0,002; para regenerar depois de uma mudança de layout intencional: `npx playwright test visual-regression --update-snapshots`. Os specs `phase16` a `phase23`:
 
 | Spec | Cobertura |
 | --- | --- |
