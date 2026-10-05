@@ -274,7 +274,8 @@ function calculateQuote(items: CartItem[], coupon?: string) {
     total: fromWei(subtotalWei - discountWei + toWei("0.016")),
   };
 }
-async function conditions(request: Request) {
+// `idleDelay` é a latência sem cenário de rede: catálogo e detalhe mantêm 80 ms; carrinho e perfil respondem na hora.
+async function conditions(request: Request, idleDelay = 80) {
   const scenario = getScenario();
   const page = Number(new URL(request.url).searchParams.get("page") || 1);
   await delay(
@@ -284,7 +285,7 @@ async function conditions(request: Request) {
         ? page % 2
           ? 900
           : 100
-        : 80,
+        : idleDelay,
   );
   if (scenario === "network-error") return HttpResponse.error();
   // Conexão aberta e sem resposta: o Axios encerra no próprio timeout (8 s).
@@ -570,7 +571,7 @@ export const handlers = [
     return new HttpResponse(null, { status: 204 });
   }),
   http.get("/api/cart", async ({ request }) => {
-    const failure = await conditions(request);
+    const failure = await conditions(request, 0);
     if (failure) return failure;
     if (getScenario() === "cart-load-error")
       return error(
@@ -581,7 +582,7 @@ export const handlers = [
     return HttpResponse.json({ items: cartLines(cartOwnerId()) });
   }),
   http.post("/api/cart/items", async ({ request }) => {
-    const failure = await conditions(request);
+    const failure = await conditions(request, 0);
     if (failure) return failure;
     if (getScenario() === "cart-error")
       return error(
@@ -611,7 +612,7 @@ export const handlers = [
     return HttpResponse.json({ items: cartLines(ownerId) }, { status: 201 });
   }),
   http.patch("/api/cart/items/:nftId", async ({ request, params }) => {
-    const failure = await conditions(request);
+    const failure = await conditions(request, 0);
     if (failure) return failure;
     if (getScenario() === "cart-error")
       return error(
@@ -644,7 +645,7 @@ export const handlers = [
     return HttpResponse.json({ items: cartLines(ownerId) });
   }),
   http.delete("/api/cart/items/:nftId", async ({ request, params }) => {
-    const failure = await conditions(request);
+    const failure = await conditions(request, 0);
     if (failure) return failure;
     if (getScenario() === "cart-error")
       return error(
@@ -691,7 +692,7 @@ export const handlers = [
   http.get("/api/profile", async ({ request }) => {
     const user = currentUser();
     if (!user) return userError();
-    const failure = await conditions(request);
+    const failure = await conditions(request, 0);
     if (failure) return failure;
     if (getScenario() === "profile-error")
       return error(
@@ -704,7 +705,7 @@ export const handlers = [
   http.patch("/api/profile", async ({ request }) => {
     const user = findSessionUser();
     if (!user) return userError();
-    const failure = await conditions(request);
+    const failure = await conditions(request, 0);
     if (failure) return failure;
     if (getScenario() === "profile-error")
       return error(
